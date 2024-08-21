@@ -21,8 +21,15 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
-      "@layout/*": ["src/layout/*"],
+      "@apis/*": ["src/apis/*"],
+      "@domains/*": ["src/domains/*"],
+      "@routing/*": ["src/routing/*"],
+      "@modules/*": ["src/modules/*"],
+      "@Enums/*": ["src/Enums/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@lib/*": ["src/lib/*"],
+      "@store/*": ["src/store/*"],
       "@/*": ["src/*"]
     }
   },
