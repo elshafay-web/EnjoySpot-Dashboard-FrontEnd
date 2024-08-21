@@ -29,7 +29,7 @@ export default function ProtectRoutes({
   }
   if (!auth) {
     if (token) {
-      return <Navigate to="/" state={{ from: location }} replace />;
+      return <Navigate to="/dashboard" state={{ from: location }} replace />;
     }
   }
   if (!token || !permission) {

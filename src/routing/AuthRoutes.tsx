@@ -1,22 +1,11 @@
-import { RouteObject } from 'react-router-dom';
-
+import AuthPage from '@modules/auth'
+import { RouteObject } from 'react-router-dom'
 
 const AuthRoute: RouteObject[] = [
-  // {
-  //   path: '/login',
-  //   // element: <AuthLayout />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: (
-  //         // <ProtectRoutes auth={false}>
-  //         //   <LoginForm />
-  //         // </ProtectRoutes>
-  //       ),
-  //     },
-  //   ],
-  //   // errorElement: <ErrorPage />,
-  // },
-];
+  {
+    path: '/login',
+    element: <AuthPage />,
+  },
+]
 
-export default AuthRoute;
+export default AuthRoute

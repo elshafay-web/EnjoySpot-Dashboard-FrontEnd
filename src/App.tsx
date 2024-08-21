@@ -6,10 +6,11 @@ import { RouterProvider } from 'react-router-dom'
 import { PrimeReactProvider } from 'primereact/api'
 import ReactQueryProvider from './lib/QueryClientProvider'
 import router from './routing'
+import SplashScreen from '@modules/layout/splashScreen'
 function App() {
   useAxiosInterceptors()
   return (
-    <Suspense fallback={<h1>loading..</h1>}>
+    <Suspense fallback={<SplashScreen />}>
       <ReactQueryProvider>
         <PrimeReactProvider value={{ unstyled: false }}>
           <RouterProvider router={router} />
