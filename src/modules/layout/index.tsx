@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import { useIsFetching } from '@tanstack/react-query'
 import Header from './header'
 import Sidebar from './sidebar'
-import Footer from './footer'
 
 export default function MainLayout() {
   const loading = useIsFetching()
@@ -22,12 +21,9 @@ export default function MainLayout() {
       <div className="flex flex-col h-screen">
         <div className="flex flex-1">
           <Sidebar />
-          <main className="flex-grow bg-gray-100  rounded flex flex-col justify-between">
+          <main className="bg-gray-100 rounded w-full">
             <Header />
-            <div className="p-5">
-              <Outlet />
-            </div>
-            <Footer />
+            <Outlet />
           </main>
         </div>
       </div>

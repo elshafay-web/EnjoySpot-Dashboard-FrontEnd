@@ -22,7 +22,7 @@ export default function DropDownInput({
     <div className="col-12 w-100">
       <label
         htmlFor={field.inputName}
-        className="w-100 form-label fw-bold text-secondary mb-1 text-dairection"
+        className="w-full form-label font-bold text-secondary "
         style={{ fontSize: '14px' }}
       >
         {field.title}{' '}

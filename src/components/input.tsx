@@ -16,7 +16,7 @@ export default function Input({ field, errors, register }: Props) {
     <div className="col-12 w-full">
       <label
         htmlFor={field.inputName}
-        className="text-sm font-semibold text-gray-500"
+        className="w-full form-label font-bold text-secondary"
       >
         {field.title}{' '}
         {field.isRequired && <span className="text-red-500">*</span>}

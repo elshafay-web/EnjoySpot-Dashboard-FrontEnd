@@ -8,3 +8,19 @@
   @tailwind components;
   @tailwind utilities;
 }
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 5px !important;
+  text-align: center;
+  justify-content: center;
+
+
+}
+.p-datatable .p-datatable-thead > tr > th{
+  text-align: center;
+  justify-content: center !important;
+}
+.p-datatable .p-column-header-content{
+  justify-content: center !important;
+
+}
