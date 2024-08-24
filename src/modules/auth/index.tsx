@@ -5,12 +5,9 @@ import { LoginRequest, UserData } from '@domains/IUser'
 import { setCookie } from '@helpers/cookies'
 import { useUserData } from '@store/auth'
 import { jwtDecode } from 'jwt-decode'
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZG1pbiIsImp0aSI6IjhhYWQ4ZTViLTI5MzMtNDI3NC04YmRhLTBlYTI5YWUxYzRmNSIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsInVpZCI6IjIiLCJjb21wYW55aWQiOiIzIiwiY29tcGFueUNvZGUiOiJjMDAwMSIsImJyYW5jaGlkIjoiMyIsImVtcGxveWVlaWQiOiIzIiwicm9sZXMiOiJBZG1pbiIsImV4cCI6MTcyNDI5OTkwOSwiaXNzIjoiQXR0ZW5kYW5jZU1hbmFnZW1lbnQifQ.PZU7qrdTsiJdtEeDXyu-IPzBtnSO2FYVq0T5NW8-bCI'
 export default function AuthPage() {
   const { updateUserData } = useUserData()
   const navigate = useNavigate()
@@ -26,37 +23,25 @@ export default function AuthPage() {
 
   const { mutate: login, isPending } = useLogin({
     onSuccess(res) {
-      // const UserData: UserData = jwtDecode(res.data.token)
-      // setCookie('token', res?.data.token)
-      // updateUserData({ ...UserData })
-      // navigate('/', {
-      //   replace: true,
-      // })
-      // window.location.reload()
+      const UserData: UserData = jwtDecode(res.data.token)
+      setCookie('token', res?.data.token)
+      updateUserData({ ...UserData })
+      navigate('/', {
+        replace: true,
+      })
+      window.location.reload()
     },
   })
 
   const onSubmit = async (loginData: any) => {
-    // login(loginData)
-
-    const UserData: UserData = jwtDecode(token)
-    setCookie('token', token)
-    updateUserData({ ...UserData })
-    navigate('/', {
-      replace: true,
-    })
-    window.location.reload()
+    login(loginData)
   }
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <img
-            className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-            alt="logo"
-          />
+        <a className="flex items-center mb-6 text-3xl font-meduim text-gray-900 ">
+          <img className="w-8 h-8 mr-2" src="EnjoySpot_Icon.svg" alt="logo" />
           Enjoy Spot CMS
         </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

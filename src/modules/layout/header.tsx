@@ -24,9 +24,9 @@ export default function Header() {
 
   const itemRenderer = (item: any) => (
     <a
-      className={`group flex items-center cursor-pointer border-none hover:text-white hover:bg-blue-500 py-4 px-3 rounded-lg transition-all`}
+      className={`group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-4 px-3 rounded-lg transition-all`}
     >
-      <i className={`${item.icon} text-gray-700 group-hover:text-white text-2xl`} />
+      <i className={`${item.icon} text-darkBlue group-hover:text-white text-2xl`} />
       <span className={"mx-5 'text-xl"}>{item.label}</span>
     </a>
   )

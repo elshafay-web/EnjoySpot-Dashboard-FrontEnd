@@ -7,8 +7,8 @@ type Props = {
 
 export default function AddButton({ onClick, buttonText }: Props) {
   return (
-    <Button type="button" onClick={onClick}>
-      <i className="fa-solid fa-plus text-xl mx-2"></i> {buttonText}
+    <Button type="button" className='px-3 py-2' onClick={onClick}>
+      <i className="fa-solid fa-plus text-xl me-3"></i> {buttonText}
     </Button>
   )
 }

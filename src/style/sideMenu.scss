@@ -7,3 +7,37 @@
   border: none !important;
   border-radius: 8px;
 }
+.p-panelmenu-header-link{
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  ::before {
+    margin-right: 10px;
+    font-size: 1.5rem !important;
+    color: #262261;
+  }
+
+  &:hover {
+    background-color: #1e90ff; // Example: light blue
+    color: #fff;
+
+    ::before {
+      color: #fff;
+    }
+  }
+}
+.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-link .p-submenu-icon{
+  position: absolute;
+  right: 0 !important;
+}
+.p-panelmenu .p-menuitem-link.p-highlight {
+  background-color: #1e90ff; // Example: light blue for active item
+  color: #fff;
+
+  i {
+    color: #fff;
+  }
+}

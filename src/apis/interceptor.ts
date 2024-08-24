@@ -15,6 +15,7 @@ const useAxiosInterceptors = () => {
       error => {
         if (error.response.status === 401) {
           setCookie('token', undefined)
+          location.reload()
           toast.error('انتهت الجلسة الخاصة بك برجاء تسجيل الدخول من جديد')
         } else if (error.response.status === 404) {
           toast.error('هذه الصفحة غير موجودة')

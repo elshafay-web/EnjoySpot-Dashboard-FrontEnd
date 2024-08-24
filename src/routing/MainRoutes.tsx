@@ -15,7 +15,7 @@ const MainRoute: RouteObject[] = [
     element: <MainLayout />,
     children: [
       {
-        path: 'dashboard',
+        path: '/',
         element: (
           <ProtectRoutes auth>
             <DashboardPage />

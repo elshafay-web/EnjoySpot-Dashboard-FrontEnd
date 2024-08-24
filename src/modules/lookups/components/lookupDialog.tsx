@@ -1,5 +1,5 @@
 import { Dialog } from 'primereact/dialog'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import clsx from 'clsx'
 import { toast } from 'sonner'
@@ -11,6 +11,7 @@ import Input from '@components/input'
 import DropDownInput from '@components/Dropdown'
 import { Checkbox } from 'primereact/checkbox'
 import CheckBoxInput from '@components/checkBox'
+import { useIsFetching } from '@tanstack/react-query'
 
 type Props = {
   dialogVisable: boolean
@@ -36,9 +37,11 @@ export default function LookupDialog({
     setValue,
   } = useForm({
     criteriaMode: 'all',
+    mode: 'onChange', // or 'onBlur', 'onTouched'
   })
 
-  const companyId = 1
+  const [loading, setLoading] = useState(false)
+
   const closeModel = () => {
     closeDialog({ visible: false, editObj: {} })
   }
@@ -48,6 +51,7 @@ export default function LookupDialog({
   }
 
   const onSubmit: SubmitHandler<any> = async values => {
+    setLoading(true)
     let sendObject: IPostLookup = {} as IPostLookup
     if (obj.requireCompanyId) {
       sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 }
@@ -57,15 +61,17 @@ export default function LookupDialog({
 
     try {
       const { data } = await addLookup(sendObject, obj.addApi)
-      if (data.statusCode === 200) {
+      if (data.isSuccess) {
         closeModel()
         isModieied(true)
         toast.success(data.message)
       } else {
         toast.warning(data.message)
       }
+      setLoading(false)
     } catch (err: any) {
       toast.error(`${err.response.data.Message} `)
+      setLoading(false)
     }
   }
 
@@ -73,12 +79,8 @@ export default function LookupDialog({
     const arr = obj.inputs.filter(elem => elem.isDropDown || elem.isMultiSelect)
     if (arr.length > 0) {
       arr.forEach(async elem => {
-        const { data } = await listOfLookups(
-          elem.isUrlRequireCompanyId
-            ? elem.supplayDataURL + companyId
-            : elem.supplayDataURL
-        )
-        if (data.statusCode === 200) {
+        const { data } = await listOfLookups(elem.supplayDataURL)
+        if (data.isSuccess) {
           elem.supplayData = data.data
         } else {
           elem.supplayData = []
@@ -115,7 +117,11 @@ export default function LookupDialog({
       onHide={() => closeModel()}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-2 gap-4">
+        <div
+          className={`grid  ${
+            obj.inputs.length > 1 ? 'grid-cols-2' : 'grid-cols-1'
+          } gap-4`}
+        >
           {obj.inputs.map((field, i) => (
             <div key={i}>
               {field.isInput && (
@@ -182,6 +188,7 @@ export default function LookupDialog({
               type="submit"
               className="rounded p-2"
               style={{ width: '100px' }}
+              disabled={loading}
             />
 
             <Button

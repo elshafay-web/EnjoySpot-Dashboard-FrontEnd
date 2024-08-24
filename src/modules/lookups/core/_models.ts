@@ -6,6 +6,7 @@ export interface ILookups {
   routing: string;
   menuRouting: string;
   title: string;
+  icon: string;
   addApi: string;
   deleteApi: string;
   toggleApi: string;
@@ -32,7 +33,6 @@ export interface IInputShape {
   isInput: boolean;
   supplayDataURL: string;
   supplayData: Array<any>;
-  isUrlRequireCompanyId: boolean;
   isRequired: boolean;
   minLength: number;
   maxLength: number;
@@ -63,7 +63,7 @@ export interface IPostLookup {
   isActive?: boolean;
   isDeleted?: boolean;
 }
-export interface ListOf {
+export interface IList {
   id: number;
   name: string;
 }

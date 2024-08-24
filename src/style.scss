@@ -9,18 +9,36 @@
   @tailwind utilities;
 }
 @import '@fortawesome/fontawesome-free/css/all.min.css';
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-SemiBold.ttf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 5px !important;
   text-align: center;
   justify-content: center;
-
-
 }
-.p-datatable .p-datatable-thead > tr > th{
+
+*,
+body {
+  font-family: 'Poppins';
+}
+.p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   justify-content: center !important;
 }
-.p-datatable .p-column-header-content{
+.p-datatable .p-column-header-content {
   justify-content: center !important;
-
+}
+.p-inputtext {
+  height: 42px !important;
+  border-radius: 6px !important;
+  padding: 0.75rem 0.45rem;
+}
+.p-dropdown-label.p-inputtext{
+  padding: 0.45rem  0.45rem;
 }

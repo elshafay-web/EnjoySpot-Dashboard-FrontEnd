@@ -18,7 +18,7 @@ const SubmitBtn: FC<{
         'w-full px-4 py-2 text-lg font-semibold transition-colors duration-300 rounded-md shadow focus:outline-none focus:ring-4',
         isFetching > 0 || loading
           ? 'bg-gray-400 text-gray-700 cursor-not-allowed focus:ring-gray-200'
-          : 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-200'
+          : 'bg-lightBlue text-white hover:bg-blue-600 focus:ring-blue-200'
       )}
       {...rest}
     >

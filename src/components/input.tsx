@@ -16,7 +16,7 @@ export default function Input({ field, errors, register }: Props) {
     <div className="col-12 w-full">
       <label
         htmlFor={field.inputName}
-        className="w-full form-label font-bold text-secondary"
+        className="w-full form-label font-bold text-secondary !mb-1"
       >
         {field.title}{' '}
         {field.isRequired && <span className="text-red-500">*</span>}
@@ -38,7 +38,7 @@ export default function Input({ field, errors, register }: Props) {
             valueAsNumber: true,
           })}
           className={clsx(
-            'w-full px-4 py-2 transition duration-300 rounded ',
+            'h-[42px] w-full !py-[0.75rem] !px-[0.45rem]  transition duration-300 rounded-[6px] mt-1',
             {
               'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200': errors[field.inputName],
             },
@@ -66,7 +66,7 @@ export default function Input({ field, errors, register }: Props) {
             },
           })}
           className={clsx(
-            'w-full px-4 py-2 transition duration-300  rounded ',
+            'h-[42px] w-full !py-[0.75rem] !px-[0.45rem] transition duration-300 rounded-[6px] mt-1',
             {
               'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200': errors[field.inputName],
             },

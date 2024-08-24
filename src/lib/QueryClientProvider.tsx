@@ -16,10 +16,6 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
         defaultOptions: {
           mutations: {
             onError: async (error: any) => {
-              if (error?.response?.status === 401) {
-                setCookie('token', undefined, true)
-                window.location.reload()
-              }
               toast.error(
                 error.response?.data.Message || error.message || error.Message
               )
@@ -28,10 +24,6 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
         },
         queryCache: new QueryCache({
           onError: (error: any) => {
-            if (error?.response?.status === 401) {
-              setCookie('token', '', true)
-              window.location.reload()
-            }
             toast.error(
               error.response?.data.Message || error.message || error.Message
             )

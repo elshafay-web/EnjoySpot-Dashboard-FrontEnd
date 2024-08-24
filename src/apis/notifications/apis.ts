@@ -8,7 +8,7 @@ import { INotification } from '@domains/INotification'
 export const getALLUserNotification = async (
   id: number
 ): Promise<INotification[]> => {
-  const response = await axios.get(HttpPaths.Api_Notification_GETALL + id)
+  // const response = await axios.get(HttpPaths.Api_Notification_GETALL + id)
   //   return response.data?.data.messagesRecords;
   return [
     {

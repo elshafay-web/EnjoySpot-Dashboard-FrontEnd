@@ -320,3 +320,23 @@ export function convertCoordinates(dmsLat: any, dmsLon: any) {
     lon: lonDecimal,
   };
 }
+export function convertObjectToFormData(obj: Record<string, any>): FormData {
+  const formData = new FormData();
+
+  function appendFormData(data: any, parentKey: string | null = null) {
+    if (data && typeof data === 'object' && !(data instanceof File)) {
+      Object.keys(data).forEach(key => {
+        const value = data[key];
+        const fullKey = parentKey ? `${parentKey}[${key}]` : key;
+        appendFormData(value, fullKey);
+      });
+    } else {
+      const valueToAppend = data == null ? '' : data;
+      formData.append(parentKey!, valueToAppend);
+    }
+  }
+
+  appendFormData(obj);
+
+  return formData;
+}

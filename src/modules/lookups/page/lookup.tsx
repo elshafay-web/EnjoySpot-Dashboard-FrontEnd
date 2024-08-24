@@ -48,25 +48,14 @@ export default function LookupsPage({ obj, className }: Props) {
         <div className="d-flex justify-content-between align-items-center w-100">
           <div className={className}>
             <TableHeader openDialog={setdialogVisable} title={obj.title} />
-            {loading ? (
-              <div
-                className="spinner-overlay flex justify-content-center align-items-center"
-                style={{ height: '200px' }}
-              >
-                <ProgressSpinner
-                  style={{ width: '50px', height: '50px' }}
-                  strokeWidth="8"
-                  animationDuration=".5s"
-                />
-              </div>
-            ) : (
-              <DataTableComponent
-                openDialog={setdialogVisable}
-                lookups={lookupsData}
-                isModieied={setModified}
-                lookupModel={obj}
-              />
-            )}
+
+            <DataTableComponent
+              openDialog={setdialogVisable}
+              lookups={lookupsData}
+              isModieied={setModified}
+              lookupModel={obj}
+            />
+
             <LookupDialog
               closeDialog={setdialogVisable}
               dialogVisable={dialogVisable.visible}

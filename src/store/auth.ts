@@ -2,19 +2,19 @@ import { create } from 'zustand'
 import { jwtDecode } from 'jwt-decode'
 import { toast } from 'sonner'
 import { checkTokenCookie, getCookie, setCookie } from '@/helpers/cookies'
-import { UserToken } from '@/domains/IUser'
+import { UserData } from '@domains/IUser'
 
 interface LoginState {
-  userData: UserToken
-  updateUserData: (token: UserToken) => void
+  userData: UserData
+  updateUserData: (token: UserData) => void
 }
-let userToken: UserToken = {} as UserToken
+let userToken: UserData = {} as UserData
 try {
   userToken = checkTokenCookie()
     ? {
         ...jwtDecode(getCookie('token')),
       }
-    : ({} as UserToken)
+    : ({} as UserData)
 } catch (error) {
   setCookie('token', undefined, true)
   toast.error('خطأ ف المصادقة - invalid auth token' + error)
@@ -22,5 +22,5 @@ try {
 
 export const useUserData = create<LoginState>(set => ({
   userData: userToken,
-  updateUserData: (token: UserToken) => set(() => ({ userData: token })),
+  updateUserData: (token: UserData) => set(() => ({ userData: token })),
 }))

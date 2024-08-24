@@ -52,16 +52,19 @@ export default function DataTableComponent({
   const togglePopUp = (event: any, obj: IGetLookup) => {
     confirmPopup({
       target: event.currentTarget,
-      message: `${obj.isActive ? 'Are you sure you want to deactivate ' + obj.name : 'Are you sure you want to activate ' + obj.name}`,
+      message: `${
+        obj.isActive
+          ? 'Are you sure you want to deactivate ' + obj.name
+          : 'Are you sure you want to activate ' + obj.name
+      }`,
       icon: 'pi pi-exclamation-triangle',
       defaultFocus: 'accept',
       accept: () => {
-        toggleItem(obj);
+        toggleItem(obj)
       },
       reject: () => {},
-    });
+    })
   }
-  
 
   const deletePopUp = (event: any, data: IGetLookup) => {
     confirmPopup({
@@ -110,7 +113,7 @@ export default function DataTableComponent({
         onClick={e => {
           deletePopUp(e, rowData)
         }}
-        className='me-4'
+        className="me-4"
       />
 
       <Button
@@ -122,8 +125,7 @@ export default function DataTableComponent({
         tooltipOptions={{ position: 'bottom' }}
         tooltip="Edit"
         severity="info"
-        className='me-4'
-
+        className="me-4"
         onClick={() => openEditModel(rowData)}
       />
     </div>
@@ -141,11 +143,7 @@ export default function DataTableComponent({
       >
         {lookupModel.columns.map((col, i) =>
           !col.isBoolean ? (
-            <Column
-              key={i}
-              field={`${col.field}`}
-              header={col.header}
-            />
+            <Column key={i} field={`${col.field}`} header={col.header} />
           ) : (
             <Column
               key={i}
@@ -158,11 +156,11 @@ export default function DataTableComponent({
 
         <Column
           field="isActive"
-          header={"Status"}
+          header={'Status'}
           body={rowData => statusBodyTemplate(rowData)}
         />
         <Column
-          header={"Actions"}
+          header={'Actions'}
           body={obj => actionTemplate(obj)}
           headerClassName="w-10rem"
         />

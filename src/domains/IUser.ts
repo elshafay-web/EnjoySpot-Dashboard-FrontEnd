@@ -7,7 +7,7 @@ export interface UserData {
   branchid: number
   employeeid: number
   companyid: number
-  roles: string
+  roles: Array<string>
 }
 
 export interface LoginRequest {

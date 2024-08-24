@@ -2,21 +2,25 @@
 import { InputCreateModel } from '@domains/IShardInput'
 import { ErrorMessage } from '@hookform/error-message'
 import clsx from 'clsx'
-import { Dropdown } from 'primereact/dropdown'
+import { Calendar } from 'primereact/calendar'
 import { Control, Controller } from 'react-hook-form'
 
 type Props = {
   field: InputCreateModel
   errors: any
   control: Control<any>
-  options: Array<any>
+  showTime?: boolean
+  min?: Date
+  max?: Date
 }
 
-export default function DropDownInput({
+export default function CalendarInput({
   field,
   errors,
   control,
-  options,
+  showTime,
+  min,
+  max,
 }: Props) {
   return (
     <div className="col-12 w-100">
@@ -35,30 +39,22 @@ export default function DropDownInput({
           required: field.isRequired ? `${field.title} is required` : false,
         }}
         render={({ field: { onChange, value } }) => (
-          <Dropdown
+          <Calendar
+            name={field.inputName}
+            onChange={onChange}
             value={value}
-            onChange={e => {
-              if (e.value) {
-                onChange(e.value)
-              } else {
-                onChange(undefined)
-              }
-            }}
-            filter
-            showClear
-            options={options}
-            optionValue="id"
-            optionLabel="name"
-            placeholder="Select a Option"
-            highlightOnSelect
+            placeholder="Select a Date"
+            showTime={showTime}
+            minDate={min}
+            maxDate={max}
             className={clsx(
-              'h-[42px] w-full  transition duration-300 rounded-[6px] mt-1',
+              'w-full transition duration-300 rounded mt-1 ',
               {
                 'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200':
                   errors[field.inputName],
               },
               {
-                'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
+                '':
                   !errors[field.inputName],
               }
             )}

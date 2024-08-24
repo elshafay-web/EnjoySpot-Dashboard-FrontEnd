@@ -22,6 +22,8 @@ export default function ProtectRoutes({
   if (externalParam) {
     token = true;
   }
+  console.log(auth , token);
+  
   if (auth) {
     if (!token) {
       return <Navigate to="/login" state={{ from: location }} replace />;
@@ -29,7 +31,7 @@ export default function ProtectRoutes({
   }
   if (!auth) {
     if (token) {
-      return <Navigate to="/dashboard" state={{ from: location }} replace />;
+      return <Navigate to="/" state={{ from: location }} replace />;
     }
   }
   if (!token || !permission) {
