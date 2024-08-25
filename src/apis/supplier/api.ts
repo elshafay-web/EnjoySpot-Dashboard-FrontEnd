@@ -61,18 +61,6 @@ export async function UpsertSupplier(req: FormData):Promise<IResponse<ISupplier>
   return data?.data
 }
 
-export const getSupplierProfile = async (id: number): Promise<ISupplier> => {
-  const response = await CommonGetRequestsWithQuery(
-    HttpPaths.Api_Supplier_Profile + id,
-    {}
-  )
-  return response.data?.data
-}
 
-export const useGetSupplierProfile = (id: number) => {
-  const query = useQuery<ISupplier, Error>({
-    queryKey: ['getSupplierProfile', id],
-    queryFn: () => getSupplierProfile(id),
-  })
-  return query
-}
+
+
