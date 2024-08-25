@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-import useAxiosInterceptors from './apis/interceptor'
 import './style.scss'
 import { Toaster } from 'sonner'
 import { RouterProvider } from 'react-router-dom'
@@ -8,7 +7,6 @@ import ReactQueryProvider from './lib/QueryClientProvider'
 import router from './routing'
 import SplashScreen from '@modules/layout/splashScreen'
 function App() {
-  useAxiosInterceptors()
   return (
     <Suspense fallback={<SplashScreen />}>
       <ReactQueryProvider>

@@ -29,7 +29,7 @@ export default function CalendarInput({
         className="w-full form-label font-bold text-secondary !mb-1"
       >
         {field.title}{' '}
-        {field.isRequired && <span className="text-danger">*</span>}{' '}
+        {field.isRequired && <span className="text-red-500 text-xl">*</span>}{' '}
       </label>
 
       <Controller

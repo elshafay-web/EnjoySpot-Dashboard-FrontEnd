@@ -25,6 +25,38 @@ export enum HttpPaths {
   Api_Country_ToggleIsActive = '/api/countries/toggelActive/',
   Api_Country_Upsert = '/api/countries/upsert',
 
+  // ************** listingType ******************
+
+  Api_listingType_GetAll = '/api/listingTypes/getAll',
+  Api_listingType_ListOf = '/api/listingTypes/listOf',
+  Api_listingType_Delete = '/api/listingTypes/delete/',
+  Api_listingType_ToggleIsActive = '/api/listingTypes/toggelActive/',
+  Api_listingType_Upsert = '/api/listingTypes/upsert',
+
+  // ************** listingCategories ******************
+
+  Api_listingCategories_GetAll = '/api/listingCategories/getAll',
+  Api_listingCategories_ListOf = '/api/listingCategories/listOf?countryId=',
+  Api_listingCategories_Delete = '/api/listingCategories/delete/',
+  Api_listingCategories_ToggleIsActive = '/api/listingCategories/toggelActive/',
+  Api_listingCategories_Upsert = '/api/listingCategories/upsert',
+
+  // ************** listingAmenities ******************
+
+  Api_listingAmenities_GetAll = '/api/listingAmenities/getAll',
+  Api_listingAmenities_ListOf = '/api/listingAmenities/listOf',
+  Api_listingAmenities_Delete = '/api/listingAmenities/delete/',
+  Api_listingAmenities_ToggleIsActive = '/api/listingAmenities/toggelActive/',
+  Api_listingAmenities_Upsert = '/api/listingAmenities/upsert',
+
+  // ************** listingEntertainments ******************
+
+  Api_listingEntertainments_GetAll = '/api/listingEntertainments/getAll',
+  Api_listingEntertainments_ListOf = '/api/listingEntertainments/listOf',
+  Api_listingEntertainments_Delete = '/api/listingEntertainments/delete/',
+  Api_listingEntertainments_ToggleIsActive = '/api/listingEntertainments/toggelActive/',
+  Api_listingEntertainments_Upsert = '/api/listingEntertainments/upsert',
+
   // ************** Supplier ******************
 
   Api_Supplier_GetAll = '/api/suppliers/getAll',

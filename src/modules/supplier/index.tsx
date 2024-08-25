@@ -9,19 +9,21 @@ import AddButton from '@components/AddButton'
 import SuppliersDataTable from './components/dataTable'
 import UbsertSupplier from './components/upsertSupplier'
 import { useGetAllSupppliers } from '@apis/supplier/api'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function AllEmployees() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [Supplier, setSupplier] = useState<ISupplier>({} as ISupplier)
   const [filter, setFilter] = useState({} as ISupplierListGetRequestFilter)
-  const { data: suppliers, isPending } = useGetAllSupppliers(filter);
+  const { data: suppliers } = useGetAllSupppliers(filter)
+  const queryClient = useQueryClient()
 
   const onEdit = (profile: ISupplier) => {
-    // if (profile && profile.id > 0) {
-    //   setSupplier(profile);
-    //   setOpen(true);
-    // }
+    if (profile && profile.id > 0) {
+      setSupplier(profile);
+      setOpen(true);
+    }
   }
 
   const handleFilterButton = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -56,11 +58,7 @@ export default function AllEmployees() {
             <AddButton onClick={handleAddButton} buttonText={'Add Supplier'} />
           </div>
         </div>
-        <SuppliersDataTable
-          onEdit={onEdit}
-          suppliers={suppliers || []}
-          isEmployeesLoading={isPending}
-        />
+        <SuppliersDataTable onEdit={onEdit} suppliers={suppliers || []} />
       </div>
 
       <UbsertSupplier
@@ -70,6 +68,7 @@ export default function AllEmployees() {
         onClose={() => {
           setSupplier({} as ISupplier)
           setOpen(false)
+          queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
         }}
       />
     </div>

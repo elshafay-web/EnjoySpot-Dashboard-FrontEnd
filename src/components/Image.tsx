@@ -13,8 +13,8 @@ type Props = {
 function Images({ url, onDelete, withIcon }: Props) {
   return (
     <div
-      className="position-relative d-flex align-items-center justify-content-center cursor-pointer overflow-hidden rounded border shadow-sm"
-      style={{ height: '140px', width: '140px' }}
+      className="relative flex items-center justify-center cursor-pointer overflow-hidden rounded border shadow-sm"
+      style={{ maxHeight: '140px', width: '140px' }}
     >
       {withIcon && (
         <div
@@ -25,15 +25,14 @@ function Images({ url, onDelete, withIcon }: Props) {
             zIndex: 99999999,
           }}
         >
-          <i className="pi pi-times-circle fs-4 fw-bold text-danger hover m-2" onClick={onDelete} />
+          <i className="pi pi-times-circle text-xl text-red-500 hover m-2" onClick={onDelete} />
         </div>
       )}
 
       <Image
         src={url}
         alt="Image"
-        width="140"
-        height="140"
+        className='w-full h-full'
         style={{ borderRadius: '6px' }}
         preview
       />

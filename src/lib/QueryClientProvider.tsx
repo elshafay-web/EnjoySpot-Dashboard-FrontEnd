@@ -16,17 +16,55 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
         defaultOptions: {
           mutations: {
             onError: async (error: any) => {
-              toast.error(
-                error.response?.data.Message || error.message || error.Message
-              )
+              if (error.response.status === 401) {
+                setCookie('token', undefined)
+                toast.error('انتهت الجلسة الخاصة بك برجاء تسجيل الدخول من جديد')
+                location.reload()
+              } else if (error.response.status === 404) {
+                toast.error('هذه الصفحة غير موجودة')
+              } else if (error.response.status === 400) {
+                toast.error(
+                  Object.values(error.response.data.errors).flat().join('\n')
+                )
+              } else if (error.response.status === 403) {
+                toast.error('ليس لديك صلاحية الدخول')
+              } else {
+                console.log(error.message)
+              }
             },
           },
         },
         queryCache: new QueryCache({
           onError: (error: any) => {
-            toast.error(
-              error.response?.data.Message || error.message || error.Message
-            )
+            if (error.response.status === 401) {
+              setCookie('token', undefined)
+              toast.error('انتهت الجلسة الخاصة بك برجاء تسجيل الدخول من جديد')
+              location.reload()
+            } else if (error.response.status === 404) {
+              toast.error('هذه الصفحة غير موجودة')
+            } else if (error.response.status === 400) {
+              console.log(error.response.data)
+
+              if (
+                error.response.data.errors &&
+                error.response.data.errors.length > 0
+              ) {
+                let combinedMessage = ''
+                for (let key in error.response.data.errors) {
+                  if (error.response.data.errors.hasOwnProperty(key)) {
+                    combinedMessage +=
+                      error.response.data.errors[key].join(', ') + ' '
+                  }
+                }
+                toast.error(combinedMessage.trim())
+              } else {
+                toast.error(error.error.Message)
+              }
+            } else if (error.response.status === 403) {
+              toast.error('ليس لديك صلاحية الدخول')
+            } else {
+              console.log(error.message)
+            }
           },
         }),
       })

@@ -3,7 +3,6 @@
   import '../../style/sideMenu.scss'
   import { useNavigate } from 'react-router'
   import LookupsData from '@modules/lookups/core/_lookupData'
-import { useState } from 'react'
 
   interface SidebarItem extends MenuItem {
     routing: string
@@ -14,8 +13,8 @@ import { useState } from 'react'
     const itemRenderer = (item: any, options: any) => (
       <a
         className={`${
-          location.href.split(/[?#]/)[1].toLowerCase() ===
-          item.routing.toLowerCase()
+          location.href.split(/[?#]/)[1]?.toLowerCase() ===
+          item.routing?.toLowerCase()
             ? ' bg-lightBlue  text-white'
             : ''
         } group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-3 px-3 my-1 rounded-lg transition-all`}
@@ -23,41 +22,42 @@ import { useState } from 'react'
       >
         <i
           className={`${item.icon} ${
-            location.href.split(/[?#]/)[1].toLowerCase() ===
-            item.routing.toLowerCase()
+            location.href.split(/[?#]/)[1]?.toLowerCase() ===
+            item.routing?.toLowerCase()
               ? ' text-white'
               : ''
-          } text-darkBlue group-hover:text-white text-2xl w-[42px]`}
+          } text-darkBlue group-hover:text-white`}
         />
         
         <span className={"text-meduim"}>{item.label}</span>
       </a>
     )
+    
     const items: SidebarItem[] = [
       {
         label: 'DashBoard',
         routing: '/',
-        icon: 'fa-solid fa-gauge-high',
+        icon: 'fa-solid fa-gauge-high text-2xl w-[42px]',
         template: itemRenderer,
         command: () => navigate('/'),
       },
       {
         label: 'Suppliers',
-        icon: 'fa-solid fa-people-group',
+        icon: 'fa-solid fa-people-group text-2xl w-[42px]',
         routing: '/suppliers',
         template: itemRenderer,
         command: () => navigate('/suppliers'),
       },
       {
         label: 'Listing',
-        icon: 'fa-solid fa-ship',
+        icon: 'fa-solid fa-ship text-2xl w-[42px]',
         routing: '/listing',
         template: itemRenderer,
         command: () => navigate('/listing'),
       },
       {
         label: 'Settings',
-        icon: 'fa-solid fa-gear',
+        icon: 'fa-solid fa-gear text-2xl m-0 w-[42px] ',
         routing: '/lookups',
         items: [
           ...LookupsData.map(elem => ({
@@ -81,7 +81,7 @@ import { useState } from 'react'
               className="rounded-full"
               alt=""
             />
-            <h1 className="text-lightBlue text-2xl ms-4">Enjoy Spot</h1>
+            <h1 className="text-lightBlue text-3xl ms-4 font-bold">Enjoy Spot</h1>
           </div>
           <PanelMenu model={items} className="w-full"  />
         </aside>

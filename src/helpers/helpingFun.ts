@@ -324,7 +324,10 @@ export function convertObjectToFormData(obj: Record<string, any>): FormData {
   const formData = new FormData();
 
   function appendFormData(data: any, parentKey: string | null = null) {
-    if (data && typeof data === 'object' && !(data instanceof File)) {
+    if (data instanceof Date) {
+      // Convert Date to an ISO string before appending
+      formData.append(parentKey!, data.toISOString());
+    } else if (data && typeof data === 'object' && !(data instanceof File)) {
       Object.keys(data).forEach(key => {
         const value = data[key];
         const fullKey = parentKey ? `${parentKey}[${key}]` : key;
@@ -340,3 +343,4 @@ export function convertObjectToFormData(obj: Record<string, any>): FormData {
 
   return formData;
 }
+

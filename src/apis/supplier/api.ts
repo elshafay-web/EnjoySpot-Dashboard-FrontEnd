@@ -52,8 +52,8 @@ export const toggleSupplier = async (
   return response.data
 }
 
-export async function UpsertSupplier(req: FormData) {
-  const data = await axios.put(`${HttpPaths.Api_Supplier_Upsert}`, req, {
+export async function UpsertSupplier(req: FormData):Promise<IResponse<ISupplier>> {
+  const data = await axios.post(`${HttpPaths.Api_Supplier_Upsert}`, req, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

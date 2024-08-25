@@ -11,6 +11,8 @@ export interface ISupplier {
   attachment_License_ExpireDate: string
   attachmentAgreementFile: any
   attachment_Agreement_ExpireDate: string
+  attachment_License_ImagePath : string
+  attachment_Agreement_ImagePath : string
   country_Id: number
   city_Id: number
   isActive : boolean
@@ -20,4 +22,5 @@ export interface ISupplierListGetRequestFilter {
     pageSize : number;
     cityId : number;
     search : string
+    country_Id:number
 }

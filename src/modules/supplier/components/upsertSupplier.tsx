@@ -12,6 +12,7 @@ import { useListOfCities, useListOfCountries } from '@apis/lookups/apis'
 import { UpsertSupplier } from '@apis/supplier/api'
 import { toast } from 'sonner'
 import { convertObjectToFormData } from '@helpers/helpingFun'
+import FileUpload from '@components/FileUpload'
 
 type Props = {
   onClose: () => void
@@ -29,7 +30,10 @@ export default function UbsertSupplier({
   const form = useForm<ISupplier>({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
+    defaultValues: intialValues,
   })
+  console.log(intialValues)
+
   const [attachmentAgreementFile, setAttachmentAgreementFile] = useState<{
     file: ArrayBuffer
     name: string
@@ -47,7 +51,7 @@ export default function UbsertSupplier({
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertSupplier(req),
     onSuccess: async res => {
-      toast.success(res)
+      toast.success(res.message)
       onClose()
     },
   })
@@ -104,6 +108,14 @@ export default function UbsertSupplier({
       const filteredObj = Object.fromEntries(
         Object.entries(intialValues).filter(([, v]) => v !== null)
       )
+      filteredObj.attachment_Agreement_ExpireDate =
+        filteredObj.attachment_Agreement_ExpireDate
+          ? new Date(filteredObj.attachment_Agreement_ExpireDate)
+          : undefined
+      filteredObj.attachment_License_ExpireDate =
+        filteredObj.attachment_License_ExpireDate
+          ? new Date(filteredObj.attachment_License_ExpireDate)
+          : undefined
       form.reset(filteredObj)
     }
   }, [intialValues])
@@ -133,9 +145,8 @@ export default function UbsertSupplier({
       dismissable={false}
     >
       <div className="w-100">
-        <form onSubmit={form.handleSubmit(onSubmit)} className='pb-20'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
           <FormHead title={'Basic Infromation'} />
-
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Input
               register={form.register}
@@ -145,7 +156,7 @@ export default function UbsertSupplier({
                 title: 'Name',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
 
@@ -157,7 +168,7 @@ export default function UbsertSupplier({
                 title: 'Email',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
 
@@ -169,7 +180,7 @@ export default function UbsertSupplier({
                 title: 'Office Address',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
 
@@ -181,7 +192,7 @@ export default function UbsertSupplier({
                 title: 'Landline Or Mobile',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
 
@@ -192,6 +203,7 @@ export default function UbsertSupplier({
               field={{
                 inputName: 'country_Id',
                 title: 'country',
+                isRequired: true,
               }}
             />
 
@@ -202,6 +214,7 @@ export default function UbsertSupplier({
               field={{
                 inputName: 'city_Id',
                 title: 'City',
+                isRequired: true,
               }}
             />
 
@@ -213,13 +226,11 @@ export default function UbsertSupplier({
                 title: 'License Number',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
           </div>
-
           <FormHead title={'Manger Infromation'} />
-
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Input
               register={form.register}
@@ -229,10 +240,10 @@ export default function UbsertSupplier({
                 title: 'Manager',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
-                        <Input
+            <Input
               register={form.register}
               errors={form.formState.errors}
               field={{
@@ -240,11 +251,10 @@ export default function UbsertSupplier({
                 title: 'Manager Contact Number',
                 isRequired: true,
                 minLength: 3,
-                maxLength: 500,
+                maxLength: 100,
               }}
             />
           </div>
-
           <FormHead title={'Attachment Data'} />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <CalendarInput
@@ -253,6 +263,7 @@ export default function UbsertSupplier({
               field={{
                 inputName: 'attachment_Agreement_ExpireDate',
                 title: 'Attachment Agreement ExpireDate',
+                isRequired: true,
               }}
             />
 
@@ -262,10 +273,24 @@ export default function UbsertSupplier({
               field={{
                 inputName: 'attachment_License_ExpireDate',
                 title: 'Attachment License ExpireDate',
+                isRequired: true,
               }}
             />
+          </div>{' '}
+          <FormHead title={'Attachment Files'} />
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <FileUpload
+              attachment={intialValues?.attachment_Agreement_ImagePath}
+              onFilesSelected={handelUploadAttachmentAgreementFile}
+              title="Agreement Image"
+            />
+            <FileUpload
+              attachment={intialValues?.attachment_License_ImagePath}
+              onFilesSelected={handelUploadAttachmentLicenseFile}
+              title="License Image"
+            />
           </div>
-
+          {/* ////////////////////////////////////////  Submit And cancle ///////////////////////////////// */}
           <div className="flex items-center mt-4 grid  fixed bottom-4 ">
             <div className="col-12 ">
               <Button

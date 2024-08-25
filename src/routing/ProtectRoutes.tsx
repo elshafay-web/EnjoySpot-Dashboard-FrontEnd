@@ -21,9 +21,7 @@ export default function ProtectRoutes({
   const externalParam = searchParams.get('token');
   if (externalParam) {
     token = true;
-  }
-  console.log(auth , token);
-  
+  }  
   if (auth) {
     if (!token) {
       return <Navigate to="/login" state={{ from: location }} replace />;

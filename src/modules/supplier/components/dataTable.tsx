@@ -7,7 +7,6 @@ import { Tag } from 'primereact/tag'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { ProgressSpinner } from 'primereact/progressspinner'
 import { Button } from 'primereact/button'
 import { ISupplier } from '@domains/ISupplier'
 import ToggleButton from '@components/ToggleButton'
@@ -18,24 +17,16 @@ import { formatDate } from '@helpers/helpingFun'
 type Props = {
   onEdit: (data: ISupplier) => void
   suppliers: ISupplier[]
-  isEmployeesLoading: boolean
 }
 
-export default function SuppliersDataTable({
-  onEdit,
-  suppliers,
-  isEmployeesLoading,
-}: Props) {
+export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
   const queryClient = useQueryClient()
-  const [SupplierId, setSupplierId] = useState<number>(0)
-  const isLoading = isEmployeesLoading
-
   const { mutate: toggleSupplierMutation } = useMutation({
     mutationKey: ['toggleSupplier'],
     mutationFn: (id: number) => toggleSupplier(id),
     onSuccess(res) {
       toast.success(res.message)
-      queryClient.invalidateQueries({ queryKey: ['getAllSuppliers'] })
+      queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
     },
   })
 
@@ -44,7 +35,7 @@ export default function SuppliersDataTable({
     mutationFn: (id: number) => deleteSupplier(id),
     onSuccess(res) {
       toast.success(res.message)
-      queryClient.invalidateQueries({ queryKey: ['getAllSuppliers'] })
+      queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
     },
   })
 
@@ -87,7 +78,10 @@ export default function SuppliersDataTable({
 
   const actionTemplate = (rowData: ISupplier) => (
     <div className="flex justify-start w-[200px]">
-      <ToggleButton isActive={true} onClick={e => togglePopUp(e, rowData)} />
+      <ToggleButton
+        isActive={rowData.isActive}
+        onClick={e => togglePopUp(e, rowData)}
+      />
 
       <Button
         icon="pi pi-trash"
@@ -113,6 +107,7 @@ export default function SuppliersDataTable({
         tooltip="Edit"
         severity="info"
         className="me-4"
+        onClick={() => onEdit(rowData)}
       />
     </div>
   )
@@ -120,15 +115,6 @@ export default function SuppliersDataTable({
   return (
     <div className="mt-4">
       <div className="table-container" style={{ position: 'relative' }}>
-        {isLoading && (
-          <div className="spinner-overlay">
-            <ProgressSpinner
-              style={{ width: '50px', height: '50px' }}
-              strokeWidth="8"
-              animationDuration=".5s"
-            />
-          </div>
-        )}
         <DataTable
           value={suppliers ?? []}
           paginator
@@ -154,8 +140,9 @@ export default function SuppliersDataTable({
             body={rowData => formatDate(rowData?.attachment_License_ExpireDate)}
           />
           <Column
+            className="w-[100px]"
             field="isActive"
-            header={'isActive'}
+            header={'Status'}
             body={rowData => statusBodyTemplate(rowData)}
           />
           <Column

@@ -5,6 +5,7 @@ import { Button } from 'primereact/button'
 import Input from '@components/input'
 import DropDownInput from '@components/Dropdown'
 import { ISupplierListGetRequestFilter } from '@domains/ISupplier'
+import { useListOfCities, useListOfCountries } from '@apis/lookups/apis'
 
 type Props = {
   onSearch: (data: any) => void
@@ -17,12 +18,14 @@ export default function SearchForSupplier({
   onClear,
   defualtValues,
 }: Props) {
-  const form = useForm({
+  const form = useForm<ISupplierListGetRequestFilter>({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
-
   })
+  const country_Id = form.watch('country_Id')
+  const { data: listOfCountries } = useListOfCountries()
+  const { data: listOfCities } = useListOfCities(country_Id ?? 0)
 
   const onSubmit = (values: any) => {
     onSearch(values)
@@ -34,162 +37,46 @@ export default function SearchForSupplier({
       className="row align-items-center rounded p-0"
       style={{ width: '30rem' }}
     >
-      <div className="col-md-12 col-12">
+      <div className="grid grid-cols-1 gap-4">
         <Input
           register={form.register}
           errors={form.formState.errors}
           field={{
-            inputName: 'Search',
+            inputName: 'search',
             title: 'searchHere',
-            minLength: 3,
+            minLength: 1,
             maxLength: 20,
           }}
         />
       </div>
-      <div className="col-md-6 col-12 mt-2">
+      <div className="grid grid-cols-2 gap-4 mt-4" >
         <DropDownInput
           control={form.control}
-          options={[]}
+          options={listOfCountries || []}
           errors={form.formState.errors}
           field={{
-            inputName: 'locationId',
-            title: 'location',
-          }}
-        />
-      </div>
-
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'CountryId',
+            inputName: 'country_Id',
             title: 'country',
+            isRequired: true,
           }}
         />
-      </div>
 
-      <div className="col-md-6 col-12 mt-2">
         <DropDownInput
           control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'StateId',
-            title: 'state',
-          }}
-        />
-      </div>
-
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
+          options={listOfCities || []}
           errors={form.formState.errors}
           field={{
             inputName: 'CityId',
-            title: 'city',
-          }}
-        />
-      </div>
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'AreaId',
-            title: 'area',
+            title: 'City',
+            isRequired: true,
           }}
         />
       </div>
 
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'Nationality_Id',
-            title: 'nationality',
-          }}
-        />
-      </div>
-
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'ReligionId',
-            title: 'religion',
-          }}
-        />
-      </div>
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'MaritalStatus_Id',
-            title: 'maritalStatus',
-          }}
-        />
-      </div>
-
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'GenderId',
-            title: 'gender',
-          }}
-        />
-      </div>
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'DepartmentId',
-            title: 'department',
-          }}
-        />
-      </div>
-
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'SectionId',
-            title: 'section',
-          }}
-        />
-      </div>
-      <div className="col-md-6 col-12 mt-2">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'JobSectionId',
-            title: 'jobSection',
-          }}
-        />
-      </div>
-
-      <div className="col-12 d-flex justify-content-end align-items-end">
+      <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
-            label={'Submit'}
+            label={'Search'}
             raised
             type="submit"
             className="rounded p-2"
@@ -197,15 +84,26 @@ export default function SearchForSupplier({
             //   disabled={isPendingUpload || isPending}
           />
 
-          <Button
-            label={'Cancle'}
-            raised
-            severity="secondary"
-            type="button"
-            className="rounded p-2 ms-4"
-            style={{ width: '100px' }}
-            // onClick={handleClose}
-          />
+          {Object.values(form.getValues()).some(value => value) && (
+            <Button
+              label={'Clear'}
+              raised
+              severity="secondary"
+              type="button"
+              className="rounded p-2 ms-4"
+              style={{ width: '100px' }}
+              onClick={() => {
+                form.reset({
+                  cityId : undefined,
+                  country_Id : undefined,
+                  search:''
+                })
+                if (onClear) {
+                  onClear()
+                }
+              }}
+            />
+          )}
         </div>
       </div>
     </form>

@@ -19,7 +19,7 @@ export default function Input({ field, errors, register }: Props) {
         className="w-full form-label font-bold text-secondary !mb-1"
       >
         {field.title}{' '}
-        {field.isRequired && <span className="text-red-500">*</span>}
+        {field.isRequired && <span className="text-red-500 text-xl">*</span>}
       </label>
       {field.isNumber ? (
         <input

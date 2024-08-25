@@ -1,37 +1,39 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Button } from 'primereact/button';
-import Image from './Image';
+import { useState, useCallback, useEffect } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { Button } from 'primereact/button'
+import Image from './Image'
 
 interface IFile extends File {
-  url?: string;
+  url?: string
 }
 interface FileUploadProps {
-  onFilesSelected: (files: IFile | undefined) => void;
-  attachment?: string;
+  onFilesSelected: (files: IFile | undefined) => void
+  attachment?: string
+  title: string
 }
 
 export default function FileUpload({
   onFilesSelected,
   attachment,
+  title,
 }: FileUploadProps) {
-  const [files, setFiles] = useState<IFile | undefined>(undefined);
+  const [files, setFiles] = useState<IFile | undefined>(undefined)
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0] as IFile;
-      setFiles(file);
-      onFilesSelected(file);
+      const file = acceptedFiles[0] as IFile
+      setFiles(file)
+      onFilesSelected(file)
     },
-    [onFilesSelected],
-  );
+    [onFilesSelected]
+  )
 
   const removeFile = useCallback(() => {
-    onFilesSelected(undefined);
-    setFiles(undefined);
-  }, [onFilesSelected]);
+    onFilesSelected(undefined)
+    setFiles(undefined)
+  }, [onFilesSelected])
 
-  const memoFile = useCallback((file: IFile) => URL.createObjectURL(file), []);
+  const memoFile = useCallback((file: IFile) => URL.createObjectURL(file), [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -40,23 +42,23 @@ export default function FileUpload({
       'image/jpeg': [],
     },
     maxFiles: 1,
-  });
+  })
 
   useEffect(() => {
     if (attachment) {
       const file = new File([attachment || ''], `${1}`, {
         type: 'image/png',
-      }) as IFile;
-      file.url = attachment; // Add the url property
-      setFiles(file);
+      }) as IFile
+      file.url = attachment // Add the url property
+      setFiles(file)
     }
-  }, [attachment]);
+  }, [attachment])
 
   return (
-    <section className="d-flex flex-column h-100 px-1 pr-3">
+    <section className="flex flex-column  items-center justify-center h-full px-1 pr-3">
       {!files && (
         <header
-          className={`d-flex flex-column align-items-center justify-content-center group my-1 rounded-lg p-10 text-center ${
+          className={`flex flex-column items-center justify-center group my-1 rounded-lg p-10 text-center flex-wrap ${
             isDragActive ? 'bg-light' : ''
           }`}
           {...getRootProps()}
@@ -67,7 +69,7 @@ export default function FileUpload({
           }}
         >
           <input {...getInputProps()} multiple={false} />
-          <p className="d-flex justify-content-center text-muted mb-2 flex-wrap">
+          <p className="flex justify-center text-muted mb-2">
             <span>Drag and drop your</span>&nbsp;
             <span>Image</span>
           </p>
@@ -76,23 +78,26 @@ export default function FileUpload({
             style={{
               borderRadius: '6px',
               backgroundColor: '#1b84ff',
-              color:"#fff",
+              color: '#fff',
               border: 'none',
             }}
             className="p-3"
           >
-            Upload an image
+            {'Upload' + title}
           </Button>
         </header>
       )}
 
       <ul
         id="gallery"
-        className="d-flex list-unstyled my-0 flex-wrap gap-4 p-0"
+        className="flex items-center justify-center list-unstyled my-0  gap-4 p-0"
       >
         {files && (
-          <li key={files.name} className="position-relative m-1">
-            <h6 className="font-weight-bold py-1 text-sm">Employee Avatar</h6>
+          <li
+            key={files.name}
+            className="relative m-1 flex flex-column flex-wrap items-center justify-center"
+          >
+            <h6 className="font-bold py-1 text-base w-full text-center">{title}</h6>
             <Image
               url={
                 files.url
@@ -102,8 +107,8 @@ export default function FileUpload({
               onDelete={() => removeFile()}
               withIcon
             />
-            <div className="d-flex align-items-center mt-2">
-              <span className="text-truncate text-muted max-w-28">
+            <div className="flex items-center mt-2 w-full">
+              <span className="text-center text-muted w-full">
                 {files.name}
               </span>
             </div>
@@ -111,5 +116,5 @@ export default function FileUpload({
         )}
       </ul>
     </section>
-  );
+  )
 }
