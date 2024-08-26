@@ -1,44 +1,83 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tsEslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-
-export default [
-  {
-    ignores: ['dist'], // Ignoring the dist directory
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    'airbnb',
+    'airbnb-typescript',
+    'airbnb/hooks',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
+  ],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: './tsconfig.json',
   },
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"], // Specify file patterns here
-    languageOptions: {
-      ecmaVersion: 2020,
-      sourceType: 'module',
-      globals: globals.browser,
-      parser: tsParser, // Use TypeScript parser
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx', '*.js'],
+      parser: '@typescript-eslint/parser',
     },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-      '@typescript-eslint': tsEslint,
-    },
-    extends: [
-      js.configs.recommended, 
-      tsEslint.configs.recommended, 
+  ],
+  ignorePatterns: [
+    'dist',
+    '.eslintrc.cjs',
+    'tailwind.config.ts',
+    'vite.config.ts',
+  ],
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    'react',
+    '@typescript-eslint',
+    'prettier',
+    'react-refresh',
+    '@tanstack/query',
+  ],
+  rules: {
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
     ],
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      'no-console': 'warn',
-      'import/prefer-default-export': 'off',
-    },
+    'react/react-in-jsx-scope': 0,
+    'max-lines-per-function': ['error', 500],
+    'react/no-string-refs': 'error',
+    'react/jsx-uses-vars': 'error',
+    'react/require-default-props': 'off',
+    '@tanstack/query/exhaustive-deps': 'error',
+    '@tanstack/query/prefer-query-object-syntax': 'error',
+    'linebreak-style': 'off',
+    'no-console': 'off',
+    'import/prefer-default-export': 'off',
+    'import/extensions': 0,
+    'tailwindcss/no-custom-classname': 0,
+    'react/button-has-type': 0,
+    'object-curly-newline': 0,
+    'operator-linebreak': 0,
+    '@typescript-eslint/indent': 0,
+    'react/jsx-wrap-multilines': 0,
+    // 'no-nested-ternary': 0,
+    'function-paren-newline': 0,
+    'react/jsx-curly-newline': 0,
+    'prefer-arrow-callback': 0,
+    'import/no-cycle': 0,
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      {
+        required: {
+          some: ['nesting', 'id'],
+        },
+      },
+    ],
+    'jsx-a11y/label-has-for': [
+      'error',
+      {
+        required: {
+          some: ['nesting', 'id'],
+        },
+      },
+    ],
+    'implicit-arrow-linebreak': 0,
+    'react/jsx-one-expression-per-line': 0,
   },
-];
+};

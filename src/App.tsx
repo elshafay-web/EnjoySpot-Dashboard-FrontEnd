@@ -6,6 +6,7 @@ import { PrimeReactProvider } from 'primereact/api'
 import ReactQueryProvider from './lib/QueryClientProvider'
 import router from './routing'
 import SplashScreen from '@modules/layout/splashScreen'
+
 function App() {
   return (
     <Suspense fallback={<SplashScreen />}>

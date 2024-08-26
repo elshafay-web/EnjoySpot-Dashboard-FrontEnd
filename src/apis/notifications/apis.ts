@@ -10,6 +10,8 @@ export const getALLUserNotification = async (
 ): Promise<INotification[]> => {
   // const response = await axios.get(HttpPaths.Api_Notification_GETALL + id)
   //   return response.data?.data.messagesRecords;
+  console.log(id);
+  
   return [
     {
       sender: 'C0001_System',

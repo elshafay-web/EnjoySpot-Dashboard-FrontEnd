@@ -6,7 +6,7 @@ import { Column } from 'primereact/column'
 import { ConfirmPopup } from 'primereact/confirmpopup'
 import { DataTable } from 'primereact/datatable'
 import { Tag } from 'primereact/tag'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 export default function DashboardDataTable() {
   const { userData } = useUserData()

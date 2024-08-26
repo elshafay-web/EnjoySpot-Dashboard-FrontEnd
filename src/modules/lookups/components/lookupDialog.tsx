@@ -1,7 +1,6 @@
 import { Dialog } from 'primereact/dialog'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import clsx from 'clsx'
 import { toast } from 'sonner'
 import { ErrorMessage } from '@hookform/error-message'
 import { Button } from 'primereact/button'
@@ -9,9 +8,7 @@ import { addLookup, listOfLookups } from '../core/_requests'
 import { ILookups, IPostLookup } from '../core/_models'
 import Input from '@components/input'
 import DropDownInput from '@components/Dropdown'
-import { Checkbox } from 'primereact/checkbox'
 import CheckBoxInput from '@components/checkBox'
-import { useIsFetching } from '@tanstack/react-query'
 
 type Props = {
   dialogVisable: boolean

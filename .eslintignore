@@ -1,4 +1,6 @@
 dist
 node_modules
-public
 coverage
+src/components/ui
+firebaseConfig.ts
+public

@@ -1,6 +1,6 @@
 import { useIsFetching } from '@tanstack/react-query'
 import clsx from 'clsx'
-import { FC, ReactNode, useEffect } from 'react'
+import { FC, ReactNode } from 'react'
 
 const SubmitBtn: FC<{
   title: string
