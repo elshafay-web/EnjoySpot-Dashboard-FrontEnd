@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
         <div className="col-span-1">
           {' '}
-          {[{}, {}, {}].map(x => {
+          {[{}, {}, {}].map(() => {
             return <DataCard />
           })}{' '}
         </div>
