@@ -6,7 +6,6 @@ import TableHeader from '../components/tableHeader'
 import { IGetLookup, ILookups } from '../core/_models'
 import { getLookups } from '../core/_requests'
 import LookupDialog from '../components/lookupDialog'
-import { ProgressSpinner } from 'primereact/progressspinner' // Import spinner
 
 type Props = {
   obj: ILookups
@@ -20,11 +19,9 @@ export default function LookupsPage({ obj, className }: Props) {
   })
   const [modified, setModified] = useState(false)
   const [lookupsData, setLookupsData] = useState<IGetLookup[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
       try {
         const { data } = await getLookups(obj.getApi, {
           PageNumber: 1,
@@ -34,8 +31,6 @@ export default function LookupsPage({ obj, className }: Props) {
         setModified(false)
       } catch (error) {
         toast.error('Error In Loading Data')
-      } finally {
-        setLoading(false)
       }
     }
 

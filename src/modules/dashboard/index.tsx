@@ -3,10 +3,10 @@ import DashboardDataTable from './components/datatable'
 
 export default function DashboardPage() {
   return (
-    <div className='p-4'>
+    <div className="p-4">
       <div className="grid grid-cols-4 gap-4	">
         {' '}
-        {[{}, {}, {}, {}].map(x => {
+        {[{}, {}, {}, {}].map(() => {
           return <DataCard />
         })}{' '}
       </div>
