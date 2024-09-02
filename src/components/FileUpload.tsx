@@ -58,7 +58,7 @@ export default function FileUpload({
     <section className="flex flex-column  items-center justify-center h-full px-1 pr-3">
       {!files && (
         <header
-          className={`flex flex-column items-center justify-center group my-1 rounded-lg p-10 text-center flex-wrap ${
+          className={`w-full group my-1 rounded-lg p-5 text-center ${
             isDragActive ? 'bg-light' : ''
           }`}
           {...getRootProps()}
@@ -69,7 +69,7 @@ export default function FileUpload({
           }}
         >
           <input {...getInputProps()} multiple={false} />
-          <p className="flex justify-center text-muted mb-2">
+          <p className="w-full flex justify-center text-muted mb-2">
             <span>Drag and drop your</span>&nbsp;
             <span>Image</span>
           </p>

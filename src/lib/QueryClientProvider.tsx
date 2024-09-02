@@ -29,7 +29,7 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
               } else if (error.response.status === 403) {
                 toast.error('ليس لديك صلاحية الدخول')
               } else {
-                console.log(error.message)
+                toast(error.message)
               }
             },
           },
@@ -43,8 +43,6 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
             } else if (error.response.status === 404) {
               toast.error('هذه الصفحة غير موجودة')
             } else if (error.response.status === 400) {
-              console.log(error.response.data)
-
               if (
                 error.response.data.errors &&
                 error.response.data.errors.length > 0
@@ -63,7 +61,7 @@ function ReactQueryProvider({ children }: { children: React.ReactNode }) {
             } else if (error.response.status === 403) {
               toast.error('ليس لديك صلاحية الدخول')
             } else {
-              console.log(error.message)
+              toast(error.message)
             }
           },
         }),

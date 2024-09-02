@@ -11,7 +11,7 @@ import UbsertSupplier from './components/upsertSupplier'
 import { useGetAllSupppliers } from '@apis/supplier/api'
 import { useQueryClient } from '@tanstack/react-query'
 
-export default function AllEmployees() {
+export default function AllSuppliers() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [Supplier, setSupplier] = useState<ISupplier>({} as ISupplier)

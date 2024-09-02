@@ -1,45 +1,47 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode} from 'react'
+import { ReactNode } from 'react'
 import { Column } from 'primereact/column'
 import { Tag } from 'primereact/tag'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Button } from 'primereact/button'
-import { IListing } from '@domains/IListing'
 import ToggleButton from '@components/ToggleButton'
 import { DataTable } from 'primereact/datatable'
-import { formatDate } from '@helpers/helpingFun'
-import { deleteListing, toggleListing } from '@apis/listing/apis'
+import {
+  deleteListingPackages,
+  toggleListingPackages,
+} from '@apis/listingPackage/apis'
+import { IListingPackages } from '@domains/IListingPackage'
 
 type Props = {
-  onEdit: (data: IListing) => void
-  listings: IListing[]
+  onEdit: (data: IListingPackages) => void
+  listings: IListingPackages[]
 }
 
-export default function ListingsDataTable({ onEdit, listings }: Props) {
+export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
   const queryClient = useQueryClient()
-  const { mutate: toggleListingMutation } = useMutation({
-    mutationKey: ['toggleListing'],
-    mutationFn: (id: number) => toggleListing(id),
+  const { mutate: toggleListingPackagesMutation } = useMutation({
+    mutationKey: ['toggleListingPackages'],
+    mutationFn: (id: number) => toggleListingPackages(id),
     onSuccess(res) {
       toast.success(res.message)
       queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
     },
   })
 
-  const { mutate: deleteListingMutation } = useMutation({
-    mutationKey: ['deleteListing'],
-    mutationFn: (id: number) => deleteListing(id),
+  const { mutate: deleteListingPackagesMutation } = useMutation({
+    mutationKey: ['deleteListingPackages'],
+    mutationFn: (id: number) => deleteListingPackages(id),
     onSuccess(res) {
       toast.success(res.message)
       queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
     },
   })
 
-  const statusBodyTemplate = (data: IListing): ReactNode => (
+  const statusBodyTemplate = (data: IListingPackages): ReactNode => (
     <Tag
       value={data.isActive ? 'Active' : 'Not Active'}
       severity={data.isActive ? 'success' : 'danger'}
@@ -48,7 +50,7 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
 
   const reject = () => {}
 
-  const togglePopUp = (event: any, data: IListing) => {
+  const togglePopUp = (event: any, data: IListingPackages) => {
     if (data) {
       confirmPopup({
         target: event.currentTarget,
@@ -58,25 +60,25 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
         icon: 'pi pi-exclamation-triangle',
         defaultFocus: 'accept',
         accept: () => {
-            toggleListingMutation(data.id)
+          toggleListingPackagesMutation(data.id)
         },
         reject,
       })
     }
   }
 
-  const deletePopUp = (event: any, data: IListing) => {
+  const deletePopUp = (event: any, data: IListingPackages) => {
     confirmPopup({
       target: event.currentTarget,
       message: `Are you sure you want to delete ${data.overview}?`,
       icon: 'pi pi-exclamation-triangle',
       defaultFocus: 'accept',
-      accept: () => deleteListingMutation(data.id),
+      accept: () => deleteListingPackagesMutation(data.id),
       reject,
     })
   }
 
-  const actionTemplate = (rowData: IListing) => (
+  const actionTemplate = (rowData: IListingPackages) => (
     <div className="flex justify-start w-[200px]">
       <ToggleButton
         isActive={rowData.isActive}
@@ -122,11 +124,18 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field={'name'} header={'Name'}  />
+          <Column field={'name'} header={'Name'} />
           <Column field="supplierName" header={'Supplier Name'} />
-          <Column field="listingTypeName" header={'Listing Type'} />
-          <Column field="listingCategoryName" header={'Listing Category'} />
-          <Column field="price" header={'Price'} body={(x)=><div>{x.price} AED</div>} />
+          <Column
+            field="originalPriceAED"
+            header={'Price'}
+            body={x => <div>{x.price} AED</div>}
+          />
+                    <Column
+            field="salePrice"
+            header={'Sale Price'}
+            body={x => <div>{x.price} AED</div>}
+          />
           <Column
             className="w-[100px]"
             field="isActive"

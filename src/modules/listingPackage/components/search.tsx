@@ -4,20 +4,20 @@ import { useForm } from 'react-hook-form'
 import { Button } from 'primereact/button'
 import Input from '@components/input'
 import DropDownInput from '@components/Dropdown'
-import { IListingGetRequestFilter } from '@domains/IListing'
+import { IListingPackageGetRequestFilter } from '@domains/IListingPackage'
 
 type Props = {
   onSearch: (data: any) => void
   onClear?: () => void
-  defualtValues: IListingGetRequestFilter
+  defualtValues: IListingPackageGetRequestFilter
 }
 
-export default function SearchForListing({
+export default function SearchForListingPackage({
   onSearch,
   onClear,
   defualtValues,
 }: Props) {
-  const form = useForm<IListingGetRequestFilter>({
+  const form = useForm<IListingPackageGetRequestFilter>({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
@@ -77,7 +77,6 @@ export default function SearchForListing({
             type="submit"
             className="rounded p-2"
             style={{ width: '100px' }}
-            //   disabled={isPendingUpload || isPending}
           />
 
           {Object.values(form.getValues()).some(value => value) && (

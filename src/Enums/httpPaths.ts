@@ -60,9 +60,35 @@ export enum HttpPaths {
   // ************** Supplier ******************
 
   Api_Supplier_GetAll = '/api/suppliers/getAll',
-  Api_Supplier_ListOf = '/api/suppliers/listOf=',
+  Api_Supplier_ListOf = '/api/suppliers/listOf',
   Api_Supplier_Delete = '/api/suppliers/delete/',
   Api_Supplier_ToggleIsActive = '/api/suppliers/toggelActive/',
   Api_Supplier_Upsert = '/api/suppliers/upsert',
   Api_Supplier_Profile = '/api/suppliers/getProfile?id=',
+
+  // ************** Listing ******************
+
+  Api_Listing_GetAll = '/api/listings/getAll',
+  Api_Listing_ListOf = '/api/Listings/listOf',
+  Api_Listing_Delete = '/api/Listings/delete/',
+  Api_Listing_ToggleIsActive = '/api/Listings/toggelActive/',
+  Api_Listing_Upsert = '/api/Listings/upsert',
+  Api_Listing_Profile = '/api/Listings/getProfile?id=',
+
+  // ************** ListingPackage ******************
+
+  Api_listingPackages_GetAll = '/api/listingPackages/getAll',
+  Api_listingPackages_ListOf = '/api/listingPackages/listOf',
+  Api_listingPackages_Delete = '/api/listingPackages/delete/',
+  Api_listingPackages_ToggleIsActive = '/api/listingPackages/toggelActive/',
+  Api_listingPackages_Upsert = '/api/listingPackages/upsert',
+  Api_listingPackages_Profile = '/api/listingPackages/getProfile?id=',
+  
+  // ************** listingCategoriesDetails ******************
+
+  Api_listingCategoryDetails_GetAll = '/api/listingCategoryDetails/getAll',
+  Api_listingCategoryDetails_ListOf = '/api/listingCategoryDetails/listOf?countryId=',
+  Api_listingCategoryDetails_Delete = '/api/listingCategoryDetails/delete/',
+  Api_listingCategoryDetails_ToggleIsActive = '/api/listingCategoryDetails/toggelActive/',
+  Api_listingCategoryDetails_Upsert = '/api/listingCategoryDetails/upsert',
 }

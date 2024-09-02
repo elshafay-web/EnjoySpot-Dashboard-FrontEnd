@@ -6,12 +6,10 @@ import { IResponse } from '@domains/IResponse'
 import { INotification } from '@domains/INotification'
 
 export const getALLUserNotification = async (
-  id: number
+  id: number = 0
 ): Promise<INotification[]> => {
   // const response = await axios.get(HttpPaths.Api_Notification_GETALL + id)
-  //   return response.data?.data.messagesRecords;
-  console.log(id);
-  
+  //   return response.data?.data.messagesRecords;  
   return [
     {
       sender: 'C0001_System',
@@ -22,7 +20,7 @@ export const getALLUserNotification = async (
       messageTypeSysName: 'string',
       readOnly: true,
       isRead: true,
-      userSender_Id: 1,
+      userSender_Id: id,
       title: 'string',
       message: 'string',
       userId: 2,

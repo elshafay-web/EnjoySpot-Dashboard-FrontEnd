@@ -32,8 +32,6 @@ export default function UbsertSupplier({
     mode: 'onChange', // or 'onBlur', 'onTouched'
     defaultValues: intialValues,
   })
-  console.log(intialValues)
-
   const [attachmentAgreementFile, setAttachmentAgreementFile] = useState<{
     file: ArrayBuffer
     name: string
@@ -67,7 +65,6 @@ export default function UbsertSupplier({
       'attachmentAgreementFile',
       new Blob([attachmentAgreementFile.file])
     )
-    console.log(values)
     mutate(formData)
   }
 

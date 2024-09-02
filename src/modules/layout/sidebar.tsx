@@ -56,6 +56,13 @@
         command: () => navigate('/listing'),
       },
       {
+        label: 'Listing Package',
+        icon: 'fa-solid fa-box-open text-2xl w-[42px]',
+        routing: '/listing-package',
+        template: itemRenderer,
+        command: () => navigate('/listing-package'),
+      },
+      {
         label: 'Settings',
         icon: 'fa-solid fa-gear text-2xl m-0 w-[42px] ',
         routing: '/lookups',

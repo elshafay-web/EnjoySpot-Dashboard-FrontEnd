@@ -7,21 +7,24 @@ import AddButton from '@components/AddButton'
 import { useQueryClient } from '@tanstack/react-query'
 import { IListing, IListingGetRequestFilter } from '@domains/IListing'
 import { useGetAllListings } from '@apis/listing/apis'
-import SearchForListing from './components/search'
-import ListingsDataTable from './components/dataTable'
-import UbsertListing from './components/upsert'
+import SearchForListingPackage from './components/search'
+import ListingsPackageDataTable from './components/dataTable'
+import UbsertListingPackage from './components/upsert'
+import { IListingPackageGetRequestFilter, IListingPackages } from '@domains/IListingPackage'
+import { useGetAllListingPackages } from '@apis/listingPackage/apis'
 
-export default function ListingPage() {
+
+export default function ListingPackagePage() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
-  const [ListingObj, setListingObj] = useState<IListing>({} as IListing)
-  const [filter, setFilter] = useState({} as IListingGetRequestFilter)
-  const { data: listings } = useGetAllListings(filter)
+  const [ListingPackageObj, setListingPackageObj] = useState<IListingPackages>({} as IListingPackages)
+  const [filter, setFilter] = useState({} as IListingPackageGetRequestFilter)
+  const { data: listingsPackages } = useGetAllListingPackages(filter)
   const queryClient = useQueryClient()
 
-  const onEdit = (profile: IListing) => {
+  const onEdit = (profile: IListingPackages) => {
     if (profile && profile.id > 0) {
-      setListingObj(profile)
+      setListingPackageObj(profile)
       setOpen(true)
     }
   }
@@ -31,7 +34,7 @@ export default function ListingPage() {
   }
 
   const handleAddButton = () => {
-    setListingObj({} as IListing)
+    setListingPackageObj({} as IListingPackages)
     setOpen(true)
   }
 
@@ -45,7 +48,7 @@ export default function ListingPage() {
               <FilterButton onClick={handleFilterButton} />
               <OverlayPanel ref={op}>
                 <div className="d-flex justify-center items-center flex-column">
-                  <SearchForListing
+                  <SearchForListingPackage
                     onSearch={data => setFilter(data)}
                     onClear={() => {
                       setFilter({} as IListingGetRequestFilter)
@@ -55,18 +58,18 @@ export default function ListingPage() {
                 </div>
               </OverlayPanel>
             </div>
-            <AddButton onClick={handleAddButton} buttonText={'Add Listing'} />
+            <AddButton onClick={handleAddButton} buttonText={'Add Listing Package'} />
           </div>
         </div>
-        <ListingsDataTable onEdit={onEdit} listings={listings || []} />
+        <ListingsPackageDataTable onEdit={onEdit} listings={listingsPackages || []} />
       </div>
 
-      <UbsertListing
+      <UbsertListingPackage
         open={open}
-        intialValues={ListingObj}
-        mode={Object.keys(ListingObj).length > 0 ? 'edit' : 'add'}
+        intialValues={ListingPackageObj}
+        mode={Object.keys(ListingPackageObj).length > 0 ? 'edit' : 'add'}
         onClose={() => {
-          setListingObj({} as IListing)
+          setListingPackageObj({} as IListingPackages)
           setOpen(false)
           queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
         }}

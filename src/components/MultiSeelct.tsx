@@ -2,25 +2,21 @@
 import { InputCreateModel } from '@domains/IShardInput'
 import { ErrorMessage } from '@hookform/error-message'
 import clsx from 'clsx'
-import { Calendar } from 'primereact/calendar'
+import { MultiSelect } from 'primereact/multiselect'
 import { Control, Controller } from 'react-hook-form'
 
 type Props = {
   field: InputCreateModel
   errors: any
   control: Control<any>
-  showTime?: boolean
-  min?: Date
-  max?: Date
+  options: Array<any>
 }
 
-export default function CalendarInput({
+export default function MultiSelectInput({
   field,
   errors,
   control,
-  showTime,
-  min,
-  max,
+  options,
 }: Props) {
   return (
     <div className="col-12 w-100">
@@ -39,22 +35,30 @@ export default function CalendarInput({
           required: field.isRequired ? `${field.title} is required` : false,
         }}
         render={({ field: { onChange, value } }) => (
-          <Calendar
-            name={field.inputName}
-            onChange={onChange}
-            value={value}
-            placeholder="Select a Date"
-            showTime={showTime}
-            minDate={min}
-            maxDate={max}
+          <MultiSelect
+            value={value || []}
+            onChange={e => {
+              if (e.value) {
+                onChange(e.value)
+              } else {
+                onChange(undefined)
+              }
+            }}
+            filter
+            showClear
+            options={options}
+            optionValue="id"
+            optionLabel="name"
+            display="chip" 
+            placeholder="Select a Option"
             className={clsx(
-              'w-full transition duration-300 rounded mt-1 ',
+              'h-[42px] w-full  transition duration-300 rounded-[6px] mt-1',
               {
                 'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200':
                   errors[field.inputName],
               },
               {
-                '':
+                'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
                   !errors[field.inputName],
               }
             )}

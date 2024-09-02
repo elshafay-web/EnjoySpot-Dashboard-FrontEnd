@@ -8,6 +8,7 @@ const MainLayout = lazy(() => import('../modules/layout'))
 const DashboardPage = lazy(() => import('../modules/dashboard'))
 const SupplierPage = lazy(() => import('../modules/supplier'))
 const ListingPage = lazy(() => import('../modules/listing'))
+const ListingPackagePage = lazy(() => import('../modules/listingPackage'))
 
 const MainRoute: RouteObject[] = [
   {
@@ -37,6 +38,15 @@ const MainRoute: RouteObject[] = [
         element: (
           <ProtectRoutes auth>
             <ListingPage />
+          </ProtectRoutes>
+        ),
+        index: true,
+      },
+      {
+        path: 'listing-package',
+        element: (
+          <ProtectRoutes auth>
+            <ListingPackagePage />
           </ProtectRoutes>
         ),
         index: true,

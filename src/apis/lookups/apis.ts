@@ -28,3 +28,59 @@ export const useListOfCountries = () => {
   })
   return query
 }
+
+
+export const listOfListingCategories = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingCategories_ListOf)
+  return response.data?.data
+}
+
+export const useListOfListingCategories = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfListingCategories'],
+    queryFn: () => listOfListingCategories(),
+  })
+  return query
+}
+
+
+export const listOfListingAmenities = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingAmenities_ListOf)
+  return response.data?.data
+}
+
+export const useListOfListingAmenities = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfListingAmenities'],
+    queryFn: () => listOfListingAmenities(),
+  })
+  return query
+}
+
+
+export const listOfListingDetails = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingCategoryDetails_ListOf)
+  return response.data?.data
+}
+
+export const useListOfListingDetails = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfListingDetails'],
+    queryFn: () => listOfListingDetails(),
+  })
+  return query
+}
+
+
+export const listOfEnteringment = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingEntertainments_ListOf)
+  return response.data?.data
+}
+
+export const useListOfEnteringment = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfEnteringment'],
+    queryFn: () => listOfEnteringment(),
+  })
+  return query
+}

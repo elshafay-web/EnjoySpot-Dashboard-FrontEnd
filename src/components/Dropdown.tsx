@@ -37,8 +37,8 @@ export default function DropDownInput({
         render={({ field: { onChange, value } }) => (
           <Dropdown
             value={value}
-            onChange={e => {
-              if (e.value) {
+            onChange={e => {              
+              if (e.value !== null || e.value !== undefined) {                 
                 onChange(e.value)
               } else {
                 onChange(undefined)
@@ -71,7 +71,7 @@ export default function DropDownInput({
         render={({ messages }) =>
           messages &&
           Object.entries(messages).map(([type, message]) => (
-            <p className="text-danger fs-6 pt-2" key={type}>
+            <p className="text-red-500 fs-6 pt-2" key={type}>
               {message}
             </p>
           ))
