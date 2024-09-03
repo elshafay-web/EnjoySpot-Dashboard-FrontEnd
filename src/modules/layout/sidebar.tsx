@@ -17,7 +17,7 @@
           item.routing?.toLowerCase()
             ? ' bg-lightBlue  text-white'
             : ''
-        } group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-3 px-3 my-1 rounded-lg transition-all`}
+        } group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-2 px-3 my-1 rounded-lg transition-all`}
         onClick={options.onClick}
       >
         <i
@@ -29,7 +29,7 @@
           } text-darkBlue group-hover:text-white`}
         />
         
-        <span className={"text-meduim"}>{item.label}</span>
+        <span className={"text-sm"}>{item.label}</span>
       </a>
     )
     
@@ -79,7 +79,7 @@
     ]
     return (
       <div className="flex">
-        <aside className="w-72 bg-white text-white h-screen px-4">
+        <aside className="w-64 bg-white text-white h-screen px-4 overflow-y-auto !scrollbar-w-[4px] scrollbar-track-gray-100">
           <div className="h-16 w-full flex justify-start items-center bg-white p-3 m-0">
             <img
               src="EnjoySpot_Icon.svg"
@@ -88,10 +88,10 @@
               className="rounded-full"
               alt=""
             />
-            <h1 className="text-lightBlue text-3xl ms-4 font-bold">Enjoy Spot</h1>
+            <h1 className="text-lightBlue text-xl ms-4 font-bold">Enjoy Spot</h1>
           </div>
-          <PanelMenu model={items} className="w-full h-full"  />
+          <PanelMenu model={items} className="w-full" />
         </aside>
       </div>
-    )
+    );
   }
