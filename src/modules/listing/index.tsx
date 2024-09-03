@@ -6,7 +6,7 @@ import FilterButton from '@components/FilterButton'
 import AddButton from '@components/AddButton'
 import { useQueryClient } from '@tanstack/react-query'
 import { IListing, IListingGetRequestFilter } from '@domains/IListing'
-import { useGetAllListings } from '@apis/listing/apis'
+import { useGetAllListings, useGetListingProfile } from '@apis/listing/apis'
 import SearchForListing from './components/search'
 import ListingsDataTable from './components/dataTable'
 import UbsertListing from './components/upsert'
@@ -17,6 +17,7 @@ export default function ListingPage() {
   const [ListingObj, setListingObj] = useState<IListing>({} as IListing)
   const [filter, setFilter] = useState({} as IListingGetRequestFilter)
   const { data: listings } = useGetAllListings(filter)
+  const { data: ListingProfile } = useGetListingProfile(ListingObj.id )
   const queryClient = useQueryClient()
 
   const onEdit = (profile: IListing) => {
@@ -63,12 +64,12 @@ export default function ListingPage() {
 
       <UbsertListing
         open={open}
-        intialValues={ListingObj}
-        mode={Object.keys(ListingObj).length > 0 ? 'edit' : 'add'}
+        intialValues={ListingProfile || ({} as IListing)}
+        mode={Object.keys(ListingProfile ?? {}).length > 0 ? 'edit' : 'add'}
         onClose={() => {
           setListingObj({} as IListing)
           setOpen(false)
-          queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
+          queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
         }}
       />
     </div>

@@ -36,7 +36,7 @@ export enum HttpPaths {
   // ************** listingCategories ******************
 
   Api_listingCategories_GetAll = '/api/listingCategories/getAll',
-  Api_listingCategories_ListOf = '/api/listingCategories/listOf?countryId=',
+  Api_listingCategories_ListOf = '/api/listingCategories/listOf',
   Api_listingCategories_Delete = '/api/listingCategories/delete/',
   Api_listingCategories_ToggleIsActive = '/api/listingCategories/toggelActive/',
   Api_listingCategories_Upsert = '/api/listingCategories/upsert',
@@ -73,7 +73,7 @@ export enum HttpPaths {
   Api_Listing_Delete = '/api/Listings/delete/',
   Api_Listing_ToggleIsActive = '/api/Listings/toggelActive/',
   Api_Listing_Upsert = '/api/Listings/upsert',
-  Api_Listing_Profile = '/api/Listings/getProfile?id=',
+  Api_Listing_Profile = '/api/Listings/GetProfile/',
 
   // ************** ListingPackage ******************
 
@@ -82,13 +82,29 @@ export enum HttpPaths {
   Api_listingPackages_Delete = '/api/listingPackages/delete/',
   Api_listingPackages_ToggleIsActive = '/api/listingPackages/toggelActive/',
   Api_listingPackages_Upsert = '/api/listingPackages/upsert',
-  Api_listingPackages_Profile = '/api/listingPackages/getProfile?id=',
-  
+  Api_listingPackages_Profile = '/api/listingPackages/GetProfile/',
+
   // ************** listingCategoriesDetails ******************
 
   Api_listingCategoryDetails_GetAll = '/api/listingCategoryDetails/getAll',
-  Api_listingCategoryDetails_ListOf = '/api/listingCategoryDetails/listOf?countryId=',
+  Api_listingCategoryDetails_ListOf = '/api/listingCategoryDetails/listOf',
   Api_listingCategoryDetails_Delete = '/api/listingCategoryDetails/delete/',
   Api_listingCategoryDetails_ToggleIsActive = '/api/listingCategoryDetails/toggelActive/',
   Api_listingCategoryDetails_Upsert = '/api/listingCategoryDetails/upsert',
+
+  // ************** emailTypes ******************
+
+  Api_emailTypes_GetAll = '/api/emailTypes/getAll',
+  Api_emailTypes_ListOf = '/api/emailTypes/listOf',
+  Api_emailTypes_Delete = '/api/emailTypes/delete/',
+  Api_emailTypes_ToggleIsActive = '/api/emailTypes/toggelActive/',
+  Api_emailTypes_Upsert = '/api/emailTypes/upsert',
+
+  // ************** emailTemplates ******************
+
+  Api_emailTemplates_GetAll = '/api/emailTemplates/getAll',
+  Api_emailTemplates_ListOf = '/api/emailTemplates/listOf',
+  Api_emailTemplates_Delete = '/api/emailTemplates/delete/',
+  Api_emailTemplates_ToggleIsActive = '/api/emailTemplates/toggelActive/',
+  Api_emailTemplates_Upsert = '/api/emailTemplates/upsert',
 }

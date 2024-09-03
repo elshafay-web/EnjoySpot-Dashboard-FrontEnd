@@ -22,6 +22,7 @@ export default function MultiFileUpload({
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      
       const newFiles = acceptedFiles.map(file => file as IFile)
       setFiles(prevFiles => [...prevFiles, ...newFiles])
       onFilesSelected([...files, ...newFiles])
@@ -31,7 +32,12 @@ export default function MultiFileUpload({
 
   const removeFile = useCallback(
     (fileToRemove: IFile) => {
-      const updatedFiles = files.filter(file => file.name !== fileToRemove.name)
+      console.log(fileToRemove);
+      console.log(files);
+
+      const updatedFiles = files.filter(file => file.name !== fileToRemove.name )
+      console.log(updatedFiles);
+
       setFiles(updatedFiles)
       onFilesSelected(updatedFiles.length > 0 ? updatedFiles : undefined)
     },
@@ -49,7 +55,7 @@ export default function MultiFileUpload({
     maxFiles: undefined, // Allow multiple files
   })
 
-  useEffect(() => {
+  useEffect(() => {    
     if (attachment && attachment.length > 0) {
       const initialFiles = attachment.map((url, index) => {
         const file = new File([url || ''], `${index + 1}`, {

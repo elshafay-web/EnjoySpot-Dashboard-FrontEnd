@@ -5,6 +5,11 @@ import { IList } from '@modules/lookups/core/_models'
 import { CommonGetRequestsWithQuery } from '@helpers/helpingFun'
 import { IResponse } from '@domains/IResponse'
 import { IListing, IListingGetRequestFilter } from '@domains/IListing'
+const options = {
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
+  refetchOnWindowFocus: false,
+}
 
 export const listOfListings = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_Listing_ListOf)
@@ -14,6 +19,7 @@ export const useListOfListings = () => {
   const query = useQuery<IList[], Error>({
     queryKey: ['listOfListings'],
     queryFn: () => listOfListings(),
+    ...options
   })
   return query
 }
@@ -31,6 +37,25 @@ export const useGetAllListings = (req: IListingGetRequestFilter) => {
   const query = useQuery<IListing[], Error>({
     queryKey: ['getAllListings', req],
     queryFn: () => getAllListings(req),
+  })
+  return query
+}
+
+export const getListingProfile = async (
+  id: number
+): Promise<IListing> => {
+  if(!id || id === 0) return {} as IListing
+  const response = await CommonGetRequestsWithQuery(
+    HttpPaths.Api_Listing_Profile+id,
+    {}
+  )
+  return response.data?.data
+}
+
+export const useGetListingProfile = (id: number) => {
+  const query = useQuery<IListing, Error>({
+    queryKey: ['getListingProfile', id],
+    queryFn: () => getListingProfile(id),
   })
   return query
 }

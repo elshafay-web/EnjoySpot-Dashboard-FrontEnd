@@ -9,6 +9,11 @@ import {
   IListingPackages,
 } from '@domains/IListingPackage'
 
+const options = {
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
+  refetchOnWindowFocus: false,
+}
 export const listOfListingPackages = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_listingPackages_ListOf)
   return response.data?.data
@@ -17,6 +22,7 @@ export const useListOfListingPackages = () => {
   const query = useQuery<IList[], Error>({
     queryKey: ['listOfListingPackages'],
     queryFn: () => listOfListingPackages(),
+    ...options,
   })
   return query
 }
@@ -36,6 +42,25 @@ export const useGetAllListingPackages = (
   const query = useQuery<IListingPackages[], Error>({
     queryKey: ['getAllListingPackages', req],
     queryFn: () => getAllListingPackages(req),
+  })
+  return query
+}
+
+export const getListingPackageProfile = async (
+  id: number
+): Promise<IListingPackages> => {
+  if(!id || id === 0) return {} as IListingPackages
+  const response = await CommonGetRequestsWithQuery(
+    HttpPaths.Api_listingPackages_Profile + id,
+    {}
+  )
+  return response.data?.data
+}
+
+export const useGetListingPackageProfile = (id: number) => {
+  const query = useQuery<IListingPackages, Error>({
+    queryKey: ['getListingPackageProfile', id],
+    queryFn: () => getListingPackageProfile(id),
   })
   return query
 }

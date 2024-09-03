@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Sidebar } from 'primereact/sidebar'
 import FormHead from '@components/formHead'
 import Input from '@components/input'
@@ -14,7 +14,7 @@ import {
 } from '@apis/lookups/apis'
 import { toast } from 'sonner'
 import FileUpload from '@components/FileUpload'
-import { IListing, IListingEntertainment } from '@domains/IListing'
+import { IListing } from '@domains/IListing'
 import { UpsertListing } from '@apis/listing/apis'
 import { useListOfSupppliers } from '@apis/supplier/api'
 import MultiSelectInput from '@components/MultiSeelct'
@@ -55,9 +55,10 @@ export default function UbsertListing({
   const youTubeVideoIframe = form.watch('youTubeVideoIframe')
   const priceType = form.watch('priceType')
   const photographer = form.watch('photographer')
-  const [entertainmentPricesList, setEntertainmentPricesList] = useState<
-    IListingEntertainment[]
-  >([])
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'entertainmentPrices',
+  })
 
   const { data: listOfSuppliers } = useListOfSupppliers()
   const { data: listOfListingCategories } = useListOfListingCategories()
@@ -75,55 +76,113 @@ export default function UbsertListing({
 
   const onSubmit = (values: any) => {
     const data: IListing = values
-    data.hasEntertainment = entertainmentPricesList.length > 0 ? true : false
-    data.entertainmentPrices = values.entertainmentPrices.map(
-      (item: IListingEntertainment) => {
-        return {
-          listingEntertainment_Id: item.listingEntertainment_Id,
-          price: item.price,
-          isDeleted: false,
-        }
+    if (mode === 'add') {
+      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
+        toast.warning(
+          'You can not add less than 3 images and more than 15 images'
+        )
+        return
       }
-    )
-    data.details = values.details.map((item: number) => {
-      return {
-        listingCategoryDetail_Id: item,
-        isDeleted: false,
-      }
-    })
-    data.amenities = values.amenities.map((item: number) => {
-      return {
-        listingAmenity_Id: item,
-        isDeleted: false,
-      }
-    })
-
+    }
     if (
       data.priceDiscountPercentage &&
       data.priceDiscountPercentage > 0 &&
       data.priceDiscountValue &&
       data.priceDiscountValue > 0
     ) {
-      toast.error(
+      toast.warning(
         'You can not set both price discount value and price discount percentage'
       )
       return
     }
+
+    data.lat = 40.7128
+    data.long = 40.7128
+    data.id = intialValues.id || 0
+    data.hasEntertainment = values.entertainmentPrices.length > 0 ? true : false
+    data.entertainmentPrices.forEach(item => {
+      item.isDeleted =
+        mode === 'add'
+          ? false
+          : intialValues.entertainmentPrices.find(x => x.id === item.id)
+          ? false
+          : item.id > 0
+          ? true
+          : false
+    })
+    if (mode === 'edit') {
+      intialValues.entertainmentPrices.forEach(item => {
+        if (!data.entertainmentPrices.map(x => x.id).includes(item.id)) {
+          item.isDeleted = true
+          data.entertainmentPrices.push(item)
+        }
+      })
+    }
+
+    data.details = values.listOfDetails.map((item: number) => {
+      console.log(item)
+
+      return {
+        listingCategoryDetail_Id: item,
+        isDeleted:
+          mode === 'add'
+            ? false
+            : intialValues.details.map(x => x.id).includes(item)
+            ? false
+            : !intialValues.details.map(x => x.id).includes(item)
+            ? false
+            : true,
+        id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
+      }
+    })
+    if (mode === 'edit') {
+      intialValues.details.forEach(item => {
+        if (!data.details.map(x => x.id).includes(item.id)) {
+          item.isDeleted = true
+          data.details.push(item)
+        }
+      })
+    }
+    data.amenities = values.listOfAmenities.map((item: number) => {
+      return {
+        listingAmenity_Id: item,
+        isDeleted:
+          mode === 'add'
+            ? false
+            : intialValues.details.map(x => x.id).includes(item)
+            ? false
+            : !intialValues.details.map(x => x.id).includes(item)
+            ? false
+            : true,
+        id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
+      }
+    })
+    if (mode === 'edit') {
+      intialValues.amenities.forEach(item => {
+        if (!data.amenities.map(x => x.id).includes(item.id)) {
+          item.isDeleted = true
+          data.amenities.push(item)
+        }
+      })
+    }
+
     if (data.priceDiscountPercentage && data.priceDiscountPercentage > 0) {
       data.priceDiscountValue = 0
+      data.extraHours = 0
     }
     if (data.priceDiscountValue && data.priceDiscountValue > 0) {
       data.priceDiscountPercentage = 0
+      data.extraHours = 0
     }
-    console.log(values)
-    console.log(data)
-
-    const { amenities , details , entertainmentPrices , ...rest } = data
-
+    if (data.extraHours && data.extraHours > 0) {
+      data.priceDiscountPercentage = 0
+      data.priceDiscountValue = 0
+    }
+    const { amenities, details, entertainmentPrices, ...rest } = data
     const formData = convertObjectToFormData(rest)
     if (MediaFiles.length > 0) {
       MediaFiles.forEach(file => {
-        formData.append('mediaFiles', new Blob([file.file]), file.name)
+        formData.append('mediaImages', new Blob([file.file]), file.name)
       })
     }
     if (RoutesMapImage.file) {
@@ -134,21 +193,46 @@ export default function UbsertListing({
       )
     }
     amenities.forEach((item, index) => {
-      formData.append(`amenities[${index}].listingAmenity_Id`, item.listingAmenity_Id.toString());
-      formData.append(`amenities[${index}].listingAmenityName`, item.listingAmenityName ?? '');
-      formData.append(`amenities[${index}].isDeleted`, item.isDeleted.toString());
-    });
+      formData.append(`amenities[${index}].id`, item.id.toString())
+      formData.append(
+        `amenities[${index}].listingAmenity_Id`,
+        item.listingAmenity_Id.toString()
+      )
+      formData.append(
+        `amenities[${index}].isDeleted`,
+        item.isDeleted.toString()
+      )
+    })
 
     details.forEach((item, index) => {
-      formData.append(`details[${index}].listingCategoryDetail_Id`, item.listingCategoryDetail_Id.toString());
-      formData.append(`details[${index}].listingCategoryDetailName`, item.listingCategoryDetailName ?? '');
-      formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
-    });
+      formData.append(`details[${index}].id`, item.id.toString())
+      formData.append(
+        `details[${index}].listingCategoryDetail_Id`,
+        item.listingCategoryDetail_Id.toString()
+      )
+      formData.append(`details[${index}].isDeleted`, item.isDeleted.toString())
+    })
+
     entertainmentPrices.forEach((item, index) => {
-      formData.append(`entertainmentPrices[${index}].listingEntertainment_Id`, item.listingEntertainment_Id.toString());
-      formData.append(`entertainmentPrices[${index}].listingEntertainmentName`, item.listingEntertainmentName ?? '');
-      formData.append(`entertainmentPrices[${index}].isDeleted`, item.isDeleted.toString());
-    });
+      formData.append(
+        `entertainmentPrices[${index}].id`,
+        item.id?.toString() ?? '0'
+      )
+      formData.append(
+        `entertainmentPrices[${index}].listingEntertainment_Id`,
+        item.listingEntertainment_Id?.toString() ?? '0'
+      )
+      formData.append(
+        `entertainmentPrices[${index}].price`,
+        item.price?.toString() ?? '0'
+      )
+      formData.append(
+        `entertainmentPrices[${index}].isDeleted`,
+        item.isDeleted.toString()
+      )
+    })
+    console.log(data)
+
     mutate(formData)
   }
   const handelUploadMediaFiles = useCallback((files?: File[]) => {
@@ -204,6 +288,26 @@ export default function UbsertListing({
         Object.entries(intialValues).filter(([, v]) => v !== null)
       )
       form.reset(filteredObj)
+      if (intialValues.attachments && intialValues.attachments.length > 0) {
+        form.setValue(
+          'youTubeVideoIframe',
+          intialValues.attachments?.find(
+            x => x.attachmentType === 'YouTubeVideoIframe'
+          )?.attachmentPath ?? ''
+        )
+      }
+      if (intialValues.amenities && intialValues.amenities.length > 0) {
+        form.setValue(
+          'listOfAmenities',
+          intialValues.amenities?.map(x => x.listingAmenity_Id)
+        )
+      }
+      if (intialValues.details && intialValues.details.length > 0) {
+        form.setValue(
+          'listOfDetails',
+          intialValues.details?.map(x => x.listingCategoryDetail_Id)
+        )
+      }
     }
   }, [intialValues])
 
@@ -276,7 +380,7 @@ export default function UbsertListing({
               options={listOfListingAmenities || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'amenities',
+                inputName: 'listOfAmenities',
                 title: 'Amenities',
                 isRequired: true,
               }}
@@ -287,7 +391,7 @@ export default function UbsertListing({
               options={listOfListingDetails || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'details',
+                inputName: 'listOfDetails',
                 title: 'Details',
                 isRequired: true,
               }}
@@ -313,7 +417,7 @@ export default function UbsertListing({
             <DropDownInput
               control={form.control}
               options={[
-                { name: 'Person', id: 'person' },
+                { name: 'Person', id: 'Person' },
                 { name: 'Hour', id: 'Hour' },
               ]}
               errors={form.formState.errors}
@@ -357,7 +461,7 @@ export default function UbsertListing({
               }}
             />
 
-            {priceType === 'person' && (
+            {priceType === 'Person' && (
               <>
                 <Input
                   register={form.register}
@@ -432,25 +536,25 @@ export default function UbsertListing({
               type="button"
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
-                setEntertainmentPricesList([
-                  ...entertainmentPricesList,
-                  {
-                    listingEntertainment_Id: 0,
-                    price: 0,
-                    isDeleted: false,
-                  },
-                ])
+                append({
+                  listingEntertainment_Id: null,
+                  price: 0,
+                  isDeleted: false,
+                  id: 0,
+                })
               }}
             >
               <i className="fa-solid fa-plus text-white text-base"></i>
             </button>
           </h5>
+
           <div className="grid grid-cols-2 gap-4 mt-4">
-            {entertainmentPricesList &&
-              entertainmentPricesList.map((_, index) => (
+            {fields
+              .filter(x => !x.isDeleted)
+              .map((field, index) => (
                 <div
-                  className=" w-full col-span-2 grid gap-4 grid-cols-2"
-                  key={index}
+                  className="w-full col-span-2 grid gap-4 grid-cols-2"
+                  key={field.id}
                 >
                   <DropDownInput
                     control={form.control}
@@ -463,7 +567,7 @@ export default function UbsertListing({
                     }}
                   />
 
-                  <div className="flex justify-between items-end ">
+                  <div className="flex justify-between items-end">
                     <Input
                       register={form.register}
                       errors={form.formState.errors}
@@ -479,10 +583,7 @@ export default function UbsertListing({
                       type="button"
                       className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
                       onClick={() => {
-                        setEntertainmentPricesList([
-                          ...entertainmentPricesList.slice(0, index),
-                          ...entertainmentPricesList.slice(index + 1),
-                        ])
+                        remove(index)
                       }}
                     >
                       <i className="fa-solid fa-trash text-white"></i>
@@ -491,22 +592,36 @@ export default function UbsertListing({
                 </div>
               ))}
           </div>
-          <FormHead title={'Media Files'} />
-          <div className="w-100 mt-4">
-            <MultiFileUpload
-              attachment={[]}
-              onFilesSelected={handelUploadMediaFiles}
-              title="Media Image"
-            />
-          </div>
-          <FormHead title={'Routes Map Image'} />
-          <div className="w-100 mt-4">
-            <FileUpload
-              attachment={''}
-              onFilesSelected={handelUploadRoutesMapImage}
-              title="Routes Map Image"
-            />
-          </div>
+          {mode === 'add' && (
+            <>
+              <FormHead title={'Media Files'} />
+              <div className="w-100 mt-4">
+                <MultiFileUpload
+                  attachment={
+                    intialValues.attachments &&
+                    intialValues.attachments
+                      .filter(x => x.attachmentType === 'media')
+                      .map(x => x.attachmentPath)
+                  }
+                  onFilesSelected={handelUploadMediaFiles}
+                  title="Media Image"
+                />
+              </div>
+              <FormHead title={'Routes Map Image'} />
+              <div className="w-100 mt-4">
+                <FileUpload
+                  attachment={
+                    intialValues.attachments &&
+                    intialValues.attachments.find(
+                      x => x.attachmentType === 'RoutesMap'
+                    )?.attachmentPath
+                  }
+                  onFilesSelected={handelUploadRoutesMapImage}
+                  title="Routes Map Image"
+                />
+              </div>
+            </>
+          )}
 
           <FormHead title={'YouTube Video'} />
           <Input

@@ -90,7 +90,7 @@
             />
             <h1 className="text-lightBlue text-3xl ms-4 font-bold">Enjoy Spot</h1>
           </div>
-          <PanelMenu model={items} className="w-full"  />
+          <PanelMenu model={items} className="w-full h-full"  />
         </aside>
       </div>
     )

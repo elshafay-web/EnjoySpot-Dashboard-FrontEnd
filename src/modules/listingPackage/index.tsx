@@ -10,16 +10,26 @@ import { useGetAllListings } from '@apis/listing/apis'
 import SearchForListingPackage from './components/search'
 import ListingsPackageDataTable from './components/dataTable'
 import UbsertListingPackage from './components/upsert'
-import { IListingPackageGetRequestFilter, IListingPackages } from '@domains/IListingPackage'
-import { useGetAllListingPackages } from '@apis/listingPackage/apis'
-
+import {
+  IListingPackageGetRequestFilter,
+  IListingPackages,
+} from '@domains/IListingPackage'
+import {
+  useGetAllListingPackages,
+  useGetListingPackageProfile,
+} from '@apis/listingPackage/apis'
 
 export default function ListingPackagePage() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
-  const [ListingPackageObj, setListingPackageObj] = useState<IListingPackages>({} as IListingPackages)
+  const [ListingPackageObj, setListingPackageObj] = useState<IListingPackages>(
+    {} as IListingPackages
+  )
   const [filter, setFilter] = useState({} as IListingPackageGetRequestFilter)
   const { data: listingsPackages } = useGetAllListingPackages(filter)
+  const { data: ListingPackageProfile } = useGetListingPackageProfile(
+    ListingPackageObj.id
+  )
   const queryClient = useQueryClient()
 
   const onEdit = (profile: IListingPackages) => {
@@ -58,20 +68,26 @@ export default function ListingPackagePage() {
                 </div>
               </OverlayPanel>
             </div>
-            <AddButton onClick={handleAddButton} buttonText={'Add Listing Package'} />
+            <AddButton
+              onClick={handleAddButton}
+              buttonText={'Add Listing Package'}
+            />
           </div>
         </div>
-        <ListingsPackageDataTable onEdit={onEdit} listings={listingsPackages || []} />
+        <ListingsPackageDataTable
+          onEdit={onEdit}
+          listings={listingsPackages || []}
+        />
       </div>
 
       <UbsertListingPackage
         open={open}
-        intialValues={ListingPackageObj}
-        mode={Object.keys(ListingPackageObj).length > 0 ? 'edit' : 'add'}
+        intialValues={ListingPackageProfile || ({} as IListingPackages)}
+        mode={Object.keys(ListingPackageProfile || {}).length > 0 ? 'edit' : 'add'}
         onClose={() => {
           setListingPackageObj({} as IListingPackages)
           setOpen(false)
-          queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
+          queryClient.invalidateQueries({ queryKey: ['getAllListingPackages'] })
         }}
       />
     </div>

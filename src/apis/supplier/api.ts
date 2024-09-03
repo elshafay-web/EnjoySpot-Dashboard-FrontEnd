@@ -6,6 +6,12 @@ import { ISupplier, ISupplierListGetRequestFilter } from '@domains/ISupplier'
 import { CommonGetRequestsWithQuery } from '@helpers/helpingFun'
 import { IResponse } from '@domains/IResponse'
 
+const options = {
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
+  refetchOnWindowFocus: false,
+}
+
 export const listOfSupliers = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_Supplier_ListOf)
   return response.data?.data
@@ -14,6 +20,7 @@ export const useListOfSupppliers = () => {
   const query = useQuery<IList[], Error>({
     queryKey: ['listOfSupliers'],
     queryFn: () => listOfSupliers(),
+    ...options
   })
   return query
 }

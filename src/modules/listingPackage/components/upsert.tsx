@@ -62,20 +62,49 @@ export default function UbsertListingPackage({
 
   const onSubmit = (values: any) => {
     const data: IListingPackages = values
-
-    data.packageCategories = values.packageCategories.map((item: number) => {
-      return {
-        listingCategory_Id: item,
-        isDeleted: false,
+    if (mode === 'add') {
+      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
+        toast.warning(
+          'You can not add less than 3 images and more than 15 images'
+        )
+        return
       }
-    })
+    }
+    data.id = intialValues.id || 0
+    data.packageCategories = values.listOfPackageCategories.map(
+      (item: number) => {
+        return {
+          listingCategory_Id: item,
+          isDeleted:
+            mode === 'add'
+              ? false
+              : intialValues.packageCategories.map(x => x.id).includes(item)
+              ? false
+              : !intialValues.packageCategories.map(x => x.id).includes(item)
+              ? false
+              : true,
+          id:
+            mode === 'add'
+              ? 0
+              : data.packageCategories?.find(x => x.id === item)?.id ?? 0,
+        }
+      }
+    )
+    if (mode === 'edit') {
+      intialValues.packageCategories.forEach(item => {
+        if (!data.packageCategories.map(x => x.id).includes(item.id)) {
+          item.isDeleted = true
+          data.packageCategories.push(item)
+        }
+      })
+    }
 
     const { packageCategories, ...rest } = data
 
     const formData = convertObjectToFormData(rest)
     if (MediaFiles.length > 0) {
       MediaFiles.forEach(file => {
-        formData.append('mediaFiles', new Blob([file.file]), file.name)
+        formData.append('mediaImages', new Blob([file.file]), file.name)
       })
     }
     if (RoutesMapImage.file) {
@@ -86,6 +115,7 @@ export default function UbsertListingPackage({
       )
     }
     packageCategories.forEach((item, index) => {
+      formData.append(`packageCategories[${index}].id`, item.id.toString())
       formData.append(
         `packageCategories[${index}].listingCategory_Id`,
         item.listingCategory_Id.toString()
@@ -155,6 +185,21 @@ export default function UbsertListingPackage({
         Object.entries(intialValues).filter(([, v]) => v !== null)
       )
       form.reset(filteredObj)
+      if (intialValues.attachments && intialValues.attachments.length > 0) {
+        form.setValue(
+          'youTubeVideoIframe',
+          intialValues.attachments?.find(
+            x => x.attachmentType === 'YouTubeVideoIframe'
+          )?.attachmentPath ?? ''
+        )
+      }
+      intialValues.packageCategories = intialValues.categories
+      if (intialValues.packageCategories && intialValues.packageCategories.length > 0) {
+        form.setValue(
+          'listOfPackageCategories',
+          intialValues.packageCategories?.map(x => x.listingCategory_Id)
+        )
+      }
     }
   }, [intialValues])
 
@@ -203,7 +248,7 @@ export default function UbsertListingPackage({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'summary ',
+                inputName: 'summary',
                 title: 'Summary ',
                 isRequired: true,
                 minLength: 3,
@@ -226,7 +271,7 @@ export default function UbsertListingPackage({
               options={ListingCategories || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'packageCategories',
+                inputName: 'listOfPackageCategories',
                 title: 'Listing Package Category',
                 isRequired: true,
               }}
@@ -253,7 +298,7 @@ export default function UbsertListingPackage({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'originalPriceAED ',
+                inputName: 'originalPriceAED',
                 title: 'Price',
                 isRequired: true,
                 isNumber: true,
@@ -264,7 +309,7 @@ export default function UbsertListingPackage({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'salePrice ',
+                inputName: 'salePrice',
                 title: 'Sale Price ',
                 isRequired: true,
                 isNumber: true,
@@ -272,22 +317,36 @@ export default function UbsertListingPackage({
             />
           </div>
 
-          <FormHead title={'Media Files'} />
-          <div className="w-100 mt-4">
-            <MultiFileUpload
-              attachment={[]}
-              onFilesSelected={handelUploadMediaFiles}
-              title="Media Image"
-            />
-          </div>
-          <FormHead title={'Routes Map Image'} />
-          <div className="w-100 mt-4">
-            <FileUpload
-              attachment={''}
-              onFilesSelected={handelUploadRoutesMapImage}
-              title="Routes Map Image"
-            />
-          </div>
+          {mode === 'add' && (
+            <>
+              <FormHead title={'Media Files'} />
+              <div className="w-100 mt-4">
+                <MultiFileUpload
+                  attachment={
+                    intialValues.attachments &&
+                    intialValues.attachments
+                      .filter(x => x.attachmentType === 'media')
+                      .map(x => x.attachmentPath)
+                  }
+                  onFilesSelected={handelUploadMediaFiles}
+                  title="Media Image"
+                />
+              </div>
+              <FormHead title={'Routes Map Image'} />
+              <div className="w-100 mt-4">
+                <FileUpload
+                  attachment={
+                    intialValues.attachments &&
+                    intialValues.attachments.find(
+                      x => x.attachmentType === 'RoutesMap'
+                    )?.attachmentPath
+                  }
+                  onFilesSelected={handelUploadRoutesMapImage}
+                  title="Routes Map Image"
+                />
+              </div>
+            </>
+          )}
 
           <FormHead title={'YouTube Video'} />
           <Input
