@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Sidebar } from 'primereact/sidebar'
 import { toast } from 'sonner'
-import { IListing, IListingAttachment } from '@domains/IListing'
+import {  IListingAttachment } from '@domains/IListing'
 import clsx from 'clsx'
 import { IListingPackages } from '@domains/IListingPackage'
 import {
@@ -199,7 +199,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment, i) => {
+            profile.attachments.map((elem: IListingAttachment) => {
               return (
                 elem.attachmentType === 'media' && (
                   <div
@@ -300,7 +300,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment, i) => {
+            profile.attachments.map((elem: IListingAttachment) => {
               return (
                 elem.attachmentType === 'RoutesMap' && (
                   <div
