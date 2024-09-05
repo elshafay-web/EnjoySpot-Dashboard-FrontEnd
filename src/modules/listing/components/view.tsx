@@ -207,9 +207,9 @@ export default function ViewListing({ onClose, profile, open }: Props) {
         </h4>
         <div className="border-b border-dashed mb-2"></div>{' '}
         {profile.entertainmentPrices &&
-          profile.entertainmentPrices.map(elem => {
+          profile.entertainmentPrices.map((elem, i) => {
             return (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={i}>
                 <div className="w-1/2 flex justify-start items-center">
                   <InputView
                     title="Entertainment"
@@ -232,9 +232,9 @@ export default function ViewListing({ onClose, profile, open }: Props) {
         </h4>
         <div className="border-b border-dashed mb-2"></div>{' '}
         {profile.amenities &&
-          profile.amenities.map(elem => {
+          profile.amenities.map((elem, i) => {
             return (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={i}>
                 <InputView title="Amenities" value={elem.listingAmenityName} />
               </div>
             )
@@ -245,9 +245,9 @@ export default function ViewListing({ onClose, profile, open }: Props) {
         </h4>
         <div className="border-b border-dashed mb-2"></div>{' '}
         {profile.details &&
-          profile.details.map(elem => {
+          profile.details.map((elem, i) => {
             return (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={i}>
                 <InputView
                   title="Category Detail Name"
                   value={elem.listingCategoryDetailName}
@@ -350,7 +350,6 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                 type="file"
                 className="hidden"
                 accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                multiple
                 onChange={e => onSelectFilesMedia(e, 'media')}
                 ref={fileInputRefMedia}
               />
@@ -456,7 +455,6 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                     type="file"
                     className="hidden"
                     accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                    multiple
                     onChange={e => onSelectFilesRoutesMap(e, 'RoutesMap')}
                     ref={fileInputRefRouteMap}
                   />

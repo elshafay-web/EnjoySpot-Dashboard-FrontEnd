@@ -27,7 +27,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
     onSuccess: async res => {
       toast.success(res.message)
       queryClient.invalidateQueries({
-        queryKey: ['getListingProfile', profile.id],
+        queryKey: ['getListingPackageProfile', profile.id],
       })
     },
   })
@@ -37,7 +37,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
     onSuccess: async res => {
       toast.success(res.message)
       queryClient.invalidateQueries({
-        queryKey: ['getListingProfile', profile.id],
+        queryKey: ['getListingPackageProfile', profile.id],
       })
     },
   })
@@ -51,7 +51,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
   ) => {
     if (files.length > 0) {
       const formData = new FormData()
-      formData.append('Listing_Id', profile.id.toString())
+      formData.append('ListingPackage_Id', profile.id.toString())
       formData.append('AttachmentType', attachmentType)
       Array.from(files).forEach((elem: any) => {
         formData.append(`ImageFile`, elem, elem.name)
@@ -177,9 +177,9 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
         </h4>
         <div className="border-b border-dashed mb-2"></div>{' '}
         {profile.categories &&
-          profile.categories.map(elem => {
+          profile.categories.map((elem , i) => {
             return (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={i}>
                 <InputView
                   title="categories"
                   value={elem.listingCategoryName}
@@ -203,7 +203,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
               return (
                 elem.attachmentType === 'media' && (
                   <div
-                    key={i}
+                  key={elem.id}
                     className="col-span-1"
                     style={{ cursor: 'pointer' }}
                   >
@@ -282,7 +282,6 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                 type="file"
                 className="hidden"
                 accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                multiple
                 onChange={e => onSelectFilesMedia(e, 'media')}
                 ref={fileInputRefMedia}
               />
@@ -305,7 +304,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
               return (
                 elem.attachmentType === 'RoutesMap' && (
                   <div
-                    key={i}
+                  key={elem.id}
                     className="col-span-1"
                     style={{ cursor: 'pointer' }}
                   >
@@ -362,6 +361,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
               (elem: IListingAttachment) => elem.attachmentType === 'RoutesMap'
             ) && (
               <div
+              
                 className="col-span-1"
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
@@ -388,7 +388,6 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                     type="file"
                     className="hidden"
                     accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                    multiple
                     onChange={e => onSelectFilesRoutesMap(e, 'RoutesMap')}
                     ref={fileInputRefRouteMap}
                   />
