@@ -5,8 +5,7 @@ import { PageHeader } from '@components/page-header'
 import FilterButton from '@components/FilterButton'
 import AddButton from '@components/AddButton'
 import { useQueryClient } from '@tanstack/react-query'
-import { IListing, IListingGetRequestFilter } from '@domains/IListing'
-import { useGetAllListings } from '@apis/listing/apis'
+import { IListingGetRequestFilter } from '@domains/IListing'
 import SearchForListingPackage from './components/search'
 import ListingsPackageDataTable from './components/dataTable'
 import UbsertListingPackage from './components/upsert'
@@ -18,10 +17,13 @@ import {
   useGetAllListingPackages,
   useGetListingPackageProfile,
 } from '@apis/listingPackage/apis'
+import ViewListingPackage from './components/view'
 
 export default function ListingPackagePage() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
+  const [view, setView] = useState<boolean>(false)
+
   const [ListingPackageObj, setListingPackageObj] = useState<IListingPackages>(
     {} as IListingPackages
   )
@@ -36,6 +38,13 @@ export default function ListingPackagePage() {
     if (profile && profile.id > 0) {
       setListingPackageObj(profile)
       setOpen(true)
+    }
+  }
+
+  const onView = (profile: IListingPackages) => {
+    if (profile && profile.id > 0) {
+      setListingPackageObj(profile)
+      setView(true)
     }
   }
 
@@ -76,6 +85,7 @@ export default function ListingPackagePage() {
         </div>
         <ListingsPackageDataTable
           onEdit={onEdit}
+          onView={onView}
           listings={listingsPackages || []}
         />
       </div>
@@ -83,11 +93,21 @@ export default function ListingPackagePage() {
       <UbsertListingPackage
         open={open}
         intialValues={ListingPackageProfile || ({} as IListingPackages)}
-        mode={Object.keys(ListingPackageProfile || {}).length > 0 ? 'edit' : 'add'}
+        mode={
+          Object.keys(ListingPackageProfile || {}).length > 0 ? 'edit' : 'add'
+        }
         onClose={() => {
           setListingPackageObj({} as IListingPackages)
           setOpen(false)
           queryClient.invalidateQueries({ queryKey: ['getAllListingPackages'] })
+        }}
+      />
+      <ViewListingPackage
+        open={view}
+        profile={ListingPackageProfile || ({} as IListingPackages)}
+        onClose={() => {
+          setListingPackageObj({} as IListingPackages)
+          setView(false)
         }}
       />
     </div>

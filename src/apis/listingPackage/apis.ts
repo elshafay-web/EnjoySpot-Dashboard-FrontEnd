@@ -98,3 +98,19 @@ export async function UpsertListingPackages(
   )
   return data?.data
 }
+export async function addListingPackageAttachment(req: FormData):Promise<IResponse<IListingPackages>> {
+  const data = await axios.post(`${HttpPaths.Api_listingPackages_addAttachment}`, req, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return data?.data
+}
+
+
+export const deleteListingPackageAttachment = async (
+  id: number
+): Promise<IResponse<string>> => {
+  const response = await axios.delete(`${HttpPaths.Api_listingPackages_Delete_Attachment}${id}`)
+  return response.data
+}

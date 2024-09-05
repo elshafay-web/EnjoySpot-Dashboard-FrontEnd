@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode} from 'react'
+import { ReactNode } from 'react'
 import { Column } from 'primereact/column'
 import { Tag } from 'primereact/tag'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
@@ -15,10 +15,11 @@ import { deleteListing, toggleListing } from '@apis/listing/apis'
 
 type Props = {
   onEdit: (data: IListing) => void
+  onView: (data: IListing) => void
   listings: IListing[]
 }
 
-export default function ListingsDataTable({ onEdit, listings }: Props) {
+export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
   const queryClient = useQueryClient()
   const { mutate: toggleListingMutation } = useMutation({
     mutationKey: ['toggleListing'],
@@ -45,6 +46,7 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
     />
   )
 
+
   const reject = () => {}
 
   const togglePopUp = (event: any, data: IListing) => {
@@ -57,7 +59,7 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
         icon: 'pi pi-exclamation-triangle',
         defaultFocus: 'accept',
         accept: () => {
-            toggleListingMutation(data.id)
+          toggleListingMutation(data.id)
         },
         reject,
       })
@@ -76,7 +78,7 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
   }
 
   const actionTemplate = (rowData: IListing) => (
-    <div className="flex justify-start w-[200px]">
+    <div className="flex justify-between w-full">
       <ToggleButton
         isActive={rowData.isActive}
         onClick={e => togglePopUp(e, rowData)}
@@ -108,6 +110,18 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
         className="me-4"
         onClick={() => onEdit(rowData)}
       />
+      <Button
+        icon="pi pi-eye"
+        rounded
+        text
+        raised
+        aria-label="Filter"
+        tooltipOptions={{ position: 'bottom' }}
+        tooltip="View"
+        severity="secondary"
+        className="me-4"
+        onClick={() => onView(rowData)}
+      />
     </div>
   )
 
@@ -121,11 +135,15 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field={'name'} header={'Name'}  />
+          <Column field={'name'} header={'Name'} />
           <Column field="supplierName" header={'Supplier Name'} />
           <Column field="listingTypeName" header={'Listing Type'} />
           <Column field="listingCategoryName" header={'Listing Category'} />
-          <Column field="price" header={'Price'} body={(x)=><div>{x.price} AED</div>} />
+          <Column
+            field="price"
+            header={'Price'}
+            body={x => <div>{x.price} AED</div>}
+          />
           <Column
             className="w-[100px]"
             field="isActive"
@@ -136,6 +154,7 @@ export default function ListingsDataTable({ onEdit, listings }: Props) {
             field="Action"
             header={'actions'}
             body={rowData => actionTemplate(rowData)}
+            className='w-[300px]'
           />
         </DataTable>
       </div>

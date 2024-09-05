@@ -18,10 +18,11 @@ import { IListingPackages } from '@domains/IListingPackage'
 
 type Props = {
   onEdit: (data: IListingPackages) => void
+  onView: (data: IListingPackages) => void
   listings: IListingPackages[]
 }
 
-export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
+export default function ListingsPackageDataTable({ onEdit, onView ,listings }: Props) {
   const queryClient = useQueryClient()
   const { mutate: toggleListingPackagesMutation } = useMutation({
     mutationKey: ['toggleListingPackages'],
@@ -79,7 +80,7 @@ export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
   }
 
   const actionTemplate = (rowData: IListingPackages) => (
-    <div className="flex justify-start w-[200px]">
+    <div className="flex justify-between w-full">
       <ToggleButton
         isActive={rowData.isActive}
         onClick={e => togglePopUp(e, rowData)}
@@ -111,6 +112,18 @@ export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
         className="me-4"
         onClick={() => onEdit(rowData)}
       />
+      <Button
+        icon="pi pi-eye"
+        rounded
+        text
+        raised
+        aria-label="Filter"
+        tooltipOptions={{ position: 'bottom' }}
+        tooltip="View"
+        severity="secondary"
+        className="me-4"
+        onClick={() => onView(rowData)}
+      />
     </div>
   )
 
@@ -131,7 +144,7 @@ export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
             header={'Price'}
             body={x => <div>{x.price} AED</div>}
           />
-                    <Column
+          <Column
             field="salePrice"
             header={'Sale Price'}
             body={x => <div>{x.price} AED</div>}
@@ -146,6 +159,8 @@ export default function ListingsPackageDataTable({ onEdit, listings }: Props) {
             field="Action"
             header={'actions'}
             body={rowData => actionTemplate(rowData)}
+            className='w-[300px]'
+
           />
         </DataTable>
       </div>

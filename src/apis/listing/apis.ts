@@ -86,6 +86,19 @@ export async function UpsertListing(req: FormData):Promise<IResponse<IListing>> 
   return data?.data
 }
 
+export async function addListingAttachment(req: FormData):Promise<IResponse<IListing>> {
+  const data = await axios.post(`${HttpPaths.Api_Listing_addAttachment}`, req, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return data?.data
+}
 
 
-
+export const deleteListingAttachment = async (
+  id: number
+): Promise<IResponse<string>> => {
+  const response = await axios.delete(`${HttpPaths.Api_Listing_Delete_Attachment}${id}`)
+  return response.data
+}

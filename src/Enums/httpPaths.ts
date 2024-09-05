@@ -71,8 +71,10 @@ export enum HttpPaths {
   Api_Listing_GetAll = '/api/listings/getAll',
   Api_Listing_ListOf = '/api/Listings/listOf',
   Api_Listing_Delete = '/api/Listings/delete/',
+  Api_Listing_Delete_Attachment = '/api/listings/deleteAttachment/',
   Api_Listing_ToggleIsActive = '/api/Listings/toggelActive/',
   Api_Listing_Upsert = '/api/Listings/upsert',
+  Api_Listing_addAttachment = '/api/listings/addAttachment',
   Api_Listing_Profile = '/api/Listings/GetProfile/',
 
   // ************** ListingPackage ******************
@@ -83,6 +85,8 @@ export enum HttpPaths {
   Api_listingPackages_ToggleIsActive = '/api/listingPackages/toggelActive/',
   Api_listingPackages_Upsert = '/api/listingPackages/upsert',
   Api_listingPackages_Profile = '/api/listingPackages/GetProfile/',
+  Api_listingPackages_Delete_Attachment = '/api/listingPackages/deleteAttachment/',
+  Api_listingPackages_addAttachment = '/api/listingPackages/addAttachment',
 
   // ************** listingCategoriesDetails ******************
 

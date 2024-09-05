@@ -10,20 +10,29 @@ import { useGetAllListings, useGetListingProfile } from '@apis/listing/apis'
 import SearchForListing from './components/search'
 import ListingsDataTable from './components/dataTable'
 import UbsertListing from './components/upsert'
+import ViewListing from './components/view'
 
 export default function ListingPage() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
+  const [view, setView] = useState<boolean>(false)
   const [ListingObj, setListingObj] = useState<IListing>({} as IListing)
   const [filter, setFilter] = useState({} as IListingGetRequestFilter)
   const { data: listings } = useGetAllListings(filter)
-  const { data: ListingProfile } = useGetListingProfile(ListingObj.id )
+  const { data: ListingProfile } = useGetListingProfile(ListingObj.id)
   const queryClient = useQueryClient()
 
   const onEdit = (profile: IListing) => {
     if (profile && profile.id > 0) {
       setListingObj(profile)
       setOpen(true)
+    }
+  }
+
+  const onView = (profile: IListing) => {
+    if (profile && profile.id > 0) {
+      setListingObj(profile)
+      setView(true)
     }
   }
 
@@ -59,7 +68,11 @@ export default function ListingPage() {
             <AddButton onClick={handleAddButton} buttonText={'Add Listing'} />
           </div>
         </div>
-        <ListingsDataTable onEdit={onEdit} listings={listings || []} />
+        <ListingsDataTable
+          onEdit={onEdit}
+          onView={onView}
+          listings={listings || []}
+        />
       </div>
 
       <UbsertListing
@@ -70,6 +83,15 @@ export default function ListingPage() {
           setListingObj({} as IListing)
           setOpen(false)
           queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
+        }}
+      />
+
+      <ViewListing
+        open={view}
+        profile={ListingProfile || ({} as IListing)}
+        onClose={() => {
+          setListingObj({} as IListing)
+          setView(false)
         }}
       />
     </div>
