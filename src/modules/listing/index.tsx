@@ -11,13 +11,14 @@ import SearchForListing from './components/search'
 import ListingsDataTable from './components/dataTable'
 import UbsertListing from './components/upsert'
 import ViewListing from './components/view'
+import { Button } from 'primereact/button'
 
 export default function ListingPage() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [view, setView] = useState<boolean>(false)
   const [ListingObj, setListingObj] = useState<IListing>({} as IListing)
-  const [filter, setFilter] = useState({} as IListingGetRequestFilter)
+  const [filter, setFilter] = useState({...{} as IListingGetRequestFilter , isActive: true})
   const { data: listings } = useGetAllListings(filter)
   const { data: ListingProfile } = useGetListingProfile(ListingObj.id)
   const queryClient = useQueryClient()
@@ -50,6 +51,21 @@ export default function ListingPage() {
       <div className="card">
         <div className="flex justify-between items-center">
           <PageHeader title="Listings" icon={'fa-solid fa-people-group'} />
+          <div className="flex items-center justify-start">
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: true })}
+              label="Published"
+              severity={`${filter.isActive ? 'success' : 'secondary'}`}
+              className="w-[150px] mx-2"
+            />
+
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: false })}
+              label="Disabled"
+              severity={`${filter.isActive === false ? 'danger' : 'secondary'}`}
+              className="w-[150px]"
+            />
+          </div>
           <div className="flex justify-between items-end gap-3">
             <div>
               <FilterButton onClick={handleFilterButton} />
@@ -58,7 +74,7 @@ export default function ListingPage() {
                   <SearchForListing
                     onSearch={data => setFilter(data)}
                     onClear={() => {
-                      setFilter({} as IListingGetRequestFilter)
+                      setFilter({...{} as IListingGetRequestFilter , isActive: true})
                     }}
                     defualtValues={filter}
                   />

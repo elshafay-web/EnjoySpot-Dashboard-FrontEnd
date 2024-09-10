@@ -33,13 +33,21 @@ export default function FileUpload({
     setFiles(undefined)
   }, [onFilesSelected])
 
-  const memoFile = useCallback((file: IFile) => URL.createObjectURL(file), [])
+  const memoFile = useCallback((file: IFile) => {
+    console.log(file)
+    console.log(URL.createObjectURL(file))
+    return URL.createObjectURL(file)
+  }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       'image/png': [],
       'image/jpeg': [],
+      'image/jpg': [],
+      'image/gif': [],
+      'image/svg': [],
+      'application/pdf': [],
     },
     maxFiles: 1,
   })
@@ -92,12 +100,14 @@ export default function FileUpload({
         id="gallery"
         className="flex items-center justify-center list-unstyled my-0  gap-4 p-0"
       >
-        {files && (
+        {files && files.name.length > 0 && files.type !== 'application/pdf' && (
           <li
             key={files.name}
             className="relative m-1 flex flex-column flex-wrap items-center justify-center"
           >
-            <h6 className="font-bold py-1 text-base w-full text-center">{title}</h6>
+            <h6 className="font-bold py-1 text-base w-full text-center">
+              {title}
+            </h6>
             <Image
               url={
                 files.url
@@ -113,6 +123,21 @@ export default function FileUpload({
               </span>
             </div>
           </li>
+        )}
+        {files && files.name.length > 0 && files.type === 'application/pdf' && (
+          <a
+            onClick={() =>
+              window.open(
+                files.url
+                  ? `${import.meta.env.VITE_BASE_URL}${files.url}`
+                  : memoFile(files)
+              )
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fa-solid fa-file-pdf text-8xl text-lightBlue cursor-pointer"></i>
+          </a>
         )}
       </ul>
     </section>

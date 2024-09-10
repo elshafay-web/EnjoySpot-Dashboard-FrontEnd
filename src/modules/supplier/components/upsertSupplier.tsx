@@ -169,6 +169,16 @@ export default function UbsertSupplier({
               }}
             />
 
+            <DropDownInput
+              control={form.control}
+              options={[]}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'user_Id',
+                title: 'User',
+              }}
+            />
+
             <Input
               register={form.register}
               errors={form.formState.errors}

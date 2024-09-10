@@ -78,7 +78,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
   }
 
   const actionTemplate = (rowData: IListing) => (
-    <div className="flex justify-between w-full">
+    <div className="flex justify-start w-full">
       <ToggleButton
         isActive={rowData.isActive}
         onClick={e => togglePopUp(e, rowData)}
@@ -96,7 +96,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
         onClick={e => {
           deletePopUp(e, rowData)
         }}
-        className="me-4"
+        className="me-2"
       />
       <Button
         icon="pi pi-pencil"
@@ -107,7 +107,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
         tooltipOptions={{ position: 'bottom' }}
         tooltip="Edit"
         severity="info"
-        className="me-4"
+        className="me-2"
         onClick={() => onEdit(rowData)}
       />
       <Button
@@ -119,7 +119,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
         tooltipOptions={{ position: 'bottom' }}
         tooltip="View"
         severity="secondary"
-        className="me-4"
+        className="me-2"
         onClick={() => onView(rowData)}
       />
     </div>
@@ -154,7 +154,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
             field="Action"
             header={'actions'}
             body={rowData => actionTemplate(rowData)}
-            className='w-[300px]'
+            className='w-[250px]'
           />
         </DataTable>
       </div>

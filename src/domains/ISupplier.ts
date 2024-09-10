@@ -23,4 +23,5 @@ export interface ISupplierListGetRequestFilter {
     cityId : number;
     search : string
     country_Id:number
+    isActive :boolean
 }

@@ -45,30 +45,6 @@ export default function SearchForListingPackage({
           }}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'country_Id',
-            title: 'country',
-            isRequired: true,
-          }}
-        />
-
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'CityId',
-            title: 'City',
-            isRequired: true,
-          }}
-        />
-      </div>
-
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
@@ -89,8 +65,6 @@ export default function SearchForListingPackage({
               style={{ width: '100px' }}
               onClick={() => {
                 form.reset({
-                  cityId: undefined,
-                  country_Id: undefined,
                   search: '',
                 })
                 if (onClear) {

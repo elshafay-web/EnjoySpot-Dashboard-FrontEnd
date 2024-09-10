@@ -3,8 +3,9 @@
 import { useForm } from 'react-hook-form'
 import { Button } from 'primereact/button'
 import Input from '@components/input'
-import DropDownInput from '@components/Dropdown'
 import { IListingGetRequestFilter } from '@domains/IListing'
+import DropDownInput from '@components/Dropdown'
+import { useListOfSupppliers } from '@apis/supplier/api'
 
 type Props = {
   onSearch: (data: any) => void
@@ -22,6 +23,7 @@ export default function SearchForListing({
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
   })
+  const { data: listOfSuppliers } = useListOfSupppliers()
 
   const onSubmit = (values: any) => {
     onSearch(values)
@@ -38,37 +40,26 @@ export default function SearchForListing({
           register={form.register}
           errors={form.formState.errors}
           field={{
-            inputName: 'search',
+            inputName: 'Search',
             title: 'searchHere',
             minLength: 1,
             maxLength: 20,
           }}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <DropDownInput
-          control={form.control}
-          options={[]}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'country_Id',
-            title: 'country',
-            isRequired: true,
-          }}
-        />
 
+      <div className="grid grid-cols-1 gap-4 mt-4">
         <DropDownInput
           control={form.control}
-          options={[]}
+          options={listOfSuppliers || []}
           errors={form.formState.errors}
           field={{
-            inputName: 'CityId',
-            title: 'City',
+            inputName: 'supplier_Id',
+            title: 'Supplier',
             isRequired: true,
           }}
         />
       </div>
-
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
@@ -90,9 +81,7 @@ export default function SearchForListing({
               style={{ width: '100px' }}
               onClick={() => {
                 form.reset({
-                  cityId: undefined,
-                  country_Id: undefined,
-                  search: '',
+                  Search: '',
                 })
                 if (onClear) {
                   onClear()

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode} from 'react'
+import { ReactNode } from 'react'
 import { Column } from 'primereact/column'
 import { Tag } from 'primereact/tag'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
@@ -24,15 +24,6 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
   const { mutate: toggleSupplierMutation } = useMutation({
     mutationKey: ['toggleSupplier'],
     mutationFn: (id: number) => toggleSupplier(id),
-    onSuccess(res) {
-      toast.success(res.message)
-      queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
-    },
-  })
-
-  const { mutate: deleteSupplierMutation } = useMutation({
-    mutationKey: ['deleteSupplier'],
-    mutationFn: (id: number) => deleteSupplier(id),
     onSuccess(res) {
       toast.success(res.message)
       queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
@@ -65,38 +56,13 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
     }
   }
 
-  const deletePopUp = (event: any, data: ISupplier) => {
-    confirmPopup({
-      target: event.currentTarget,
-      message: `Are you sure you want to delete ${data.name}?`,
-      icon: 'pi pi-exclamation-triangle',
-      defaultFocus: 'accept',
-      accept: () => deleteSupplierMutation(data.id),
-      reject,
-    })
-  }
-
   const actionTemplate = (rowData: ISupplier) => (
-    <div className="flex justify-start w-[200px]">
+    <div className="flex justify-start w-[150px]">
       <ToggleButton
         isActive={rowData.isActive}
         onClick={e => togglePopUp(e, rowData)}
       />
 
-      <Button
-        icon="pi pi-trash"
-        rounded
-        text
-        raised
-        aria-label="Filter"
-        tooltipOptions={{ position: 'bottom' }}
-        tooltip="Delete"
-        severity="danger"
-        onClick={e => {
-          deletePopUp(e, rowData)
-        }}
-        className="me-4"
-      />
       <Button
         icon="pi pi-pencil"
         rounded
@@ -106,7 +72,7 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
         tooltipOptions={{ position: 'bottom' }}
         tooltip="Edit"
         severity="info"
-        className="me-4"
+        className="me-2"
         onClick={() => onEdit(rowData)}
       />
     </div>

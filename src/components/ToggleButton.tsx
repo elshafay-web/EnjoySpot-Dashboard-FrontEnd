@@ -17,7 +17,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ isActive, onClick }) => (
     severity={isActive ? "danger" : "success"}
     onClick={onClick}
     tooltipOptions={{ position: 'top' }}
-    className='me-4'
+    className='me-2'
     size='small'
     
   />

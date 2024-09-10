@@ -64,4 +64,8 @@ export interface IListingAmenities {
   listingAmenityName?: string
   isDeleted: boolean
 }
-export interface IListingGetRequestFilter {}
+export interface IListingGetRequestFilter {
+  isActive : boolean
+  Search : string
+  supplier_Id : number
+}

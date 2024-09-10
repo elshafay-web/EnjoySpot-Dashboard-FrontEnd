@@ -35,5 +35,10 @@ export interface IListingPackages {
   }
   
   
-  export interface IListingPackageGetRequestFilter {}
+  export interface IListingPackageGetRequestFilter {
+    pageNumber: number
+    pageSize: number
+    search: string
+    isActive: boolean
+  }
   

@@ -49,7 +49,19 @@ export default function SearchForSupplier({
           }}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-4" >
+      <div className="grid grid-cols-1 gap-4 mt-4">
+        <Input
+          register={form.register}
+          errors={form.formState.errors}
+          field={{
+            inputName: 'search',
+            title: 'License Number',
+            minLength: 1,
+            maxLength: 20,
+          }}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-4 mt-4">
         <DropDownInput
           control={form.control}
           options={listOfCountries || []}
@@ -57,7 +69,6 @@ export default function SearchForSupplier({
           field={{
             inputName: 'country_Id',
             title: 'country',
-            isRequired: true,
           }}
         />
 
@@ -68,7 +79,6 @@ export default function SearchForSupplier({
           field={{
             inputName: 'CityId',
             title: 'City',
-            isRequired: true,
           }}
         />
       </div>
@@ -94,9 +104,9 @@ export default function SearchForSupplier({
               style={{ width: '100px' }}
               onClick={() => {
                 form.reset({
-                  cityId : undefined,
-                  country_Id : undefined,
-                  search:''
+                  cityId: undefined,
+                  country_Id: undefined,
+                  search: '',
                 })
                 if (onClear) {
                   onClear()

@@ -18,6 +18,7 @@ import {
   useGetListingPackageProfile,
 } from '@apis/listingPackage/apis'
 import ViewListingPackage from './components/view'
+import { Button } from 'primereact/button'
 
 export default function ListingPackagePage() {
   const op = useRef<any>(null)
@@ -27,7 +28,10 @@ export default function ListingPackagePage() {
   const [ListingPackageObj, setListingPackageObj] = useState<IListingPackages>(
     {} as IListingPackages
   )
-  const [filter, setFilter] = useState({} as IListingPackageGetRequestFilter)
+  const [filter, setFilter] = useState({
+    ...({} as IListingPackageGetRequestFilter),
+    isActive: true,
+  })
   const { data: listingsPackages } = useGetAllListingPackages(filter)
   const { data: ListingPackageProfile } = useGetListingPackageProfile(
     ListingPackageObj.id
@@ -61,7 +65,25 @@ export default function ListingPackagePage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Listings" icon={'fa-solid fa-people-group'} />
+          <PageHeader
+            title="Listing Packages"
+            icon={'fa-solid fa-people-group'}
+          />
+          <div className="flex items-center justify-start">
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: true })}
+              label="Active"
+              severity={`${filter.isActive ? 'success' : 'secondary'}`}
+              className="w-[150px] mx-2"
+            />
+
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: false })}
+              label="Not Active"
+              severity={`${filter.isActive === false ? 'danger' : 'secondary'}`}
+              className="w-[150px]"
+            />
+          </div>
           <div className="flex justify-between items-end gap-3">
             <div>
               <FilterButton onClick={handleFilterButton} />
@@ -70,7 +92,10 @@ export default function ListingPackagePage() {
                   <SearchForListingPackage
                     onSearch={data => setFilter(data)}
                     onClear={() => {
-                      setFilter({} as IListingGetRequestFilter)
+                      setFilter({
+                        ...({} as IListingPackageGetRequestFilter),
+                        isActive: true,
+                      })
                     }}
                     defualtValues={filter}
                   />

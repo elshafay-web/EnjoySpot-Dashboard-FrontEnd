@@ -10,19 +10,23 @@ import SuppliersDataTable from './components/dataTable'
 import UbsertSupplier from './components/upsertSupplier'
 import { useGetAllSupppliers } from '@apis/supplier/api'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from 'primereact/button'
 
 export default function AllSuppliers() {
   const op = useRef<any>(null)
   const [open, setOpen] = useState<boolean>(false)
   const [Supplier, setSupplier] = useState<ISupplier>({} as ISupplier)
-  const [filter, setFilter] = useState({} as ISupplierListGetRequestFilter)
+  const [filter, setFilter] = useState({
+    ...({} as ISupplierListGetRequestFilter),
+    isActive: true,
+  })
   const { data: suppliers } = useGetAllSupppliers(filter)
   const queryClient = useQueryClient()
 
   const onEdit = (profile: ISupplier) => {
     if (profile && profile.id > 0) {
-      setSupplier(profile);
-      setOpen(true);
+      setSupplier(profile)
+      setOpen(true)
     }
   }
 
@@ -40,6 +44,21 @@ export default function AllSuppliers() {
       <div className="card">
         <div className="flex justify-between items-center">
           <PageHeader title="Suppliers" icon={'fa-solid fa-people-group'} />
+          <div className="flex items-center justify-start">
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: true })}
+              label="Active"
+              severity={`${filter.isActive ? 'success' : 'secondary'}`}
+              className="w-[150px] mx-2"
+            />
+
+            <Button
+              onClick={() => setFilter({ ...filter, isActive: false })}
+              label="Not Active"
+              severity={`${filter.isActive === false ? 'danger' : 'secondary'}`}
+              className="w-[150px]"
+            />
+          </div>
           <div className="flex justify-between items-end gap-3">
             <div>
               <FilterButton onClick={handleFilterButton} />
@@ -48,7 +67,10 @@ export default function AllSuppliers() {
                   <SearchForSupplier
                     onSearch={data => setFilter(data)}
                     onClear={() => {
-                      setFilter({} as ISupplierListGetRequestFilter)
+                      setFilter({
+                        ...({} as ISupplierListGetRequestFilter),
+                        isActive: true,
+                      })
                     }}
                     defualtValues={filter}
                   />
