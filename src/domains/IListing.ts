@@ -9,6 +9,7 @@ export interface IListing {
   minimumValue: number
   supplier_Id: number
   listingCategory_Id: number
+  listingType_Id: number
   price: number
   priceDiscountValue: number
   priceDiscountPercentage: number

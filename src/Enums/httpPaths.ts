@@ -37,6 +37,7 @@ export enum HttpPaths {
 
   Api_listingCategories_GetAll = '/api/listingCategories/getAll',
   Api_listingCategories_ListOf = '/api/listingCategories/listOf',
+  Api_listingCategories_ListOf_WithListTypeId  = '/api/listingCategories/listOf?listingTypeId=',
   Api_listingCategories_Delete = '/api/listingCategories/delete/',
   Api_listingCategories_ToggleIsActive = '/api/listingCategories/toggelActive/',
   Api_listingCategories_Upsert = '/api/listingCategories/upsert',

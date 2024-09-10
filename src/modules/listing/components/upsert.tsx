@@ -9,8 +9,9 @@ import { Button } from 'primereact/button'
 import {
   useListOfEnteringment,
   useListOfListingAmenities,
-  useListOfListingCategories,
+  useListOfListingCategoriesWithListTypeId,
   useListOfListingDetails,
+  useListOfListingTypes,
 } from '@apis/lookups/apis'
 import { toast } from 'sonner'
 import FileUpload from '@components/FileUpload'
@@ -53,6 +54,7 @@ export default function UbsertListing({
   }>({} as any)
 
   const youTubeVideoIframe = form.watch('youTubeVideoIframe')
+  const listingType_Id = form.watch('listingType_Id')
   const priceType = form.watch('priceType')
   const photographer = form.watch('photographer')
   const { fields, append, remove } = useFieldArray({
@@ -61,7 +63,8 @@ export default function UbsertListing({
   })
 
   const { data: listOfSuppliers } = useListOfSupppliers()
-  const { data: listOfListingCategories } = useListOfListingCategories()
+  const { data: listOfListingTypes} = useListOfListingTypes()
+  const { data: listOfListingCategories } = useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0)
   const { data: listOfListingAmenities } = useListOfListingAmenities()
   const { data: listOfListingDetails } = useListOfListingDetails()
   const { data: listOfEnteringment } = useListOfEnteringment()
@@ -360,6 +363,17 @@ export default function UbsertListing({
               field={{
                 inputName: 'supplier_Id',
                 title: 'Supplier',
+                isRequired: true,
+              }}
+            />
+
+            <DropDownInput
+              control={form.control}
+              options={listOfListingTypes || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'listingType_Id',
+                title: 'Listing Type',
                 isRequired: true,
               }}
             />
