@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate, useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import LockStyle from './Lock';
 import { checkTokenCookie } from '@helpers/cookies';
+import LockStyle from './Lock';
 
 type Props = {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export default function ProtectRoutes({
   const externalParam = searchParams.get('token');
   if (externalParam) {
     token = true;
-  }  
+  }
   if (auth) {
     if (!token) {
       return <Navigate to="/login" state={{ from: location }} replace />;

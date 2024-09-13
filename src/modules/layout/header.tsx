@@ -1,35 +1,38 @@
-import { OverlayPanel } from 'primereact/overlaypanel'
-import { TieredMenu } from 'primereact/tieredmenu'
-import { useRef, useState } from 'react'
-import '../../style/header.scss'
-import { Badge } from 'primereact/badge'
-import { timeAgo } from '@helpers/helpingFun'
-import { Tag } from 'primereact/tag'
-import { Sidebar } from 'primereact/sidebar'
-import { useGetAllNotification } from '@apis/notifications/apis'
-import { useUserData } from '@store/auth'
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/img-redundant-alt */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { TieredMenu } from 'primereact/tieredmenu';
+import { useRef, useState } from 'react';
+import '../../style/header.scss';
+import { Badge } from 'primereact/badge';
+import { timeAgo } from '@helpers/helpingFun';
+import { Tag } from 'primereact/tag';
+import { Sidebar } from 'primereact/sidebar';
+import { useGetAllNotification } from '@apis/notifications/apis';
+import { useUserData } from '@store/auth';
 
 export default function Header() {
-  const op = useRef<any>(null)
+  const op = useRef<any>(null);
   const [visibleSidebar, setVisibleSidebar] = useState(false);
-  const { userData } = useUserData()
+  const { userData } = useUserData();
   const { data: allUserNotifications } = useGetAllNotification(userData.uid);
 
-
-
-
-  const logout = () => {}
-
-
+  const logout = () => {};
 
   const itemRenderer = (item: any) => (
-    <a
-      className={`group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-4 px-3 rounded-lg transition-all`}
+    <div
+      className="group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-4 px-3 rounded-lg transition-all"
     >
-      <i className={`${item.icon} text-darkBlue group-hover:text-white text-2xl`} />
+      <i
+        className={`${item.icon} text-darkBlue group-hover:text-white text-2xl`}
+      />
       <span className={"mx-5 'text-xl"}>{item.label}</span>
-    </a>
-  )
+    </div>
+  );
   const items = [
     {
       label: 'Profile',
@@ -45,9 +48,7 @@ export default function Header() {
       template: itemRenderer,
       command: () => logout(),
     },
-  ]
-
-
+  ];
 
   const notificationSidebar = (
     <Sidebar
@@ -108,9 +109,12 @@ export default function Header() {
 
   return (
     <div className="h-16 flex justify-end items-center bg-white m-0">
-      <i className="pi pi-bell p-overlay-badge me-4 cursor-pointer" style={{ fontSize: '1.8rem' }}
-      onClick={()=>setVisibleSidebar(true)}>
-        <Badge value="2" severity={"danger"}></Badge>
+      <i
+        className="pi pi-bell p-overlay-badge me-4 cursor-pointer"
+        style={{ fontSize: '1.8rem' }}
+        onClick={() => setVisibleSidebar(true)}
+      >
+        <Badge value="2" severity="danger" />
       </i>
 
       <img
@@ -119,7 +123,7 @@ export default function Header() {
         width={35}
         height={35}
         className="rounded-full me-4 cursor-pointer"
-        onClick={e => op.current.toggle(e)}
+        onClick={(e) => op.current.toggle(e)}
       />
 
       <OverlayPanel ref={op} dismissable style={{ width: '250px' }}>
@@ -132,5 +136,5 @@ export default function Header() {
 
       {notificationSidebar}
     </div>
-  )
+  );
 }

@@ -4,5 +4,5 @@ export default function LockStyle() {
       <p className="font-dinbold text-6xl text-darkBlue"> عفوًا</p>
       <p className="mt-5 text-xl text-darkBlue">لا تمتلك الصلاحية الكافية</p>
     </div>
-  )
+  );
 }

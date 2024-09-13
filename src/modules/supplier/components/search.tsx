@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from 'react-hook-form'
-import { Button } from 'primereact/button'
-import Input from '@components/input'
-import DropDownInput from '@components/Dropdown'
-import { ISupplierListGetRequestFilter } from '@domains/ISupplier'
-import { useListOfCities, useListOfCountries } from '@apis/lookups/apis'
+import { useForm } from 'react-hook-form';
+import { Button } from 'primereact/button';
+import Input from '@components/input';
+import DropDownInput from '@components/Dropdown';
+import { ISupplierListGetRequestFilter } from '@domains/ISupplier';
+import { useListOfCities, useListOfCountries } from '@apis/lookups/apis';
 
 type Props = {
-  onSearch: (data: any) => void
-  onClear?: () => void
-  defualtValues: ISupplierListGetRequestFilter
-}
+  onSearch: (data: any) => void;
+  onClear?: () => void;
+  defualtValues: ISupplierListGetRequestFilter;
+};
 
 export default function SearchForSupplier({
   onSearch,
@@ -22,14 +23,14 @@ export default function SearchForSupplier({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
-  })
-  const country_Id = form.watch('country_Id')
-  const { data: listOfCountries } = useListOfCountries()
-  const { data: listOfCities } = useListOfCities(country_Id ?? 0)
+  });
+  const country_Id = form.watch('country_Id');
+  const { data: listOfCountries } = useListOfCountries();
+  const { data: listOfCities } = useListOfCities(country_Id ?? 0);
 
   const onSubmit = (values: any) => {
-    onSearch(values)
-  }
+    onSearch(values);
+  };
 
   return (
     <form
@@ -86,7 +87,7 @@ export default function SearchForSupplier({
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
-            label={'Search'}
+            label="Search"
             raised
             type="submit"
             className="rounded p-2"
@@ -94,9 +95,9 @@ export default function SearchForSupplier({
             //   disabled={isPendingUpload || isPending}
           />
 
-          {Object.values(form.getValues()).some(value => value) && (
+          {Object.values(form.getValues()).some((value) => value) && (
             <Button
-              label={'Clear'}
+              label="Clear"
               raised
               severity="secondary"
               type="button"
@@ -107,9 +108,9 @@ export default function SearchForSupplier({
                   cityId: undefined,
                   country_Id: undefined,
                   search: '',
-                })
+                });
                 if (onClear) {
-                  onClear()
+                  onClear();
                 }
               }}
             />
@@ -117,5 +118,5 @@ export default function SearchForSupplier({
         </div>
       </div>
     </form>
-  )
+  );
 }

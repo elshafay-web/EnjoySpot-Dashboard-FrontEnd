@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputCreateModel } from '@domains/IShardInput'
-import { ErrorMessage } from '@hookform/error-message'
-import clsx from 'clsx'
-import { Calendar } from 'primereact/calendar'
-import { Control, Controller } from 'react-hook-form'
+import { InputCreateModel } from '@domains/IShardInput';
+import { ErrorMessage } from '@hookform/error-message';
+import clsx from 'clsx';
+import { Calendar } from 'primereact/calendar';
+import { Control, Controller } from 'react-hook-form';
 
 type Props = {
   field: InputCreateModel
@@ -12,7 +12,7 @@ type Props = {
   showTime?: boolean
   min?: Date
   max?: Date
-}
+};
 
 export default function CalendarInput({
   field,
@@ -54,9 +54,8 @@ export default function CalendarInput({
                   errors[field.inputName],
               },
               {
-                '':
-                  !errors[field.inputName],
-              }
+                '': !errors[field.inputName],
+              },
             )}
           />
         )}
@@ -74,5 +73,5 @@ export default function CalendarInput({
         }
       />
     </div>
-  )
+  );
 }

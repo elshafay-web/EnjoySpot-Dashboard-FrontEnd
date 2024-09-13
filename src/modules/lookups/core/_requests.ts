@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { IPostLookup } from './_models';
 import { CommonGetRequestsWithQuery } from '@helpers/helpingFun';
+import { IPostLookup } from './_models';
 
 export function getLookups(Api_Get_Url: string, model: any) {
   return CommonGetRequestsWithQuery(`${Api_Get_Url}`, model);

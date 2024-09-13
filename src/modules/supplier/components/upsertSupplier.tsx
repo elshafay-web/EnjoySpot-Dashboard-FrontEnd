@@ -1,25 +1,28 @@
-import { useMutation } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Sidebar } from 'primereact/sidebar'
-import { ISupplier } from '@domains/ISupplier'
-import FormHead from '@components/formHead'
-import Input from '@components/input'
-import CalendarInput from '@components/calendar'
-import DropDownInput from '@components/Dropdown'
-import { Button } from 'primereact/button'
-import { useListOfCities, useListOfCountries } from '@apis/lookups/apis'
-import { UpsertSupplier } from '@apis/supplier/api'
-import { toast } from 'sonner'
-import { convertObjectToFormData } from '@helpers/helpingFun'
-import FileUpload from '@components/FileUpload'
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Sidebar } from 'primereact/sidebar';
+import { ISupplier } from '@domains/ISupplier';
+import FormHead from '@components/formHead';
+import Input from '@components/input';
+import CalendarInput from '@components/calendar';
+import DropDownInput from '@components/Dropdown';
+import { Button } from 'primereact/button';
+import { useListOfCities, useListOfCountries } from '@apis/lookups/apis';
+import { UpsertSupplier } from '@apis/supplier/api';
+import { toast } from 'sonner';
+import { convertObjectToFormData } from '@helpers/helpingFun';
+import FileUpload from '@components/FileUpload';
 
 type Props = {
-  onClose: () => void
-  intialValues: ISupplier
-  mode: 'edit' | 'add'
-  open: boolean
-}
+  onClose: () => void;
+  intialValues: ISupplier;
+  mode: 'edit' | 'add';
+  open: boolean;
+};
 
 export default function UbsertSupplier({
   onClose,
@@ -31,101 +34,101 @@ export default function UbsertSupplier({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
     defaultValues: intialValues,
-  })
+  });
   const [attachmentAgreementFile, setAttachmentAgreementFile] = useState<{
-    file: ArrayBuffer
-    name: string
-  }>({} as any)
+    file: ArrayBuffer;
+    name: string;
+  }>({} as any);
 
   const [attachmentLicenseFile, setAttachmentLicenseFile] = useState<{
-    file: ArrayBuffer
-    name: string
-  }>({} as any)
+    file: ArrayBuffer;
+    name: string;
+  }>({} as any);
 
-  const country_Id = form.watch('country_Id')
-  const { data: listOfCountries } = useListOfCountries()
-  const { data: listOfCities } = useListOfCities(country_Id ?? 0)
+  const country_Id = form.watch('country_Id');
+  const { data: listOfCountries } = useListOfCountries();
+  const { data: listOfCities } = useListOfCities(country_Id ?? 0);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertSupplier(req),
-    onSuccess: async res => {
-      toast.success(res.message)
-      onClose()
+    onSuccess: async (res) => {
+      toast.success(res.message);
+      onClose();
     },
-  })
+  });
 
   const onSubmit = (values: any) => {
-    const formData = convertObjectToFormData(values)
+    const formData = convertObjectToFormData(values);
 
     formData.append(
       'attachmentLicenseFile',
-      new Blob([attachmentLicenseFile.file])
-    )
+      new Blob([attachmentLicenseFile.file]),
+    );
     formData.append(
       'attachmentAgreementFile',
-      new Blob([attachmentAgreementFile.file])
-    )
-    mutate(formData)
-  }
+      new Blob([attachmentAgreementFile.file]),
+    );
+    mutate(formData);
+  };
 
   const handelUploadAttachmentAgreementFile = useCallback((file?: File) => {
     if (file) {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
       reader.onload = () => {
-        const data = reader.result as ArrayBuffer
+        const data = reader.result as ArrayBuffer;
         if (data) {
           setAttachmentAgreementFile({
             file: data,
             name: file.name,
-          })
+          });
         }
-      }
+      };
     }
-  }, [])
+  }, []);
 
   const handelUploadAttachmentLicenseFile = useCallback((file?: File) => {
     if (file) {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
       reader.onload = () => {
-        const data = reader.result as ArrayBuffer
+        const data = reader.result as ArrayBuffer;
         if (data) {
           setAttachmentLicenseFile({
             file: data,
             name: file.name,
-          })
+          });
         }
-      }
+      };
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (intialValues) {
       const filteredObj = Object.fromEntries(
-        Object.entries(intialValues).filter(([, v]) => v !== null)
-      )
+        Object.entries(intialValues).filter(([, v]) => v !== null),
+      );
       filteredObj.attachment_Agreement_ExpireDate =
         filteredObj.attachment_Agreement_ExpireDate
           ? new Date(filteredObj.attachment_Agreement_ExpireDate)
-          : undefined
+          : undefined;
       filteredObj.attachment_License_ExpireDate =
         filteredObj.attachment_License_ExpireDate
           ? new Date(filteredObj.attachment_License_ExpireDate)
-          : undefined
-      form.reset(filteredObj)
+          : undefined;
+      form.reset(filteredObj);
     }
-  }, [intialValues])
+  }, [intialValues]);
   const customHeader = (
     <div className="items-center flex gap-4">
       <span className="text-3xl font-bold">
         {mode === 'add' ? 'Add Supplier' : 'Edit Supplier'}
       </span>
     </div>
-  )
+  );
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   return (
     <Sidebar
@@ -135,15 +138,15 @@ export default function UbsertSupplier({
       modal
       className="d-flex dss"
       onHide={() => {
-        form.reset()
-        onClose()
+        form.reset();
+        onClose();
       }}
       header={customHeader}
       dismissable={false}
     >
       <div className="w-100">
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
-          <FormHead title={'Basic Infromation'} />
+          <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Input
               register={form.register}
@@ -237,7 +240,7 @@ export default function UbsertSupplier({
               }}
             />
           </div>
-          <FormHead title={'Manger Infromation'} />
+          <FormHead title="Manger Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Input
               register={form.register}
@@ -262,7 +265,7 @@ export default function UbsertSupplier({
               }}
             />
           </div>
-          <FormHead title={'Attachment Data'} />
+          <FormHead title="Attachment Data" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <CalendarInput
               control={form.control}
@@ -284,7 +287,7 @@ export default function UbsertSupplier({
               }}
             />
           </div>{' '}
-          <FormHead title={'Attachment Files'} />
+          <FormHead title="Attachment Files" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <FileUpload
               attachment={intialValues?.attachment_Agreement_ImagePath}
@@ -297,11 +300,10 @@ export default function UbsertSupplier({
               title="License Image"
             />
           </div>
-          {/* ////////////////////////////////////////  Submit And cancle ///////////////////////////////// */}
           <div className="flex items-center mt-4 grid  fixed bottom-4 ">
             <div className="col-12 ">
               <Button
-                label={'Submit'}
+                label="Submit"
                 raised
                 type="submit"
                 className="rounded p-2"
@@ -310,7 +312,7 @@ export default function UbsertSupplier({
               />
 
               <Button
-                label={'Cancle'}
+                label="Cancle"
                 raised
                 severity="secondary"
                 type="button"
@@ -323,5 +325,5 @@ export default function UbsertSupplier({
         </form>
       </div>
     </Sidebar>
-  )
+  );
 }

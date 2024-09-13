@@ -1,24 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import DataTableComponent from '../components/dataTable'
-import TableHeader from '../components/tableHeader'
-import { IGetLookup, ILookups } from '../core/_models'
-import { getLookups } from '../core/_requests'
-import LookupDialog from '../components/lookupDialog'
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import DataTableComponent from '../components/dataTable';
+import TableHeader from '../components/tableHeader';
+import { IGetLookup, ILookups } from '../core/_models';
+import { getLookups } from '../core/_requests';
+import LookupDialog from '../components/lookupDialog';
 
 type Props = {
-  obj: ILookups
-  className: string
-}
+  obj: ILookups;
+  className: string;
+};
 
 export default function LookupsPage({ obj, className }: Props) {
   const [dialogVisable, setdialogVisable] = useState({
     visible: false,
     editObj: {},
-  })
-  const [modified, setModified] = useState(false)
-  const [lookupsData, setLookupsData] = useState<IGetLookup[]>([])
+  });
+  const [modified, setModified] = useState(false);
+  const [lookupsData, setLookupsData] = useState<IGetLookup[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,16 +26,16 @@ export default function LookupsPage({ obj, className }: Props) {
         const { data } = await getLookups(obj.getApi, {
           PageNumber: 1,
           PageSize: 100000,
-        })
-        setLookupsData(data.data)
-        setModified(false)
+        });
+        setLookupsData(data.data);
+        setModified(false);
       } catch (error) {
-        toast.error('Error In Loading Data')
+        toast.error('Error In Loading Data');
       }
-    }
+    };
 
-    fetchData()
-  }, [obj.getApi, modified])
+    fetchData();
+  }, [obj.getApi, modified]);
 
   return (
     <div className="p-4 w-100">
@@ -62,5 +62,5 @@ export default function LookupsPage({ obj, className }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

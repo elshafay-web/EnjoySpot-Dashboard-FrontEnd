@@ -1,16 +1,19 @@
+/* eslint-disable no-useless-concat */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { Button } from 'primereact/button'
-import Image from './Image'
+import { useState, useCallback, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Button } from 'primereact/button';
+import Image from './Image';
 
 interface IFile extends File {
-  url?: string
+  url?: string;
 }
 interface FileUploadProps {
-  onFilesSelected: (files: IFile | undefined) => void
-  attachment?: string
-  title: string
+  onFilesSelected: (files: IFile | undefined) => void;
+  attachment?: string;
+  title: string;
 }
 
 export default function FileUpload({
@@ -18,26 +21,22 @@ export default function FileUpload({
   attachment,
   title,
 }: FileUploadProps) {
-  const [files, setFiles] = useState<IFile | undefined>(undefined)
+  const [files, setFiles] = useState<IFile | undefined>(undefined);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0] as IFile
-      setFiles(file)
-      onFilesSelected(file)
+      const file = acceptedFiles[0] as IFile;
+      setFiles(file);
+      onFilesSelected(file);
     },
-    [onFilesSelected]
-  )
+    [onFilesSelected],
+  );
 
   const removeFile = useCallback(() => {
-    onFilesSelected(undefined)
-    setFiles(undefined)
-  }, [onFilesSelected])
+    onFilesSelected(undefined);
+    setFiles(undefined);
+  }, [onFilesSelected]);
 
-  const memoFile = useCallback((file: IFile) => {
-    console.log(file)
-    console.log(URL.createObjectURL(file))
-    return URL.createObjectURL(file)
-  }, [])
+  const memoFile = useCallback((file: IFile) => URL.createObjectURL(file), []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -50,17 +49,17 @@ export default function FileUpload({
       'application/pdf': [],
     },
     maxFiles: 1,
-  })
+  });
 
   useEffect(() => {
     if (attachment) {
       const file = new File([attachment || ''], `${1}`, {
         type: 'image/png',
-      }) as IFile
-      file.url = attachment // Add the url property
-      setFiles(file)
+      }) as IFile;
+      file.url = attachment; // Add the url property
+      setFiles(file);
     }
-  }, [attachment])
+  }, [attachment]);
 
   return (
     <section className="flex flex-column  items-center justify-center h-full px-1 pr-3">
@@ -91,7 +90,7 @@ export default function FileUpload({
             }}
             className="p-3"
           >
-            {'Upload' + ' ' + title}
+            {'Upload' + ` ${title}`}
           </Button>
         </header>
       )}
@@ -125,21 +124,19 @@ export default function FileUpload({
           </li>
         )}
         {files && files.name.length > 0 && files.type === 'application/pdf' && (
-          <a
+          <div
             onClick={() =>
               window.open(
                 files.url
                   ? `${import.meta.env.VITE_BASE_URL}${files.url}`
-                  : memoFile(files)
+                  : memoFile(files),
               )
             }
-            target="_blank"
-            rel="noopener noreferrer"
           >
-            <i className="fa-solid fa-file-pdf text-8xl text-lightBlue cursor-pointer"></i>
-          </a>
+            <i className="fa-solid fa-file-pdf text-8xl text-lightBlue cursor-pointer" />
+          </div>
         )}
       </ul>
     </section>
-  )
+  );
 }

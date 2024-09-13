@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputCreateModel } from '@domains/IShardInput'
-import { ErrorMessage } from '@hookform/error-message'
-import clsx from 'clsx'
-import { MultiSelect } from 'primereact/multiselect'
-import { Control, Controller } from 'react-hook-form'
+import { InputCreateModel } from '@domains/IShardInput';
+import { ErrorMessage } from '@hookform/error-message';
+import clsx from 'clsx';
+import { MultiSelect } from 'primereact/multiselect';
+import { Control, Controller } from 'react-hook-form';
 
 type Props = {
   field: InputCreateModel
   errors: any
   control: Control<any>
   options: Array<any>
-}
+};
 
 export default function MultiSelectInput({
   field,
@@ -37,11 +37,11 @@ export default function MultiSelectInput({
         render={({ field: { onChange, value } }) => (
           <MultiSelect
             value={value || []}
-            onChange={e => {
+            onChange={(e) => {
               if (e.value) {
-                onChange(e.value)
+                onChange(e.value);
               } else {
-                onChange(undefined)
+                onChange(undefined);
               }
             }}
             filter
@@ -49,7 +49,7 @@ export default function MultiSelectInput({
             options={options}
             optionValue="id"
             optionLabel="name"
-            display="chip" 
+            display="chip"
             placeholder="Select a Option"
             className={clsx(
               'h-[42px] w-full  transition duration-300 rounded-[6px] mt-1',
@@ -60,7 +60,7 @@ export default function MultiSelectInput({
               {
                 'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
                   !errors[field.inputName],
-              }
+              },
             )}
           />
         )}
@@ -78,5 +78,5 @@ export default function MultiSelectInput({
         }
       />
     </div>
-  )
+  );
 }

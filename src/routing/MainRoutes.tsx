@@ -1,14 +1,14 @@
-import { lazy } from 'react'
-import { RouteObject } from 'react-router-dom'
-import ProtectRoutes from './ProtectRoutes'
-import LookupsData from '@modules/lookups/core/_lookupData'
-import LookupsPage from '@modules/lookups/page/lookup'
+import { lazy } from 'react';
+import { RouteObject } from 'react-router-dom';
+import LookupsData from '@modules/lookups/core/_lookupData';
+import LookupsPage from '@modules/lookups/page/lookup';
+import ProtectRoutes from './ProtectRoutes';
 
-const MainLayout = lazy(() => import('../modules/layout'))
-const DashboardPage = lazy(() => import('../modules/dashboard'))
-const SupplierPage = lazy(() => import('../modules/supplier'))
-const ListingPage = lazy(() => import('../modules/listing'))
-const ListingPackagePage = lazy(() => import('../modules/listingPackage'))
+const MainLayout = lazy(() => import('../modules/layout'));
+const DashboardPage = lazy(() => import('../modules/dashboard'));
+const SupplierPage = lazy(() => import('../modules/supplier'));
+const ListingPage = lazy(() => import('../modules/listing'));
+const ListingPackagePage = lazy(() => import('../modules/listingPackage'));
 
 const MainRoute: RouteObject[] = [
   {
@@ -61,6 +61,6 @@ const MainRoute: RouteObject[] = [
       })),
     ],
   },
-]
+];
 
-export default MainRoute
+export default MainRoute;

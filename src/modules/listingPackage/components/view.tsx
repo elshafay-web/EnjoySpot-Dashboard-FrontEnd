@@ -1,7 +1,16 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/semi */
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Sidebar } from 'primereact/sidebar'
 import { toast } from 'sonner'
-import {  IListingAttachment } from '@domains/IListing'
+import { IListingAttachment } from '@domains/IListing'
 import clsx from 'clsx'
 import { IListingPackages } from '@domains/IListingPackage'
 import {
@@ -24,7 +33,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
 
   const { mutate } = useMutation({
     mutationFn: (req: FormData) => addListingPackageAttachment(req),
-    onSuccess: async res => {
+    onSuccess: async (res) => {
       toast.success(res.message)
       queryClient.invalidateQueries({
         queryKey: ['getListingPackageProfile', profile.id],
@@ -34,7 +43,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
 
   const { mutate: deleteAttachment } = useMutation({
     mutationFn: (req: number) => deleteListingPackageAttachment(req),
-    onSuccess: async res => {
+    onSuccess: async (res) => {
       toast.success(res.message)
       queryClient.invalidateQueries({
         queryKey: ['getListingPackageProfile', profile.id],
@@ -47,14 +56,14 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
 
   const sendAttachment = async (
     files: any[],
-    attachmentType: 'media' | 'RoutesMap'
+    attachmentType: 'media' | 'RoutesMap',
   ) => {
     if (files.length > 0) {
       const formData = new FormData()
       formData.append('ListingPackage_Id', profile.id.toString())
       formData.append('AttachmentType', attachmentType)
       Array.from(files).forEach((elem: any) => {
-        formData.append(`ImageFile`, elem, elem.name)
+        formData.append('ImageFile', elem, elem.name)
       })
 
       mutate(formData)
@@ -67,14 +76,14 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
 
   const onSelectFilesMedia = async (
     e: any,
-    attachmentType: 'media' | 'RoutesMap'
+    attachmentType: 'media' | 'RoutesMap',
   ) => {
     sendAttachment(e.target.files, attachmentType)
   }
 
   const onSelectFilesRoutesMap = async (
     e: any,
-    attachmentType: 'media' | 'RoutesMap'
+    attachmentType: 'media' | 'RoutesMap',
   ) => {
     sendAttachment(e.target.files, attachmentType)
   }
@@ -96,7 +105,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
 
   const handleDropRoutesMap = (
     e: any,
-    attachmentType: 'media' | 'RoutesMap'
+    attachmentType: 'media' | 'RoutesMap',
   ) => {
     e.preventDefault()
     e.stopPropagation()
@@ -126,7 +135,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
   }
   const customHeader = (
     <div className="items-center flex gap-4">
-      <span className="text-3xl font-bold">{'View Listing Package'}</span>
+      <span className="text-3xl font-bold">View Listing Package</span>
     </div>
   )
 
@@ -141,69 +150,64 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
         onClose()
       }}
       header={customHeader}
-      dismissable={true}
+      dismissable
     >
       <div className="w-100">
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package Data
         </h4>
-        <div className="border-b border-dashed mb-2"></div>{' '}
+        <div className="border-b border-dashed mb-2" />{' '}
         <div className="flex justify-between items-center">
           <InputView title="Name" value={profile.name} />
           <InputView title="Supplier Name" value={profile.supplierName} />
         </div>
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <div className="flex justify-between items-center">
           <InputView
             title="Price"
             value={profile.originalPriceAED}
-            superscript={'AED'}
+            superscript="AED"
           />
           <InputView
             title="Sale Price"
             value={profile.salePrice}
-            superscript={'AED'}
+            superscript="AED"
           />
         </div>
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <div className="flex justify-between items-center">
           <InputView title="Overview" value={profile.overview} />
           <InputView title="Summary" value={profile.summary} />
         </div>
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package Categories
         </h4>
-        <div className="border-b border-dashed mb-2"></div>{' '}
+        <div className="border-b border-dashed mb-2" />{' '}
         {profile.categories &&
-          profile.categories.map((elem , i) => {
-            return (
-              <div className="flex justify-between items-center" key={i}>
-                <InputView
-                  title="categories"
-                  value={elem.listingCategoryName}
-                />
-              </div>
-            )
-          })}
-        <div className="border-b border-dashed mb-2"></div>
+          profile.categories.map((elem, i) => (
+            <div className="flex justify-between items-center" key={i}>
+              <InputView title="categories" value={elem.listingCategoryName} />
+            </div>
+          ))}
+        <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package Media Images
         </h4>
-        <div className="border-b border-dashed mb-2"></div>{' '}
+        <div className="border-b border-dashed mb-2" />{' '}
         <div
           className={clsx(
             'grid grid-cols-3 gap-4',
-            dragging ? 'opscity-5' : ''
+            dragging ? 'opscity-5' : '',
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment) => {
-              return (
+            profile.attachments.map(
+              (elem: IListingAttachment) =>
                 elem.attachmentType === 'media' && (
                   <div
-                  key={elem.id}
+                    key={elem.id}
                     className="col-span-1"
                     style={{ cursor: 'pointer' }}
                   >
@@ -213,7 +217,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                           onClick={() => {
                             window.open(
                               import.meta.env.VITE_BASE_URL +
-                                elem.attachmentPath
+                                elem.attachmentPath,
                             )
                           }}
                           className="text-gray-800 text-hover-primary flex flex-column"
@@ -229,7 +233,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                             >
                               <i
                                 className="pi pi-times-circle text-xl text-red-500 hover m-2"
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation()
                                   onDelete(elem.id)
                                 }}
@@ -251,16 +255,15 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                       </div>
                     </div>
                   </div>
-                )
-              )
-            })}
+                ),
+            )}
 
           <div
             className="col-span-1"
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            onDrop={e => handleDropMedia(e, 'media')}
+            onDrop={(e) => handleDropMedia(e, 'media')}
           >
             <div
               className="h-full grid grid-cols-1 justify-center items-center bg-gray-200 border-gray-300 border border-dashed p-4 cursor-pointer rounded"
@@ -282,29 +285,29 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                 type="file"
                 className="hidden"
                 accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                onChange={e => onSelectFilesMedia(e, 'media')}
+                onChange={(e) => onSelectFilesMedia(e, 'media')}
                 ref={fileInputRefMedia}
               />
             </div>
           </div>
         </div>
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package Routes Map Images
         </h4>
-        <div className="border-b border-dashed mb-2"></div>{' '}
+        <div className="border-b border-dashed mb-2" />{' '}
         <div
           className={clsx(
             'grid grid-cols-3 gap-4',
-            dragging ? 'opscity-5' : ''
+            dragging ? 'opscity-5' : '',
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment) => {
-              return (
+            profile.attachments.map(
+              (elem: IListingAttachment) =>
                 elem.attachmentType === 'RoutesMap' && (
                   <div
-                  key={elem.id}
+                    key={elem.id}
                     className="col-span-1"
                     style={{ cursor: 'pointer' }}
                   >
@@ -314,7 +317,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                           onClick={() => {
                             window.open(
                               import.meta.env.VITE_BASE_URL +
-                                elem.attachmentPath
+                                elem.attachmentPath,
                             )
                           }}
                           className="text-gray-800 text-hover-primary flex flex-column"
@@ -330,7 +333,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                             >
                               <i
                                 className="pi pi-times-circle text-xl text-red-500 hover m-2"
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation()
                                   onDelete(elem.id)
                                 }}
@@ -352,21 +355,19 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                       </div>
                     </div>
                   </div>
-                )
-              )
-            })}
+                ),
+            )}
 
           {profile.attachments &&
             !profile.attachments.some(
-              (elem: IListingAttachment) => elem.attachmentType === 'RoutesMap'
+              (elem: IListingAttachment) => elem.attachmentType === 'RoutesMap',
             ) && (
               <div
-              
                 className="col-span-1"
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                onDrop={e => handleDropRoutesMap(e, 'RoutesMap')}
+                onDrop={(e) => handleDropRoutesMap(e, 'RoutesMap')}
               >
                 <div
                   className="h-full grid grid-cols-1 justify-center items-center bg-gray-200 border-gray-300 border border-dashed p-4 cursor-pointer rounded"
@@ -388,28 +389,28 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                     type="file"
                     className="hidden"
                     accept=".jpg,.jpeg,.png,.mp4,.gif,.webp,.svg"
-                    onChange={e => onSelectFilesRoutesMap(e, 'RoutesMap')}
+                    onChange={(e) => onSelectFilesRoutesMap(e, 'RoutesMap')}
                     ref={fileInputRefRouteMap}
                   />
                 </div>
               </div>
             )}
         </div>
-        <div className="border-b border-dashed mb-2"></div>
+        <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package YouTube Video
         </h4>
-        <div className="border-b border-dashed mb-2"></div>{' '}
+        <div className="border-b border-dashed mb-2" />{' '}
         {profile.attachments &&
           profile.attachments.find(
-            x => x.attachmentType === 'YouTubeVideoIframe'
+            (x) => x.attachmentType === 'YouTubeVideoIframe',
           ) && (
             <div className="grid  gap-4 mt-4">
               <YouTubeIFrame
                 iframeSrc={
                   profile.attachments &&
                   profile.attachments.find(
-                    x => x.attachmentType === 'YouTubeVideoIframe'
+                    (x) => x.attachmentType === 'YouTubeVideoIframe',
                   )?.attachmentPath
                 }
               />

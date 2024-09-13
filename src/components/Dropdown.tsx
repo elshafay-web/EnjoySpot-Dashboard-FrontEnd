@@ -37,8 +37,8 @@ export default function DropDownInput({
         render={({ field: { onChange, value } }) => (
           <Dropdown
             value={value}
-            onChange={e => {              
-              if (e.value !== null || e.value !== undefined) {                 
+            onChange={e => {
+              if (e.value !== null || e.value !== undefined) {
                 onChange(e.value)
               } else {
                 onChange(undefined)

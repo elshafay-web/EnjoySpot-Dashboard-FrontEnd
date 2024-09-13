@@ -32,7 +32,7 @@ function Images({ url, onDelete, withIcon }: Props) {
       <Image
         src={url}
         alt="Image"
-        className='w-full h-full'
+        className="w-full h-full"
         style={{ borderRadius: '6px' }}
         preview
       />

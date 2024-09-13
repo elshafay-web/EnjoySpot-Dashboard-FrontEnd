@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from 'react-hook-form'
-import { Button } from 'primereact/button'
-import Input from '@components/input'
-import DropDownInput from '@components/Dropdown'
-import { IListingPackageGetRequestFilter } from '@domains/IListingPackage'
+import { useForm } from 'react-hook-form';
+import { Button } from 'primereact/button';
+import Input from '@components/input';
+import { IListingPackageGetRequestFilter } from '@domains/IListingPackage';
 
 type Props = {
   onSearch: (data: any) => void
   onClear?: () => void
   defualtValues: IListingPackageGetRequestFilter
-}
+};
 
 export default function SearchForListingPackage({
   onSearch,
@@ -21,11 +20,11 @@ export default function SearchForListingPackage({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
-  })
+  });
 
   const onSubmit = (values: any) => {
-    onSearch(values)
-  }
+    onSearch(values);
+  };
 
   return (
     <form
@@ -48,16 +47,16 @@ export default function SearchForListingPackage({
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
-            label={'Search'}
+            label="Search"
             raised
             type="submit"
             className="rounded p-2"
             style={{ width: '100px' }}
           />
 
-          {Object.values(form.getValues()).some(value => value) && (
+          {Object.values(form.getValues()).some((value) => value) && (
             <Button
-              label={'Clear'}
+              label="Clear"
               raised
               severity="secondary"
               type="button"
@@ -66,9 +65,9 @@ export default function SearchForListingPackage({
               onClick={() => {
                 form.reset({
                   search: '',
-                })
+                });
                 if (onClear) {
-                  onClear()
+                  onClear();
                 }
               }}
             />
@@ -76,5 +75,5 @@ export default function SearchForListingPackage({
         </div>
       </div>
     </form>
-  )
+  );
 }

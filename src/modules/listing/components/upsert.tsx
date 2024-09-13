@@ -1,35 +1,35 @@
-import { useMutation } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { Sidebar } from 'primereact/sidebar'
-import FormHead from '@components/formHead'
-import Input from '@components/input'
-import DropDownInput from '@components/Dropdown'
-import { Button } from 'primereact/button'
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { Sidebar } from 'primereact/sidebar';
+import FormHead from '@components/formHead';
+import Input from '@components/input';
+import DropDownInput from '@components/Dropdown';
+import { Button } from 'primereact/button';
 import {
   useListOfEnteringment,
   useListOfListingAmenities,
   useListOfListingCategoriesWithListTypeId,
   useListOfListingDetails,
   useListOfListingTypes,
-} from '@apis/lookups/apis'
-import { toast } from 'sonner'
-import FileUpload from '@components/FileUpload'
-import { IListing } from '@domains/IListing'
-import { UpsertListing } from '@apis/listing/apis'
-import { useListOfSupppliers } from '@apis/supplier/api'
-import MultiSelectInput from '@components/MultiSeelct'
-import MultiFileUpload from '@components/MultiFileUpload'
-import YouTubeIFrame from '@components/YouTubeIFrame'
-import { convertObjectToFormData } from '@helpers/helpingFun'
-import EditorInput from '@components/editor'
+} from '@apis/lookups/apis';
+import { toast } from 'sonner';
+import FileUpload from '@components/FileUpload';
+import { IListing } from '@domains/IListing';
+import { UpsertListing } from '@apis/listing/apis';
+import { useListOfSupppliers } from '@apis/supplier/api';
+import MultiSelectInput from '@components/MultiSeelct';
+import MultiFileUpload from '@components/MultiFileUpload';
+import YouTubeIFrame from '@components/YouTubeIFrame';
+import { convertObjectToFormData } from '@helpers/helpingFun';
+import EditorInput from '@components/editor';
 
 type Props = {
-  onClose: () => void
-  intialValues: IListing
-  mode: 'edit' | 'add'
-  open: boolean
-}
+  onClose: () => void;
+  intialValues: IListing;
+  mode: 'edit' | 'add';
+  open: boolean;
+};
 
 export default function UbsertListing({
   onClose,
@@ -41,51 +41,51 @@ export default function UbsertListing({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
     defaultValues: intialValues,
-  })
+  });
   const [MediaFiles, setMediaFiles] = useState<
     {
-      file: ArrayBuffer
-      name: string
+      file: ArrayBuffer;
+      name: string;
     }[]
-  >([])
+  >([]);
   const [RoutesMapImage, setRoutesMapImage] = useState<{
-    file: ArrayBuffer
-    name: string
-  }>({} as any)
+    file: ArrayBuffer;
+    name: string;
+  }>({} as any);
 
-  const youTubeVideoIframe = form.watch('youTubeVideoIframe')
-  const listingType_Id = form.watch('listingType_Id')
-  const priceType = form.watch('priceType')
-  const photographer = form.watch('photographer')
+  const youTubeVideoIframe = form.watch('youTubeVideoIframe');
+  const listingType_Id = form.watch('listingType_Id');
+  const priceType = form.watch('priceType');
+  const photographer = form.watch('photographer');
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'entertainmentPrices',
-  })
+  });
 
-  const { data: listOfSuppliers } = useListOfSupppliers()
-  const { data: listOfListingTypes } = useListOfListingTypes()
+  const { data: listOfSuppliers } = useListOfSupppliers();
+  const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
-    useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0)
-  const { data: listOfListingAmenities } = useListOfListingAmenities()
-  const { data: listOfListingDetails } = useListOfListingDetails()
-  const { data: listOfEnteringment } = useListOfEnteringment()
+    useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0);
+  const { data: listOfListingAmenities } = useListOfListingAmenities();
+  const { data: listOfListingDetails } = useListOfListingDetails();
+  const { data: listOfEnteringment } = useListOfEnteringment();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertListing(req),
     onSuccess: async res => {
-      toast.success(res.message)
-      onClose()
+      toast.success(res.message);
+      onClose();
     },
-  })
+  });
 
   const onSubmit = (values: any) => {
-    const data: IListing = values
+    const data: IListing = values;
     if (mode === 'add') {
       if (MediaFiles.length < 3 || MediaFiles.length > 15) {
         toast.warning(
           'You can not add less than 3 images and more than 15 images'
-        )
-        return
+        );
+        return;
       }
     }
     if (
@@ -96,35 +96,33 @@ export default function UbsertListing({
     ) {
       toast.warning(
         'You can not set both price discount value and price discount percentage'
-      )
-      return
+      );
+      return;
     }
 
-    data.lat = 40.7128
-    data.long = 40.7128
-    data.id = intialValues.id || 0
-    data.hasEntertainment = values.entertainmentPrices.length > 0 ? true : false
+    data.lat = 40.7128;
+    data.long = 40.7128;
+    data.id = intialValues.id || 0;
+    data.hasEntertainment = values.entertainmentPrices.length > 0;
     data.entertainmentPrices.forEach(item => {
       item.isDeleted =
         mode === 'add'
           ? false
           : intialValues.entertainmentPrices.find(x => x.id === item.id)
           ? false
-          : item.id > 0
-          ? true
-          : false
-    })
+          : item.id > 0;
+    });
     if (mode === 'edit') {
       intialValues.entertainmentPrices.forEach(item => {
         if (!data.entertainmentPrices.map(x => x.id).includes(item.id)) {
-          item.isDeleted = true
-          data.entertainmentPrices.push(item)
+          item.isDeleted = true;
+          data.entertainmentPrices.push(item);
         }
-      })
+      });
     }
 
     data.details = values.listOfDetails.map((item: number) => {
-      console.log(item)
+      console.log(item);
 
       return {
         listingCategoryDetail_Id: item,
@@ -133,187 +131,182 @@ export default function UbsertListing({
             ? false
             : intialValues.details.map(x => x.id).includes(item)
             ? false
-            : !intialValues.details.map(x => x.id).includes(item)
-            ? false
-            : true,
+            : !!intialValues.details.map(x => x.id).includes(item),
         id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
-      }
-    })
+      };
+    });
     if (mode === 'edit') {
       intialValues.details.forEach(item => {
         if (!data.details.map(x => x.id).includes(item.id)) {
-          item.isDeleted = true
-          data.details.push(item)
+          item.isDeleted = true;
+          data.details.push(item);
         }
-      })
+      });
     }
-    data.amenities = values.listOfAmenities.map((item: number) => {
-      return {
-        listingAmenity_Id: item,
-        isDeleted:
-          mode === 'add'
-            ? false
-            : intialValues.details.map(x => x.id).includes(item)
-            ? false
-            : !intialValues.details.map(x => x.id).includes(item)
-            ? false
-            : true,
-        id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
-      }
-    })
+    data.amenities = values.listOfAmenities.map((item: number) => ({
+      listingAmenity_Id: item,
+      isDeleted:
+        mode === 'add'
+          ? false
+          : intialValues.details.map(x => x.id).includes(item)
+          ? false
+          : !!intialValues.details.map(x => x.id).includes(item),
+      id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
+    }));
     if (mode === 'edit') {
       intialValues.amenities.forEach(item => {
         if (!data.amenities.map(x => x.id).includes(item.id)) {
-          item.isDeleted = true
-          data.amenities.push(item)
+          item.isDeleted = true;
+          data.amenities.push(item);
         }
-      })
+      });
     }
 
     if (data.priceDiscountPercentage && data.priceDiscountPercentage > 0) {
-      data.priceDiscountValue = 0
-      data.extraHours = 0
+      data.priceDiscountValue = 0;
+      data.extraHours = 0;
     }
     if (data.priceDiscountValue && data.priceDiscountValue > 0) {
-      data.priceDiscountPercentage = 0
-      data.extraHours = 0
+      data.priceDiscountPercentage = 0;
+      data.extraHours = 0;
     }
     if (data.extraHours && data.extraHours > 0) {
-      data.priceDiscountPercentage = 0
-      data.priceDiscountValue = 0
+      data.priceDiscountPercentage = 0;
+      data.priceDiscountValue = 0;
     }
-    const { amenities, details, entertainmentPrices, ...rest } = data
-    const formData = convertObjectToFormData(rest)
+    const { amenities, details, entertainmentPrices, ...rest } = data;
+    const formData = convertObjectToFormData(rest);
     if (MediaFiles.length > 0) {
       MediaFiles.forEach(file => {
-        formData.append('mediaImages', new Blob([file.file]), file.name)
-      })
+        formData.append('mediaImages', new Blob([file.file]), file.name);
+      });
     }
     if (RoutesMapImage.file) {
       formData.append(
         'routesMapImage',
         new Blob([RoutesMapImage.file]),
         RoutesMapImage.name
-      )
+      );
     }
     amenities.forEach((item, index) => {
-      formData.append(`amenities[${index}].id`, item.id.toString())
+      formData.append(`amenities[${index}].id`, item.id.toString());
       formData.append(
         `amenities[${index}].listingAmenity_Id`,
         item.listingAmenity_Id.toString()
-      )
+      );
       formData.append(
         `amenities[${index}].isDeleted`,
         item.isDeleted.toString()
-      )
-    })
+      );
+    });
 
     details.forEach((item, index) => {
-      formData.append(`details[${index}].id`, item.id.toString())
+      formData.append(`details[${index}].id`, item.id.toString());
       formData.append(
         `details[${index}].listingCategoryDetail_Id`,
         item.listingCategoryDetail_Id.toString()
-      )
-      formData.append(`details[${index}].isDeleted`, item.isDeleted.toString())
-    })
+      );
+      formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
+    });
 
     entertainmentPrices.forEach((item, index) => {
       formData.append(
         `entertainmentPrices[${index}].id`,
         item.id?.toString() ?? '0'
-      )
+      );
       formData.append(
         `entertainmentPrices[${index}].listingEntertainment_Id`,
         item.listingEntertainment_Id?.toString() ?? '0'
-      )
+      );
       formData.append(
         `entertainmentPrices[${index}].price`,
         item.price?.toString() ?? '0'
-      )
+      );
       formData.append(
         `entertainmentPrices[${index}].isDeleted`,
         item.isDeleted.toString()
-      )
-    })
-    console.log(data)
+      );
+    });
+    console.log(data);
 
-    mutate(formData)
-  }
+    mutate(formData);
+  };
   const handelUploadMediaFiles = useCallback((files?: File[]) => {
     if (files) {
-      const promises = files.map(file => {
-        return new Promise<{ file: ArrayBuffer; name: string }>(
-          (resolve, reject) => {
-            const reader = new FileReader()
-            reader.readAsArrayBuffer(file)
-            reader.onload = () => {
-              const data = reader.result as ArrayBuffer
-              if (data) {
-                resolve({
-                  file: data,
-                  name: file.name,
-                })
-              }
+      const promises = files.map(
+        file =>
+          new Promise<{ file: ArrayBuffer; name: string }>(
+            (resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsArrayBuffer(file);
+              reader.onload = () => {
+                const data = reader.result as ArrayBuffer;
+                if (data) {
+                  resolve({
+                    file: data,
+                    name: file.name,
+                  });
+                }
+              };
+              reader.onerror = reject;
             }
-            reader.onerror = reject
-          }
-        )
-      })
+          )
+      );
 
       Promise.all(promises)
         .then(filesData => {
-          setMediaFiles(filesData)
+          setMediaFiles(filesData);
         })
         .catch(error => {
-          console.error('Error reading files:', error)
-        })
+          console.error('Error reading files:', error);
+        });
     }
-  }, [])
+  }, []);
 
   const handelUploadRoutesMapImage = useCallback((file?: File) => {
     if (file) {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
       reader.onload = () => {
-        const data = reader.result as ArrayBuffer
+        const data = reader.result as ArrayBuffer;
         if (data) {
           setRoutesMapImage({
             file: data,
             name: file.name,
-          })
+          });
         }
-      }
+      };
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (intialValues) {
       const filteredObj = Object.fromEntries(
         Object.entries(intialValues).filter(([, v]) => v !== null)
-      )
-      form.reset(filteredObj)
+      );
+      form.reset(filteredObj);
       if (intialValues.attachments && intialValues.attachments.length > 0) {
         form.setValue(
           'youTubeVideoIframe',
           intialValues.attachments?.find(
             x => x.attachmentType === 'YouTubeVideoIframe'
           )?.attachmentPath ?? ''
-        )
+        );
       }
       if (intialValues.amenities && intialValues.amenities.length > 0) {
         form.setValue(
           'listOfAmenities',
           intialValues.amenities?.map(x => x.listingAmenity_Id)
-        )
+        );
       }
       if (intialValues.details && intialValues.details.length > 0) {
         form.setValue(
           'listOfDetails',
           intialValues.details?.map(x => x.listingCategoryDetail_Id)
-        )
+        );
       }
     }
-  }, [intialValues])
+  }, [intialValues]);
 
   const customHeader = (
     <div className="items-center flex gap-4">
@@ -321,11 +314,11 @@ export default function UbsertListing({
         {mode === 'add' ? 'Add Listing' : 'Edit Listing'}
       </span>
     </div>
-  )
+  );
 
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   return (
     <Sidebar
@@ -335,15 +328,15 @@ export default function UbsertListing({
       modal
       className="d-flex dss"
       onHide={() => {
-        form.reset()
-        onClose()
+        form.reset();
+        onClose();
       }}
       header={customHeader}
       dismissable={false}
     >
       <div className="w-100">
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
-          <FormHead title={'Basic Infromation'} />
+          <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Input
               register={form.register}
@@ -427,7 +420,7 @@ export default function UbsertListing({
             </div>
           </div>
 
-          <FormHead title={'Price Infromation'} />
+          <FormHead title="Price Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <DropDownInput
               control={form.control}
@@ -476,11 +469,7 @@ export default function UbsertListing({
               }}
             />
           </div>
-          {priceType && (
-            <>
-              <FormHead title={'Offer Infromation'} />
-            </>
-          )}
+          {priceType && <FormHead title="Offer Infromation" />}
           <div className="grid grid-cols-2 gap-4 mt-4">
             {priceType === 'Person' && (
               <>
@@ -519,7 +508,7 @@ export default function UbsertListing({
             )}
           </div>
 
-          <FormHead title={'Photographer Infromation'} />
+          <FormHead title="Photographer Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <DropDownInput
               control={form.control}
@@ -549,8 +538,8 @@ export default function UbsertListing({
 
           <h5 className=" flex items-center justify-between  rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
             <div>
-              <i className="fa-regular fa-circle-question me-4"></i>
-              {'Entertainment Infromation'}
+              <i className="fa-regular fa-circle-question me-4" />
+              Entertainment Infromation
             </div>
 
             <button
@@ -562,10 +551,10 @@ export default function UbsertListing({
                   price: 0,
                   isDeleted: false,
                   id: 0,
-                })
+                });
               }}
             >
-              <i className="fa-solid fa-plus text-white text-base"></i>
+              <i className="fa-solid fa-plus text-white text-base" />
             </button>
           </h5>
 
@@ -604,10 +593,10 @@ export default function UbsertListing({
                       type="button"
                       className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
                       onClick={() => {
-                        remove(index)
+                        remove(index);
                       }}
                     >
-                      <i className="fa-solid fa-trash text-white"></i>
+                      <i className="fa-solid fa-trash text-white" />
                     </button>
                   </div>
                 </div>
@@ -615,7 +604,7 @@ export default function UbsertListing({
           </div>
           {mode === 'add' && (
             <>
-              <FormHead title={'Media Files'} />
+              <FormHead title="Media Files" />
               <div className="w-100 mt-4">
                 <MultiFileUpload
                   attachment={
@@ -628,7 +617,7 @@ export default function UbsertListing({
                   title="Media Image"
                 />
               </div>
-              <FormHead title={'Routes Map Image'} />
+              <FormHead title="Routes Map Image" />
               <div className="w-100 mt-4">
                 <FileUpload
                   attachment={
@@ -644,7 +633,7 @@ export default function UbsertListing({
             </>
           )}
 
-          <FormHead title={'YouTube Video'} />
+          <FormHead title="YouTube Video" />
           <Input
             register={form.register}
             errors={form.formState.errors}
@@ -665,7 +654,7 @@ export default function UbsertListing({
           <div className="flex items-center mt-4 grid  fixed bottom-4 ">
             <div className="col-12 ">
               <Button
-                label={'Submit'}
+                label="Submit"
                 raised
                 type="submit"
                 className="rounded p-2"
@@ -674,7 +663,7 @@ export default function UbsertListing({
               />
 
               <Button
-                label={'Cancle'}
+                label="Cancle"
                 raised
                 severity="secondary"
                 type="button"
@@ -687,5 +676,5 @@ export default function UbsertListing({
         </form>
       </div>
     </Sidebar>
-  )
+  );
 }

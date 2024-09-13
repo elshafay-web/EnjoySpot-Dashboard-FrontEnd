@@ -38,6 +38,8 @@
     "vite.config.ts",
     ".eslintrc.cjs",
     "tailwind.config.ts",
+    "firebaseConfig.ts",
+    "public/firebase-messaging-sw.js"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

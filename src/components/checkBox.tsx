@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputCreateModel } from '@domains/IShardInput'
-import { ErrorMessage } from '@hookform/error-message'
-import { Checkbox } from 'primereact/checkbox'
-import { Control, Controller } from 'react-hook-form'
+import { InputCreateModel } from '@domains/IShardInput';
+import { ErrorMessage } from '@hookform/error-message';
+import { Checkbox } from 'primereact/checkbox';
+import { Control, Controller } from 'react-hook-form';
 
 type Props = {
   field: InputCreateModel
   errors: any
   control: Control<any>
-}
+};
 
 export default function CheckBoxInput({ field, errors, control }: Props) {
   return (
@@ -52,5 +52,5 @@ export default function CheckBoxInput({ field, errors, control }: Props) {
         </label>
       </div>
     </div>
-  )
+  );
 }

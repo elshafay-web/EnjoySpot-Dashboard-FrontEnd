@@ -1,5 +1,5 @@
-import { HttpPaths } from '@/Enums/httpPaths'
-import { ILookups } from './_models'
+import { HttpPaths } from '@/Enums/httpPaths';
+import { ILookups } from './_models';
 
 const LookupsData: Array<ILookups> = [
   {
@@ -461,6 +461,6 @@ const LookupsData: Array<ILookups> = [
     className: 'col-6',
     requireCompanyId: false,
   },
-]
+];
 
-export default LookupsData
+export default LookupsData;

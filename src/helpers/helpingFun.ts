@@ -269,8 +269,8 @@ export function isDocumentPath(path: string): boolean {
 }
 
 export function getCurrentLocation(): Promise<{
-  lat: number;
-  lng: number;
+  lat: number
+  lng: number
 }> {
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
@@ -328,7 +328,7 @@ export function convertObjectToFormData(obj: Record<string, any>): FormData {
       // Convert Date to an ISO string before appending
       formData.append(parentKey!, data.toISOString());
     } else if (data && typeof data === 'object' && !(data instanceof File)) {
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         const value = data[key];
         const fullKey = parentKey ? `${parentKey}[${key}]` : key;
         appendFormData(value, fullKey);
@@ -343,4 +343,3 @@ export function convertObjectToFormData(obj: Record<string, any>): FormData {
 
   return formData;
 }
-

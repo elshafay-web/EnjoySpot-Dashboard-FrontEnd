@@ -1,22 +1,22 @@
-import { useGetAllNotification } from '@apis/notifications/apis'
-import { INotification } from '@domains/INotification'
-import { timeAgo } from '@helpers/helpingFun'
-import { useUserData } from '@store/auth'
-import { Column } from 'primereact/column'
-import { ConfirmPopup } from 'primereact/confirmpopup'
-import { DataTable } from 'primereact/datatable'
-import { Tag } from 'primereact/tag'
-import { ReactNode } from 'react'
+import { useGetAllNotification } from '@apis/notifications/apis';
+import { INotification } from '@domains/INotification';
+import { timeAgo } from '@helpers/helpingFun';
+import { useUserData } from '@store/auth';
+import { Column } from 'primereact/column';
+import { ConfirmPopup } from 'primereact/confirmpopup';
+import { DataTable } from 'primereact/datatable';
+import { Tag } from 'primereact/tag';
+import { ReactNode } from 'react';
 
 export default function DashboardDataTable() {
-  const { userData } = useUserData()
-  const { data: userNotifications } = useGetAllNotification(userData.uid)
+  const { userData } = useUserData();
+  const { data: userNotifications } = useGetAllNotification(userData.uid);
   const statusBodyTemplate = (data: INotification): ReactNode => (
     <Tag
       value={data.isRead ? 'Readed' : 'Un Readed'}
       severity={data.isRead ? 'success' : 'danger'}
     />
-  )
+  );
 
   return (
     <div>
@@ -33,16 +33,16 @@ export default function DashboardDataTable() {
           <Column
             field="messageDate"
             header="date"
-            body={data => timeAgo(new Date(data.messageDate))}
+            body={(data) => timeAgo(new Date(data.messageDate))}
           />
           <Column
             field="isReaded"
             header="isActive"
-            body={rowData => statusBodyTemplate(rowData)}
+            body={(rowData) => statusBodyTemplate(rowData)}
           />
         </DataTable>
       </div>
       <ConfirmPopup />
     </div>
-  )
+  );
 }

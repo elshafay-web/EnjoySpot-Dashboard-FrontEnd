@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-props-no-spreading */
-import clsx from 'clsx'
-import { ErrorMessage } from '@hookform/error-message'
-import { UseFormRegister } from 'react-hook-form'
-import { InputCreateModel } from '@domains/IShardInput'
+import clsx from 'clsx';
+import { ErrorMessage } from '@hookform/error-message';
+import { UseFormRegister } from 'react-hook-form';
+import { InputCreateModel } from '@domains/IShardInput';
 
 type Props = {
   field: InputCreateModel
   errors: any
   register: UseFormRegister<any>
-}
+};
 
 export default function TextArea({ field, errors, register }: Props) {
   return (
@@ -36,7 +36,7 @@ export default function TextArea({ field, errors, register }: Props) {
           {
             'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
               !errors[field.inputName],
-          }
+          },
         )}
         name={field.inputName}
         autoComplete="off"
@@ -54,5 +54,5 @@ export default function TextArea({ field, errors, register }: Props) {
         }
       />
     </div>
-  )
+  );
 }

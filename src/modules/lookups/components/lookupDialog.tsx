@@ -1,23 +1,27 @@
-import { Dialog } from 'primereact/dialog'
-import { useEffect, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { ErrorMessage } from '@hookform/error-message'
-import { Button } from 'primereact/button'
-import { addLookup, listOfLookups } from '../core/_requests'
-import { ILookups, IPostLookup } from '../core/_models'
-import Input from '@components/input'
-import DropDownInput from '@components/Dropdown'
-import CheckBoxInput from '@components/checkBox'
-import EditorInput from '@components/editor'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable no-param-reassign */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Dialog } from 'primereact/dialog';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { ErrorMessage } from '@hookform/error-message';
+import { Button } from 'primereact/button';
+import Input from '@components/input';
+import DropDownInput from '@components/Dropdown';
+import CheckBoxInput from '@components/checkBox';
+import EditorInput from '@components/editor';
+import { ILookups, IPostLookup } from '../core/_models';
+import { addLookup, listOfLookups } from '../core/_requests';
 
 type Props = {
-  dialogVisable: boolean
-  closeDialog: (edit: { visible: boolean; editObj: any }) => void
-  obj: ILookups
-  editObj: any
-  isModieied: (visable: boolean) => void
-}
+  dialogVisable: boolean;
+  closeDialog: (edit: { visible: boolean; editObj: any }) => void;
+  obj: ILookups;
+  editObj: any;
+  isModieied: (visable: boolean) => void;
+};
 
 export default function LookupDialog({
   dialogVisable,
@@ -36,72 +40,74 @@ export default function LookupDialog({
   } = useForm({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
-  })
+  });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const closeModel = () => {
-    closeDialog({ visible: false, editObj: {} })
-  }
+    closeDialog({ visible: false, editObj: {} });
+  };
 
   const handleClose = () => {
-    closeModel()
-  }
+    closeModel();
+  };
 
-  const onSubmit: SubmitHandler<any> = async values => {
-    setLoading(true)
-    let sendObject: IPostLookup = {} as IPostLookup
+  const onSubmit: SubmitHandler<any> = async (values) => {
+    setLoading(true);
+    let sendObject: IPostLookup = {} as IPostLookup;
     if (obj.requireCompanyId) {
-      sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 }
+      sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 };
     } else {
-      sendObject = { ...values, id: editObj.id ?? 0 }
+      sendObject = { ...values, id: editObj.id ?? 0 };
     }
 
     try {
-      const { data } = await addLookup(sendObject, obj.addApi)
+      const { data } = await addLookup(sendObject, obj.addApi);
       if (data.isSuccess) {
-        closeModel()
-        isModieied(true)
-        toast.success(data.message)
+        closeModel();
+        isModieied(true);
+        toast.success(data.message);
       } else {
-        toast.warning(data.message)
+        toast.warning(data.message);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (err: any) {
-      toast.error(`${err.response.data.Message} `)
-      setLoading(false)
+      toast.error(`${err.response.data.Message} `);
+      setLoading(false);
     }
-  }
+  };
 
   const getLookupsData = () => {
-    const arr = obj.inputs.filter(elem => elem.isDropDown || elem.isMultiSelect)
+    const arr = obj.inputs.filter(
+      (elem) => elem.isDropDown || elem.isMultiSelect,
+    );
     if (arr.length > 0) {
-      arr.forEach(async elem => {
-        const { data } = await listOfLookups(elem.supplayDataURL)
+      arr.forEach(async (elem) => {
+        const { data } = await listOfLookups(elem.supplayDataURL);
         if (data.isSuccess) {
-          elem.supplayData = data.data
+          elem.supplayData = data.data;
         } else {
-          elem.supplayData = []
+          elem.supplayData = [];
         }
-      })
+      });
     }
-  }
+  };
 
   useEffect(() => {
-    getLookupsData()
+    getLookupsData();
     if (Object.keys(editObj).length > 0) {
-      obj.inputs.forEach(elem => {
+      obj.inputs.forEach((elem) => {
         if (elem.isDropDown || elem.isMultiSelect) {
-          setValue(elem.name, +editObj[elem.name])
+          setValue(elem.name, +editObj[elem.name]);
         }
-        setValue(elem.name, editObj[elem.name])
-      })
+        setValue(elem.name, editObj[elem.name]);
+      });
     }
 
     return () => {
-      reset()
-    }
-  }, [editObj])
+      reset();
+    };
+  }, [editObj]);
 
   return (
     <Dialog
@@ -195,7 +201,7 @@ export default function LookupDialog({
         <div className="flex items-center mt-4 grid  ">
           <div className="col-12 ">
             <Button
-              label={'Submit'}
+              label="Submit"
               raised
               type="submit"
               className="rounded p-2"
@@ -204,7 +210,7 @@ export default function LookupDialog({
             />
 
             <Button
-              label={'Cancle'}
+              label="Cancle"
               raised
               severity="secondary"
               type="button"
@@ -216,5 +222,5 @@ export default function LookupDialog({
         </div>
       </form>
     </Dialog>
-  )
+  );
 }

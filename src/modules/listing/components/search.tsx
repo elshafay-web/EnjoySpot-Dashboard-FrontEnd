@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from 'react-hook-form'
-import { Button } from 'primereact/button'
-import Input from '@components/input'
-import { IListingGetRequestFilter } from '@domains/IListing'
-import DropDownInput from '@components/Dropdown'
-import { useListOfSupppliers } from '@apis/supplier/api'
+import { useForm } from 'react-hook-form';
+import { Button } from 'primereact/button';
+import Input from '@components/input';
+import { IListingGetRequestFilter } from '@domains/IListing';
+import DropDownInput from '@components/Dropdown';
+import { useListOfSupppliers } from '@apis/supplier/api';
 
 type Props = {
-  onSearch: (data: any) => void
-  onClear?: () => void
-  defualtValues: IListingGetRequestFilter
-}
+  onSearch: (data: any) => void;
+  onClear?: () => void;
+  defualtValues: IListingGetRequestFilter;
+};
 
 export default function SearchForListing({
   onSearch,
@@ -22,12 +22,12 @@ export default function SearchForListing({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
-  })
-  const { data: listOfSuppliers } = useListOfSupppliers()
+  });
+  const { data: listOfSuppliers } = useListOfSupppliers();
 
   const onSubmit = (values: any) => {
-    onSearch(values)
-  }
+    onSearch(values);
+  };
 
   return (
     <form
@@ -55,23 +55,23 @@ export default function SearchForListing({
           errors={form.formState.errors}
           field={{
             inputName: 'SupplierId',
-            title: 'Supplier'
+            title: 'Supplier',
           }}
         />
       </div>
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
-            label={'Search'}
+            label="Search"
             raised
             type="submit"
             className="rounded p-2"
             style={{ width: '100px' }}
           />
 
-          {Object.values(form.getValues()).some(value => value) && (
+          {Object.values(form.getValues()).some((value) => value) && (
             <Button
-              label={'Clear'}
+              label="Clear"
               raised
               severity="secondary"
               type="button"
@@ -80,9 +80,9 @@ export default function SearchForListing({
               onClick={() => {
                 form.reset({
                   Search: '',
-                })
+                });
                 if (onClear) {
-                  onClear()
+                  onClear();
                 }
               }}
             />
@@ -90,5 +90,5 @@ export default function SearchForListing({
         </div>
       </div>
     </form>
-  )
+  );
 }

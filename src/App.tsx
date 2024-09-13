@@ -1,11 +1,11 @@
-import { Suspense } from 'react'
-import './style.scss'
-import { Toaster } from 'sonner'
-import { RouterProvider } from 'react-router-dom'
-import { PrimeReactProvider } from 'primereact/api'
-import ReactQueryProvider from './lib/QueryClientProvider'
-import router from './routing'
-import SplashScreen from '@modules/layout/splashScreen'
+import { Suspense } from 'react';
+import './style.scss';
+import { Toaster } from 'sonner';
+import { RouterProvider } from 'react-router-dom';
+import { PrimeReactProvider } from 'primereact/api';
+import SplashScreen from '@modules/layout/splashScreen';
+import ReactQueryProvider from './lib/QueryClientProvider';
+import router from './routing';
 
 function App() {
   return (
@@ -22,6 +22,6 @@ function App() {
         offset={5}
       />
     </Suspense>
-  )
+  );
 }
-export default App
+export default App;

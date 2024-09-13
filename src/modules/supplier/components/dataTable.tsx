@@ -1,43 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode } from 'react'
-import { Column } from 'primereact/column'
-import { Tag } from 'primereact/tag'
-import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { Button } from 'primereact/button'
-import { ISupplier } from '@domains/ISupplier'
-import ToggleButton from '@components/ToggleButton'
-import { DataTable } from 'primereact/datatable'
-import { deleteSupplier, toggleSupplier } from '@apis/supplier/api'
-import { formatDate } from '@helpers/helpingFun'
+import { ReactNode } from 'react';
+import { Column } from 'primereact/column';
+import { Tag } from 'primereact/tag';
+import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { Button } from 'primereact/button';
+import { ISupplier } from '@domains/ISupplier';
+import ToggleButton from '@components/ToggleButton';
+import { DataTable } from 'primereact/datatable';
+import { toggleSupplier } from '@apis/supplier/api';
+import { formatDate } from '@helpers/helpingFun';
 
 type Props = {
-  onEdit: (data: ISupplier) => void
-  suppliers: ISupplier[]
-}
+  onEdit: (data: ISupplier) => void;
+  suppliers: ISupplier[];
+};
 
 export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { mutate: toggleSupplierMutation } = useMutation({
     mutationKey: ['toggleSupplier'],
     mutationFn: (id: number) => toggleSupplier(id),
     onSuccess(res) {
-      toast.success(res.message)
-      queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] })
+      toast.success(res.message);
+      queryClient.invalidateQueries({ queryKey: ['getAllSupppliers'] });
     },
-  })
+  });
 
   const statusBodyTemplate = (data: ISupplier): ReactNode => (
     <Tag
       value={data.isActive ? 'Active' : 'Not Active'}
       severity={data.isActive ? 'success' : 'danger'}
     />
-  )
+  );
 
-  const reject = () => {}
+  const reject = () => {};
 
   const togglePopUp = (event: any, data: ISupplier) => {
     if (data) {
@@ -49,18 +49,18 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
         icon: 'pi pi-exclamation-triangle',
         defaultFocus: 'accept',
         accept: () => {
-          toggleSupplierMutation(data.id)
+          toggleSupplierMutation(data.id);
         },
         reject,
-      })
+      });
     }
-  }
+  };
 
   const actionTemplate = (rowData: ISupplier) => (
     <div className="flex justify-start w-[150px]">
       <ToggleButton
         isActive={rowData.isActive}
-        onClick={e => togglePopUp(e, rowData)}
+        onClick={(e) => togglePopUp(e, rowData)}
       />
 
       <Button
@@ -76,7 +76,7 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
         onClick={() => onEdit(rowData)}
       />
     </div>
-  )
+  );
 
   return (
     <div className="mt-4">
@@ -88,37 +88,37 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column header={'Name'} field={'name'} />
-          <Column field="officeAddress" header={'Office Address'} />
-          <Column field="landlineOrMobile" header={'Phone'} />
-          <Column field="manager" header={'Manger'} />
-          <Column field="managerContactNumber" header={'Manger Number'} />
+          <Column header="Name" field="name" />
+          <Column field="officeAddress" header="Office Address" />
+          <Column field="landlineOrMobile" header="Phone" />
+          <Column field="manager" header="Manger" />
+          <Column field="managerContactNumber" header="Manger Number" />
           <Column
             field="attachment_Agreement_ExpireDate"
-            header={'Agreement ExpireDate'}
-            body={rowData =>
+            header="Agreement ExpireDate"
+            body={(rowData) =>
               formatDate(rowData?.attachment_Agreement_ExpireDate)
             }
           />
           <Column
             field="attachment_License_ExpireDate"
-            header={'License ExpireDate'}
-            body={rowData => formatDate(rowData?.attachment_License_ExpireDate)}
+            header="License ExpireDate"
+            body={(rowData) => formatDate(rowData?.attachment_License_ExpireDate)}
           />
           <Column
             className="w-[100px]"
             field="isActive"
-            header={'Status'}
-            body={rowData => statusBodyTemplate(rowData)}
+            header="Status"
+            body={(rowData) => statusBodyTemplate(rowData)}
           />
           <Column
             field="Action"
-            header={'actions'}
-            body={rowData => actionTemplate(rowData)}
+            header="actions"
+            body={(rowData) => actionTemplate(rowData)}
           />
         </DataTable>
       </div>
       <ConfirmPopup />
     </div>
-  )
+  );
 }

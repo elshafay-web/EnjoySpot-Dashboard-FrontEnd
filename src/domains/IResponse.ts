@@ -6,5 +6,3 @@ export interface IResponse<T> {
   data: T
   totalCount: number | null
 }
-
-
