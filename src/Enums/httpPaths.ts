@@ -37,7 +37,7 @@ export enum HttpPaths {
 
   Api_listingCategories_GetAll = '/api/listingCategories/getAll',
   Api_listingCategories_ListOf = '/api/listingCategories/listOf',
-  Api_listingCategories_ListOf_WithListTypeId  = '/api/listingCategories/listOf?listingTypeId=',
+  Api_listingCategories_ListOf_WithListTypeId = '/api/listingCategories/listOf?listingTypeId=',
   Api_listingCategories_Delete = '/api/listingCategories/delete/',
   Api_listingCategories_ToggleIsActive = '/api/listingCategories/toggelActive/',
   Api_listingCategories_Upsert = '/api/listingCategories/upsert',
@@ -112,4 +112,20 @@ export enum HttpPaths {
   Api_emailTemplates_Delete = '/api/emailTemplates/delete/',
   Api_emailTemplates_ToggleIsActive = '/api/emailTemplates/toggelActive/',
   Api_emailTemplates_Upsert = '/api/emailTemplates/upsert',
+
+  // ************** nationalities ******************
+
+  Api_nationalities_GetAll = '/api/nationalities/getAll',
+  Api_nationalities_ListOf = '/api/nationalities/listOf',
+  Api_nationalities_Delete = '/api/nationalities/delete/',
+  Api_nationalities_ToggleIsActive = '/api/nationalities/toggelActive/',
+  Api_nationalities_Upsert = '/api/nationalities/upsert',
+
+  // ************** currencies ******************
+
+  Api_currencies_GetAll = '/api/currencies/getAll',
+  Api_currencies_ListOf = '/api/currencies/listOf',
+  Api_currencies_Delete = '/api/currencies/delete/',
+  Api_currencies_ToggleIsActive = '/api/currencies/toggelActive/',
+  Api_currencies_Upsert = '/api/currencies/upsert',
 }

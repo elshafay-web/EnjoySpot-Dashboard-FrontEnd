@@ -9,6 +9,7 @@ import { ILookups, IPostLookup } from '../core/_models'
 import Input from '@components/input'
 import DropDownInput from '@components/Dropdown'
 import CheckBoxInput from '@components/checkBox'
+import EditorInput from '@components/editor'
 
 type Props = {
   dialogVisable: boolean
@@ -120,7 +121,7 @@ export default function LookupDialog({
           } gap-4`}
         >
           {obj.inputs.map((field, i) => (
-            <div key={i}>
+            <div key={i} className={field.isHtml ? 'col-span-2' : 'col-span-1'}>
               {field.isInput && (
                 <Input
                   register={register}
@@ -160,6 +161,20 @@ export default function LookupDialog({
                     }}
                   />
                 </div>
+              )}
+
+              {field.isHtml && (
+                <EditorInput
+                  control={control}
+                  errors={errors}
+                  field={{
+                    inputName: field.name,
+                    title: field.title,
+                    isRequired: field.isRequired,
+                    minLength: field.minLength,
+                    maxLength: field.maxLength,
+                  }}
+                />
               )}
 
               <ErrorMessage

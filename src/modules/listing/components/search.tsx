@@ -54,9 +54,8 @@ export default function SearchForListing({
           options={listOfSuppliers || []}
           errors={form.formState.errors}
           field={{
-            inputName: 'supplier_Id',
-            title: 'Supplier',
-            isRequired: true,
+            inputName: 'SupplierId',
+            title: 'Supplier'
           }}
         />
       </div>
@@ -68,7 +67,6 @@ export default function SearchForListing({
             type="submit"
             className="rounded p-2"
             style={{ width: '100px' }}
-            //   disabled={isPendingUpload || isPending}
           />
 
           {Object.values(form.getValues()).some(value => value) && (

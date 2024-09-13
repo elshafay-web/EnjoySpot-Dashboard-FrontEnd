@@ -54,7 +54,7 @@ export default function SearchForSupplier({
           register={form.register}
           errors={form.formState.errors}
           field={{
-            inputName: 'search',
+            inputName: 'LicenseNumber',
             title: 'License Number',
             minLength: 1,
             maxLength: 20,

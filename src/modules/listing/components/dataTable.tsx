@@ -19,20 +19,11 @@ type Props = {
   listings: IListing[]
 }
 
-export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
+export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
   const queryClient = useQueryClient()
   const { mutate: toggleListingMutation } = useMutation({
     mutationKey: ['toggleListing'],
     mutationFn: (id: number) => toggleListing(id),
-    onSuccess(res) {
-      toast.success(res.message)
-      queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
-    },
-  })
-
-  const { mutate: deleteListingMutation } = useMutation({
-    mutationKey: ['deleteListing'],
-    mutationFn: (id: number) => deleteListing(id),
     onSuccess(res) {
       toast.success(res.message)
       queryClient.invalidateQueries({ queryKey: ['getAllListings'] })
@@ -45,7 +36,6 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
       severity={data.isActive ? 'success' : 'danger'}
     />
   )
-
 
   const reject = () => {}
 
@@ -66,37 +56,11 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
     }
   }
 
-  const deletePopUp = (event: any, data: IListing) => {
-    confirmPopup({
-      target: event.currentTarget,
-      message: `Are you sure you want to delete ${data.overview}?`,
-      icon: 'pi pi-exclamation-triangle',
-      defaultFocus: 'accept',
-      accept: () => deleteListingMutation(data.id),
-      reject,
-    })
-  }
-
   const actionTemplate = (rowData: IListing) => (
     <div className="flex justify-start w-full">
       <ToggleButton
         isActive={rowData.isActive}
         onClick={e => togglePopUp(e, rowData)}
-      />
-
-      <Button
-        icon="pi pi-trash"
-        rounded
-        text
-        raised
-        aria-label="Filter"
-        tooltipOptions={{ position: 'bottom' }}
-        tooltip="Delete"
-        severity="danger"
-        onClick={e => {
-          deletePopUp(e, rowData)
-        }}
-        className="me-2"
       />
       <Button
         icon="pi pi-pencil"
@@ -154,7 +118,7 @@ export default function ListingsDataTable({ onEdit, onView ,listings }: Props) {
             field="Action"
             header={'actions'}
             body={rowData => actionTemplate(rowData)}
-            className='w-[250px]'
+            className="w-[250px]"
           />
         </DataTable>
       </div>

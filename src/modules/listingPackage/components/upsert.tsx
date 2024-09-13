@@ -17,6 +17,7 @@ import TextArea from '@components/textArea'
 import { convertObjectToFormData } from '@helpers/helpingFun'
 import { IListingPackages } from '@domains/IListingPackage'
 import { UpsertListingPackages } from '@apis/listingPackage/apis'
+import EditorInput from '@components/editor'
 
 type Props = {
   onClose: () => void
@@ -194,7 +195,10 @@ export default function UbsertListingPackage({
         )
       }
       intialValues.packageCategories = intialValues.categories
-      if (intialValues.packageCategories && intialValues.packageCategories.length > 0) {
+      if (
+        intialValues.packageCategories &&
+        intialValues.packageCategories.length > 0
+      ) {
         form.setValue(
           'listOfPackageCategories',
           intialValues.packageCategories?.map(x => x.listingCategory_Id)
@@ -244,17 +248,7 @@ export default function UbsertListingPackage({
                 maxLength: 100,
               }}
             />
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'summary',
-                title: 'Summary ',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            />
+
             <DropDownInput
               control={form.control}
               options={listOfSuppliers || []}
@@ -276,10 +270,22 @@ export default function UbsertListingPackage({
                 isRequired: true,
               }}
             />
-
             <div className="col-span-2">
               <TextArea
                 register={form.register}
+                errors={form.formState.errors}
+                field={{
+                  inputName: 'summary',
+                  title: 'Summary',
+                  isRequired: true,
+                  minLength: 3,
+                  maxLength: 100,
+                }}
+              />
+            </div>
+            <div className="col-span-2">
+              <EditorInput
+                control={form.control}
                 errors={form.formState.errors}
                 field={{
                   inputName: 'overview',

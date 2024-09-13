@@ -21,8 +21,8 @@ import { useListOfSupppliers } from '@apis/supplier/api'
 import MultiSelectInput from '@components/MultiSeelct'
 import MultiFileUpload from '@components/MultiFileUpload'
 import YouTubeIFrame from '@components/YouTubeIFrame'
-import TextArea from '@components/textArea'
 import { convertObjectToFormData } from '@helpers/helpingFun'
+import EditorInput from '@components/editor'
 
 type Props = {
   onClose: () => void
@@ -63,8 +63,9 @@ export default function UbsertListing({
   })
 
   const { data: listOfSuppliers } = useListOfSupppliers()
-  const { data: listOfListingTypes} = useListOfListingTypes()
-  const { data: listOfListingCategories } = useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0)
+  const { data: listOfListingTypes } = useListOfListingTypes()
+  const { data: listOfListingCategories } =
+    useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0)
   const { data: listOfListingAmenities } = useListOfListingAmenities()
   const { data: listOfListingDetails } = useListOfListingDetails()
   const { data: listOfEnteringment } = useListOfEnteringment()
@@ -412,8 +413,8 @@ export default function UbsertListing({
             />
 
             <div className="col-span-2">
-              <TextArea
-                register={form.register}
+              <EditorInput
+                control={form.control}
                 errors={form.formState.errors}
                 field={{
                   inputName: 'overview',
@@ -474,7 +475,13 @@ export default function UbsertListing({
                 isNumber: true,
               }}
             />
-
+          </div>
+          {priceType && (
+            <>
+              <FormHead title={'Offer Infromation'} />
+            </>
+          )}
+          <div className="grid grid-cols-2 gap-4 mt-4">
             {priceType === 'Person' && (
               <>
                 <Input

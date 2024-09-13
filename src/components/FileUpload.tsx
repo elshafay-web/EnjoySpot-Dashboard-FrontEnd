@@ -91,7 +91,7 @@ export default function FileUpload({
             }}
             className="p-3"
           >
-            {'Upload' + title}
+            {'Upload' + ' ' + title}
           </Button>
         </header>
       )}

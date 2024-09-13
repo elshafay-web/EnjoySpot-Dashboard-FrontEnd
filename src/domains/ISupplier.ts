@@ -24,4 +24,6 @@ export interface ISupplierListGetRequestFilter {
     search : string
     country_Id:number
     isActive :boolean
+    LicenseNumber : string
+    User_Id:number
 }

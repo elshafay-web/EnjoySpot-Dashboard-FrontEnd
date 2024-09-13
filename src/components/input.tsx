@@ -38,7 +38,7 @@ export default function Input({ field, errors, register }: Props) {
             valueAsNumber: true,
           })}
           className={clsx(
-            'h-[42px] w-full !py-[0.75rem] !px-[0.45rem]  transition duration-300 rounded-[6px] mt-1',
+            'h-[42px] w-full !py-[0.75rem] !px-[0.45rem]  transition duration-300 rounded-[6px]',
             {
               'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200': errors[field.inputName],
             },

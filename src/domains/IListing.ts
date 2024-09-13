@@ -67,5 +67,5 @@ export interface IListingAmenities {
 export interface IListingGetRequestFilter {
   isActive : boolean
   Search : string
-  supplier_Id : number
+  SupplierId : number
 }
