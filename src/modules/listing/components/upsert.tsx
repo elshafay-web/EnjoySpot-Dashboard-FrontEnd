@@ -29,6 +29,7 @@ import MultiFileUpload from '@components/MultiFileUpload';
 import YouTubeIFrame from '@components/YouTubeIFrame';
 import { convertObjectToFormData } from '@helpers/helpingFun';
 import EditorInput from '@components/editor';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 type Props = {
   onClose: () => void;
@@ -75,6 +76,11 @@ export default function UbsertListing({
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
+  const center = {
+    lat: 24.4666667,
+    lng: 54.3666667,
+  };
+  const [selectedPosition, setSelectedPosition] = useState(center);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertListing(req),
@@ -105,9 +111,6 @@ export default function UbsertListing({
       );
       return;
     }
-
-    data.lat = 40.7128;
-    data.long = 40.7128;
     data.id = intialValues.id || 0;
     data.hasEntertainment = values.entertainmentPrices.length > 0;
     data.entertainmentPrices.forEach((item) => {
@@ -176,7 +179,8 @@ export default function UbsertListing({
       data.priceDiscountPercentage = 0;
       data.priceDiscountValue = 0;
     }
-    const { amenities, details, entertainmentPrices, ...rest } = data;
+    const { amenities, details, entertainmentPrices, lat, long, ...rest } =
+      data;
     const formData = convertObjectToFormData(rest);
     if (MediaFiles.length > 0) {
       MediaFiles.forEach((file) => {
@@ -229,7 +233,8 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
-    console.log(data);
+    formData.append('lat', selectedPosition.lat.toString());
+    formData.append('long', selectedPosition.lng.toString());
 
     mutate(formData);
   };
@@ -260,7 +265,7 @@ export default function UbsertListing({
           setMediaFiles(filesData);
         })
         .catch((error) => {
-          console.error('Error reading files:', error);
+          toast.error(error);
         });
     }
   }, []);
@@ -307,6 +312,12 @@ export default function UbsertListing({
           intialValues.details?.map((x) => x.listingCategoryDetail_Id),
         );
       }
+      if (intialValues.lat && intialValues.long) {
+        setSelectedPosition({
+          lat: intialValues.lat,
+          lng: intialValues.long,
+        });
+      }
     }
   }, [intialValues]);
 
@@ -321,7 +332,14 @@ export default function UbsertListing({
   const handleClose = () => {
     onClose();
   };
-
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (event.latLng) {
+      setSelectedPosition({
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
+      });
+    }
+  };
   return (
     <Sidebar
       position="right"
@@ -604,6 +622,24 @@ export default function UbsertListing({
                 </div>
               ))}
           </div>
+
+          <FormHead title="Location" />
+
+          <div className="col-md-12 mt-2">
+            <div className="mt-4">
+              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
+                <GoogleMap
+                  mapContainerStyle={{ height: '600px', width: '100%' }}
+                  center={center}
+                  zoom={7}
+                  onClick={handleMapClick}
+                >
+                  {selectedPosition && <Marker position={selectedPosition} />}
+                </GoogleMap>
+              </LoadScript>
+            </div>
+          </div>
+
           {mode === 'add' && (
             <>
               <FormHead title="Media Files" />

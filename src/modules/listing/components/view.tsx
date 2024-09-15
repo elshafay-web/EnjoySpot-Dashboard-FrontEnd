@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/no-array-index-key */
@@ -18,11 +19,13 @@ import { useRef, useState } from 'react';
 import { isImagePath, isVedioPath } from '@helpers/helpingFun';
 import clsx from 'clsx';
 import YouTubeIFrame from '@components/YouTubeIFrame';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { Editor } from 'primereact/editor';
 
 type Props = {
-  onClose: () => void
-  profile: IListing
-  open: boolean
+  onClose: () => void;
+  profile: IListing;
+  open: boolean;
 };
 
 export default function ViewListing({ onClose, profile, open }: Props) {
@@ -205,8 +208,54 @@ export default function ViewListing({ onClose, profile, open }: Props) {
           </div>
         )}
         <div className="border-b border-dashed mb-2" />
-        <div className="flex justify-between items-center">
-          <InputView title="Overview" value={profile.overview} />
+        <div className="col-span-2">
+          <label
+            htmlFor="overview"
+            className="fw-semibold text-gray-400 text-capitalize text-lg"
+          >
+            OverView
+          </label>
+          <Editor
+            id="overview"
+            value={profile.overview}
+            style={{ height: '320px' }}
+            name="overview"
+            className={clsx(
+              ' w-full  transition duration-300 rounded-[6px] mt-1',
+            )}
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="border-b border-dashed mb-2" />
+        <div className="col-span-2">
+          <div className="col-md-12 mt-2">
+            <label
+              htmlFor="Location"
+              className="fw-semibold text-gray-400 text-capitalize text-lg"
+            >
+              Location
+            </label>
+
+            <div className="mt-4">
+              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
+                <GoogleMap
+                  mapContainerStyle={{ height: '600px', width: '100%' }}
+                  zoom={7}
+                  center={{ lat: profile.lat, lng: profile.long }}
+                >
+                  {profile.lat && profile.long && (
+                    <Marker
+                      position={{
+                        lat: profile.lat,
+                        lng: profile.long,
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              </LoadScript>
+            </div>
+          </div>
         </div>
         <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
@@ -230,8 +279,7 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                 />
               </div>
             </div>
-            ))}
-        <div className="border-b border-dashed mb-2" />
+          ))}
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Amenities
         </h4>
@@ -241,7 +289,7 @@ export default function ViewListing({ onClose, profile, open }: Props) {
             <div className="flex justify-between items-center" key={i}>
               <InputView title="Amenities" value={elem.listingAmenityName} />
             </div>
-            ))}
+          ))}
         <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Details
@@ -255,7 +303,7 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                 value={elem.listingCategoryDetailName}
               />
             </div>
-            ))}
+          ))}
         <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Media Images
@@ -268,7 +316,8 @@ export default function ViewListing({ onClose, profile, open }: Props) {
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment, i) => (
+            profile.attachments.map(
+              (elem: IListingAttachment, i) =>
                 elem.attachmentType === 'media' && (
                   <div
                     key={i}
@@ -319,8 +368,8 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                       </div>
                     </div>
                   </div>
-                )
-              ))}
+                ),
+            )}
 
           <div
             className="col-span-1"
@@ -367,7 +416,8 @@ export default function ViewListing({ onClose, profile, open }: Props) {
           )}
         >
           {profile.attachments &&
-            profile.attachments.map((elem: IListingAttachment, i) => (
+            profile.attachments.map(
+              (elem: IListingAttachment, i) =>
                 elem.attachmentType === 'RoutesMap' && (
                   <div
                     key={i}
@@ -418,8 +468,8 @@ export default function ViewListing({ onClose, profile, open }: Props) {
                       </div>
                     </div>
                   </div>
-                )
-              ))}
+                ),
+            )}
 
           {profile.attachments &&
             !profile.attachments.some(

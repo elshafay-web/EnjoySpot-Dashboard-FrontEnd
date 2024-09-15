@@ -53,7 +53,7 @@ export default function ListingPage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Listings" icon="fa-solid fa-people-group" />
+          <PageHeader title="Listings" icon="fa-solid fa-ship" />
           <div className="flex items-center justify-start">
             <Button
               onClick={() => setFilter({ ...filter, isActive: true })}

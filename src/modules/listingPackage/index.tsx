@@ -65,10 +65,7 @@ export default function ListingPackagePage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader
-            title="Listing Packages"
-            icon={'fa-solid fa-people-group'}
-          />
+          <PageHeader title="Listing Packages" icon={'fa-solid fa-box-open'} />
           <div className="flex items-center justify-start">
             <Button
               onClick={() => setFilter({ ...filter, isActive: true })}
@@ -124,7 +121,9 @@ export default function ListingPackagePage() {
         onClose={() => {
           setListingPackageObj({} as IListingPackages);
           setOpen(false);
-          queryClient.invalidateQueries({ queryKey: ['getAllListingPackages'] });
+          queryClient.invalidateQueries({
+            queryKey: ['getAllListingPackages'],
+          });
         }}
       />
       <ViewListingPackage

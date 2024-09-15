@@ -43,7 +43,7 @@ export default function UserPage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Users" icon="fa-solid fa-people-group" />
+          <PageHeader title="Users" icon="fa-solid fa-users" />
           <div className="flex items-center justify-start">
             <Button
               onClick={() => setFilter({ ...filter, isActive: true })}

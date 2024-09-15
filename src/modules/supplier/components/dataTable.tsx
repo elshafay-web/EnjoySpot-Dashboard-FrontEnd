@@ -89,6 +89,7 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
           className="data-table-custom"
         >
           <Column header="Name" field="name" />
+          <Column header="User Name" field="username" />
           <Column field="officeAddress" header="Office Address" />
           <Column field="landlineOrMobile" header="Phone" />
           <Column field="manager" header="Manger" />
@@ -103,7 +104,9 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
           <Column
             field="attachment_License_ExpireDate"
             header="License ExpireDate"
-            body={(rowData) => formatDate(rowData?.attachment_License_ExpireDate)}
+            body={(rowData) =>
+              formatDate(rowData?.attachment_License_ExpireDate)
+            }
           />
           <Column
             className="w-[100px]"
