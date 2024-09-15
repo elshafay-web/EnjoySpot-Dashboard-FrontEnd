@@ -7,137 +7,139 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/semi */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Sidebar } from 'primereact/sidebar'
-import { toast } from 'sonner'
-import { IListingAttachment } from '@domains/IListing'
-import clsx from 'clsx'
-import { IListingPackages } from '@domains/IListingPackage'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Sidebar } from 'primereact/sidebar';
+import { toast } from 'sonner';
+import { IListingAttachment } from '@domains/IListing';
+import clsx from 'clsx';
+import { IListingPackages } from '@domains/IListingPackage';
 import {
   addListingPackageAttachment,
   deleteListingPackageAttachment,
-} from '@apis/listingPackage/apis'
-import { useRef, useState } from 'react'
-import { isImagePath, isVedioPath } from '@helpers/helpingFun'
-import InputView from '@components/inputView'
-import YouTubeIFrame from '@components/YouTubeIFrame'
+} from '@apis/listingPackage/apis';
+import { useRef, useState } from 'react';
+import { isImagePath, isVedioPath } from '@helpers/helpingFun';
+import InputView from '@components/inputView';
+import YouTubeIFrame from '@components/YouTubeIFrame';
+import { Editor } from 'primereact/editor';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 type Props = {
-  onClose: () => void
-  profile: IListingPackages
-  open: boolean
-}
+  onClose: () => void;
+  profile: IListingPackages;
+  open: boolean;
+};
 
 export default function ViewListingPackage({ onClose, profile, open }: Props) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: (req: FormData) => addListingPackageAttachment(req),
     onSuccess: async (res) => {
-      toast.success(res.message)
+      toast.success(res.message);
       queryClient.invalidateQueries({
         queryKey: ['getListingPackageProfile', profile.id],
-      })
+      });
     },
-  })
+  });
 
   const { mutate: deleteAttachment } = useMutation({
     mutationFn: (req: number) => deleteListingPackageAttachment(req),
     onSuccess: async (res) => {
-      toast.success(res.message)
+      toast.success(res.message);
       queryClient.invalidateQueries({
         queryKey: ['getListingPackageProfile', profile.id],
-      })
+      });
     },
-  })
+  });
   const onDelete = (id: number) => {
-    deleteAttachment(id)
-  }
+    deleteAttachment(id);
+  };
 
   const sendAttachment = async (
     files: any[],
     attachmentType: 'media' | 'RoutesMap',
   ) => {
     if (files.length > 0) {
-      const formData = new FormData()
-      formData.append('ListingPackage_Id', profile.id.toString())
-      formData.append('AttachmentType', attachmentType)
+      const formData = new FormData();
+      formData.append('ListingPackage_Id', profile.id.toString());
+      formData.append('AttachmentType', attachmentType);
       Array.from(files).forEach((elem: any) => {
-        formData.append('ImageFile', elem, elem.name)
-      })
+        formData.append('ImageFile', elem, elem.name);
+      });
 
-      mutate(formData)
+      mutate(formData);
     }
-  }
+  };
 
-  const [dragging, setDragging] = useState(false)
-  const fileInputRefMedia = useRef<any>(null)
-  const fileInputRefRouteMap = useRef<any>(null)
+  const [dragging, setDragging] = useState(false);
+  const fileInputRefMedia = useRef<any>(null);
+  const fileInputRefRouteMap = useRef<any>(null);
 
   const onSelectFilesMedia = async (
     e: any,
     attachmentType: 'media' | 'RoutesMap',
   ) => {
-    sendAttachment(e.target.files, attachmentType)
-  }
+    sendAttachment(e.target.files, attachmentType);
+  };
 
   const onSelectFilesRoutesMap = async (
     e: any,
     attachmentType: 'media' | 'RoutesMap',
   ) => {
-    sendAttachment(e.target.files, attachmentType)
-  }
+    sendAttachment(e.target.files, attachmentType);
+  };
 
   const handleDragEnter = (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragging(true)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
   const handleDragLeave = (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragging(false)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
   const handleDragOver = (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   const handleDropRoutesMap = (
     e: any,
     attachmentType: 'media' | 'RoutesMap',
   ) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
-    setDragging(false)
+    setDragging(false);
 
-    const files = [...e.dataTransfer.files]
+    const files = [...e.dataTransfer.files];
 
-    sendAttachment(files, attachmentType)
-  }
+    sendAttachment(files, attachmentType);
+  };
 
   const handleDropMedia = (e: any, attachmentType: 'media' | 'RoutesMap') => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
-    setDragging(false)
+    setDragging(false);
 
-    const files = [...e.dataTransfer.files]
+    const files = [...e.dataTransfer.files];
 
-    sendAttachment(files, attachmentType)
-  }
+    sendAttachment(files, attachmentType);
+  };
   const openUploadDialogMedia = () => {
-    fileInputRefMedia.current.click()
-  }
+    fileInputRefMedia.current.click();
+  };
   const openUploadDialogRouteMap = () => {
-    fileInputRefRouteMap.current.click()
-  }
+    fileInputRefRouteMap.current.click();
+  };
   const customHeader = (
     <div className="items-center flex gap-4">
       <span className="text-3xl font-bold">View Listing Package</span>
     </div>
-  )
+  );
 
   return (
     <Sidebar
@@ -147,7 +149,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
       modal
       className="d-flex dss"
       onHide={() => {
-        onClose()
+        onClose();
       }}
       header={customHeader}
       dismissable
@@ -177,20 +179,59 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
         </div>
         <div className="border-b border-dashed mb-2" />
         <div className="flex justify-between items-center">
-          <InputView title="Overview" value={profile.overview} />
+          <InputView title="listing Type " value={profile.listingTypeName} />
           <InputView title="Summary" value={profile.summary} />
         </div>
         <div className="border-b border-dashed mb-2" />
-        <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
-          Listing Package Categories
-        </h4>
-        <div className="border-b border-dashed mb-2" />{' '}
-        {profile.categories &&
-          profile.categories.map((elem, i) => (
-            <div className="flex justify-between items-center" key={i}>
-              <InputView title="categories" value={elem.listingCategoryName} />
+        <div className="col-span-2">
+          <label
+            htmlFor="overview"
+            className="fw-semibold text-gray-400 text-capitalize text-lg"
+          >
+            OverView
+          </label>
+          <Editor
+            id="overview"
+            value={profile.overview}
+            style={{ height: '320px' }}
+            name="overview"
+            className={clsx(
+              ' w-full  transition duration-300 rounded-[6px] mt-1',
+            )}
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="border-b border-dashed mb-2" />
+        <div className="col-span-2">
+          <div className="col-md-12 mt-2">
+            <label
+              htmlFor="Location"
+              className="fw-semibold text-gray-400 text-capitalize text-lg"
+            >
+              Location
+            </label>
+
+            <div className="mt-4">
+              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
+                <GoogleMap
+                  mapContainerStyle={{ height: '600px', width: '100%' }}
+                  zoom={7}
+                  center={{ lat: profile.lat, lng: profile.long }}
+                >
+                  {profile.lat && profile.long && (
+                    <Marker
+                      position={{
+                        lat: profile.lat,
+                        lng: profile.long,
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              </LoadScript>
             </div>
-          ))}
+          </div>
+        </div>
         <div className="border-b border-dashed mb-2" />
         <h4 className="text-2xl my-5 bg-gray-200 p-4 rounded">
           Listing Package Media Images
@@ -218,7 +259,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                             window.open(
                               import.meta.env.VITE_BASE_URL +
                                 elem.attachmentPath,
-                            )
+                            );
                           }}
                           className="text-gray-800 text-hover-primary flex flex-column"
                         >
@@ -234,8 +275,8 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                               <i
                                 className="pi pi-times-circle text-xl text-red-500 hover m-2"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  onDelete(elem.id)
+                                  e.stopPropagation();
+                                  onDelete(elem.id);
                                 }}
                               />
                             </div>{' '}
@@ -318,7 +359,7 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                             window.open(
                               import.meta.env.VITE_BASE_URL +
                                 elem.attachmentPath,
-                            )
+                            );
                           }}
                           className="text-gray-800 text-hover-primary flex flex-column"
                         >
@@ -334,8 +375,8 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
                               <i
                                 className="pi pi-times-circle text-xl text-red-500 hover m-2"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  onDelete(elem.id)
+                                  e.stopPropagation();
+                                  onDelete(elem.id);
                                 }}
                               />
                             </div>
@@ -418,5 +459,5 @@ export default function ViewListingPackage({ onClose, profile, open }: Props) {
           )}
       </div>
     </Sidebar>
-  )
+  );
 }

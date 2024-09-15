@@ -4,6 +4,15 @@ export enum HttpPaths {
   Api_Login = '/api/auth/token',
   Api_Logout = '/api/v1/Authentication/Logout/',
 
+  // ************** users ******************
+
+  Api_users_GetAll = '/api/users/getAll',
+  Api_users_ListOf = '/api/users/listOf',
+  Api_users_Delete = '/api/users/delete/',
+  Api_users_ToggleIsActive = '/api/users/toggelActive/',
+  Api_users_Upsert = '/api/users/upsert',
+  Api_users_Profile = '/api/users/GetProfile/',
+
   // ************** Notification ******************
 
   Api_Notification_GETALL = '/api/v1/NotiMessage/GetUserMessages?User_Id=',

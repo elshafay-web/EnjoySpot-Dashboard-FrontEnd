@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputCreateModel } from '@domains/IShardInput'
-import { ErrorMessage } from '@hookform/error-message'
-import clsx from 'clsx'
-import { Editor } from 'primereact/editor'
-import { Control, Controller } from 'react-hook-form'
+import { InputCreateModel } from '@domains/IShardInput';
+import { ErrorMessage } from '@hookform/error-message';
+import clsx from 'clsx';
+import { Editor } from 'primereact/editor';
+import { Control, Controller } from 'react-hook-form';
 
 type Props = {
-  field: InputCreateModel
-  errors: any
-  control: Control<any>
-}
+  field: InputCreateModel;
+  errors: any;
+  control: Control<any>;
+};
 
 export default function EditorInput({ field, errors, control }: Props) {
   return (
@@ -32,8 +32,8 @@ export default function EditorInput({ field, errors, control }: Props) {
           <Editor
             id={field.inputName}
             value={value}
-            onTextChange={e => {
-              onChange(e.htmlValue)
+            onTextChange={(e) => {
+              onChange(e.htmlValue);
             }}
             style={{ height: '320px' }}
             name={field.inputName}
@@ -46,7 +46,7 @@ export default function EditorInput({ field, errors, control }: Props) {
               {
                 'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
                   !errors[field.inputName],
-              }
+              },
             )}
           />
         )}
@@ -64,5 +64,5 @@ export default function EditorInput({ field, errors, control }: Props) {
         }
       />
     </div>
-  )
+  );
 }

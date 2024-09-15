@@ -18,9 +18,9 @@ import {
 import { IListingPackages } from '@domains/IListingPackage';
 
 type Props = {
-  onEdit: (data: IListingPackages) => void
-  onView: (data: IListingPackages) => void
-  listings: IListingPackages[]
+  onEdit: (data: IListingPackages) => void;
+  onView: (data: IListingPackages) => void;
+  listings: IListingPackages[];
 };
 
 export default function ListingsPackageDataTable({
@@ -144,6 +144,7 @@ export default function ListingsPackageDataTable({
         >
           <Column field="name" header="Name" />
           <Column field="supplierName" header="Supplier Name" />
+          <Column field="listingTypeName" header="List Type " />
           <Column
             field="originalPriceAED"
             header="Price"

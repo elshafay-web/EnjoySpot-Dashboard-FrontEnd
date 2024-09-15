@@ -16,6 +16,7 @@ import { UpsertSupplier } from '@apis/supplier/api';
 import { toast } from 'sonner';
 import { convertObjectToFormData } from '@helpers/helpingFun';
 import FileUpload from '@components/FileUpload';
+import { useListOfUsers } from '@apis/user/api';
 
 type Props = {
   onClose: () => void;
@@ -46,6 +47,7 @@ export default function UbsertSupplier({
   }>({} as any);
 
   const country_Id = form.watch('country_Id');
+  const { data: listOfUsers } = useListOfUsers();
   const { data: listOfCountries } = useListOfCountries();
   const { data: listOfCities } = useListOfCities(country_Id ?? 0);
 
@@ -174,7 +176,7 @@ export default function UbsertSupplier({
 
             <DropDownInput
               control={form.control}
-              options={[]}
+              options={listOfUsers || []}
               errors={form.formState.errors}
               field={{
                 inputName: 'user_Id',

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router';
 import LookupsData from '@modules/lookups/core/_lookupData';
 
 interface SidebarItem extends MenuItem {
-  routing: string
+  routing: string;
 }
 
 export default function Sidebar() {
@@ -36,7 +36,6 @@ export default function Sidebar() {
       <span className="text-sm">{item.label}</span>
     </a>
   );
-
   const items: SidebarItem[] = [
     {
       label: 'DashBoard',
@@ -44,6 +43,13 @@ export default function Sidebar() {
       icon: 'fa-solid fa-gauge-high text-2xl w-[42px]',
       template: itemRenderer,
       command: () => navigate('/'),
+    },
+    {
+      label: 'Users',
+      icon: 'fa-solid fa-users text-2xl w-[42px]',
+      routing: '/users',
+      template: itemRenderer,
+      command: () => navigate('/users'),
     },
     {
       label: 'Suppliers',

@@ -1,3 +1,9 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable max-lines-per-function */
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -54,7 +60,7 @@ export default function UbsertListing({
   }>({} as any);
 
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
-  const listingType_Id = form.watch('listingType_Id');
+  const listingTypeId = form.watch('listingType_Id');
   const priceType = form.watch('priceType');
   const photographer = form.watch('photographer');
   const { fields, append, remove } = useFieldArray({
@@ -65,14 +71,14 @@ export default function UbsertListing({
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
-    useListOfListingCategoriesWithListTypeId(listingType_Id ?? 0);
+    useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertListing(req),
-    onSuccess: async res => {
+    onSuccess: async (res) => {
       toast.success(res.message);
       onClose();
     },
@@ -83,7 +89,7 @@ export default function UbsertListing({
     if (mode === 'add') {
       if (MediaFiles.length < 3 || MediaFiles.length > 15) {
         toast.warning(
-          'You can not add less than 3 images and more than 15 images'
+          'You can not add less than 3 images and more than 15 images',
         );
         return;
       }
@@ -95,7 +101,7 @@ export default function UbsertListing({
       data.priceDiscountValue > 0
     ) {
       toast.warning(
-        'You can not set both price discount value and price discount percentage'
+        'You can not set both price discount value and price discount percentage',
       );
       return;
     }
@@ -104,40 +110,36 @@ export default function UbsertListing({
     data.long = 40.7128;
     data.id = intialValues.id || 0;
     data.hasEntertainment = values.entertainmentPrices.length > 0;
-    data.entertainmentPrices.forEach(item => {
+    data.entertainmentPrices.forEach((item) => {
       item.isDeleted =
         mode === 'add'
           ? false
-          : intialValues.entertainmentPrices.find(x => x.id === item.id)
+          : intialValues.entertainmentPrices.find((x) => x.id === item.id)
           ? false
           : item.id > 0;
     });
     if (mode === 'edit') {
-      intialValues.entertainmentPrices.forEach(item => {
-        if (!data.entertainmentPrices.map(x => x.id).includes(item.id)) {
+      intialValues.entertainmentPrices.forEach((item) => {
+        if (!data.entertainmentPrices.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.entertainmentPrices.push(item);
         }
       });
     }
 
-    data.details = values.listOfDetails.map((item: number) => {
-      console.log(item);
-
-      return {
-        listingCategoryDetail_Id: item,
-        isDeleted:
-          mode === 'add'
-            ? false
-            : intialValues.details.map(x => x.id).includes(item)
-            ? false
-            : !!intialValues.details.map(x => x.id).includes(item),
-        id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
-      };
-    });
+    data.details = values.listOfDetails.map((item: number) => ({
+      listingCategoryDetail_Id: item,
+      isDeleted:
+        mode === 'add'
+          ? false
+          : intialValues.details.map((x) => x.id).includes(item)
+          ? false
+          : !!intialValues.details.map((x) => x.id).includes(item),
+      id: mode === 'add' ? 0 : data.details.find((x) => x.id === item)?.id ?? 0,
+    }));
     if (mode === 'edit') {
-      intialValues.details.forEach(item => {
-        if (!data.details.map(x => x.id).includes(item.id)) {
+      intialValues.details.forEach((item) => {
+        if (!data.details.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.details.push(item);
         }
@@ -148,14 +150,14 @@ export default function UbsertListing({
       isDeleted:
         mode === 'add'
           ? false
-          : intialValues.details.map(x => x.id).includes(item)
+          : intialValues.details.map((x) => x.id).includes(item)
           ? false
-          : !!intialValues.details.map(x => x.id).includes(item),
-      id: mode === 'add' ? 0 : data.details.find(x => x.id === item)?.id ?? 0,
+          : !!intialValues.details.map((x) => x.id).includes(item),
+      id: mode === 'add' ? 0 : data.details.find((x) => x.id === item)?.id ?? 0,
     }));
     if (mode === 'edit') {
-      intialValues.amenities.forEach(item => {
-        if (!data.amenities.map(x => x.id).includes(item.id)) {
+      intialValues.amenities.forEach((item) => {
+        if (!data.amenities.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.amenities.push(item);
         }
@@ -177,7 +179,7 @@ export default function UbsertListing({
     const { amenities, details, entertainmentPrices, ...rest } = data;
     const formData = convertObjectToFormData(rest);
     if (MediaFiles.length > 0) {
-      MediaFiles.forEach(file => {
+      MediaFiles.forEach((file) => {
         formData.append('mediaImages', new Blob([file.file]), file.name);
       });
     }
@@ -185,18 +187,18 @@ export default function UbsertListing({
       formData.append(
         'routesMapImage',
         new Blob([RoutesMapImage.file]),
-        RoutesMapImage.name
+        RoutesMapImage.name,
       );
     }
     amenities.forEach((item, index) => {
       formData.append(`amenities[${index}].id`, item.id.toString());
       formData.append(
         `amenities[${index}].listingAmenity_Id`,
-        item.listingAmenity_Id.toString()
+        item.listingAmenity_Id.toString(),
       );
       formData.append(
         `amenities[${index}].isDeleted`,
-        item.isDeleted.toString()
+        item.isDeleted.toString(),
       );
     });
 
@@ -204,7 +206,7 @@ export default function UbsertListing({
       formData.append(`details[${index}].id`, item.id.toString());
       formData.append(
         `details[${index}].listingCategoryDetail_Id`,
-        item.listingCategoryDetail_Id.toString()
+        item.listingCategoryDetail_Id.toString(),
       );
       formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
     });
@@ -212,19 +214,19 @@ export default function UbsertListing({
     entertainmentPrices.forEach((item, index) => {
       formData.append(
         `entertainmentPrices[${index}].id`,
-        item.id?.toString() ?? '0'
+        item.id?.toString() ?? '0',
       );
       formData.append(
         `entertainmentPrices[${index}].listingEntertainment_Id`,
-        item.listingEntertainment_Id?.toString() ?? '0'
+        item.listingEntertainment_Id?.toString() ?? '0',
       );
       formData.append(
         `entertainmentPrices[${index}].price`,
-        item.price?.toString() ?? '0'
+        item.price?.toString() ?? '0',
       );
       formData.append(
         `entertainmentPrices[${index}].isDeleted`,
-        item.isDeleted.toString()
+        item.isDeleted.toString(),
       );
     });
     console.log(data);
@@ -234,7 +236,7 @@ export default function UbsertListing({
   const handelUploadMediaFiles = useCallback((files?: File[]) => {
     if (files) {
       const promises = files.map(
-        file =>
+        (file) =>
           new Promise<{ file: ArrayBuffer; name: string }>(
             (resolve, reject) => {
               const reader = new FileReader();
@@ -249,15 +251,15 @@ export default function UbsertListing({
                 }
               };
               reader.onerror = reject;
-            }
-          )
+            },
+          ),
       );
 
       Promise.all(promises)
-        .then(filesData => {
+        .then((filesData) => {
           setMediaFiles(filesData);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error reading files:', error);
         });
     }
@@ -282,27 +284,27 @@ export default function UbsertListing({
   useEffect(() => {
     if (intialValues) {
       const filteredObj = Object.fromEntries(
-        Object.entries(intialValues).filter(([, v]) => v !== null)
+        Object.entries(intialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
       if (intialValues.attachments && intialValues.attachments.length > 0) {
         form.setValue(
           'youTubeVideoIframe',
           intialValues.attachments?.find(
-            x => x.attachmentType === 'YouTubeVideoIframe'
-          )?.attachmentPath ?? ''
+            (x) => x.attachmentType === 'YouTubeVideoIframe',
+          )?.attachmentPath ?? '',
         );
       }
       if (intialValues.amenities && intialValues.amenities.length > 0) {
         form.setValue(
           'listOfAmenities',
-          intialValues.amenities?.map(x => x.listingAmenity_Id)
+          intialValues.amenities?.map((x) => x.listingAmenity_Id),
         );
       }
       if (intialValues.details && intialValues.details.length > 0) {
         form.setValue(
           'listOfDetails',
-          intialValues.details?.map(x => x.listingCategoryDetail_Id)
+          intialValues.details?.map((x) => x.listingCategoryDetail_Id),
         );
       }
     }
@@ -560,7 +562,7 @@ export default function UbsertListing({
 
           <div className="grid grid-cols-2 gap-4 mt-4">
             {fields
-              .filter(x => !x.isDeleted)
+              .filter((x) => !x.isDeleted)
               .map((field, index) => (
                 <div
                   className="w-full col-span-2 grid gap-4 grid-cols-2"
@@ -610,8 +612,8 @@ export default function UbsertListing({
                   attachment={
                     intialValues.attachments &&
                     intialValues.attachments
-                      .filter(x => x.attachmentType === 'media')
-                      .map(x => x.attachmentPath)
+                      .filter((x) => x.attachmentType === 'media')
+                      .map((x) => x.attachmentPath)
                   }
                   onFilesSelected={handelUploadMediaFiles}
                   title="Media Image"
@@ -623,7 +625,7 @@ export default function UbsertListing({
                   attachment={
                     intialValues.attachments &&
                     intialValues.attachments.find(
-                      x => x.attachmentType === 'RoutesMap'
+                      (x) => x.attachmentType === 'RoutesMap',
                     )?.attachmentPath
                   }
                   onFilesSelected={handelUploadRoutesMapImage}

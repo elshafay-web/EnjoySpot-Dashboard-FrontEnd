@@ -10,11 +10,9 @@ import FormHead from '@components/formHead';
 import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import { Button } from 'primereact/button';
-import { useListOfListingCategories } from '@apis/lookups/apis';
 import { toast } from 'sonner';
 import FileUpload from '@components/FileUpload';
 import { useListOfSupppliers } from '@apis/supplier/api';
-import MultiSelectInput from '@components/MultiSeelct';
 import MultiFileUpload from '@components/MultiFileUpload';
 import YouTubeIFrame from '@components/YouTubeIFrame';
 import TextArea from '@components/textArea';
@@ -22,6 +20,8 @@ import { convertObjectToFormData } from '@helpers/helpingFun';
 import { IListingPackages } from '@domains/IListingPackage';
 import { UpsertListingPackages } from '@apis/listingPackage/apis';
 import EditorInput from '@components/editor';
+import { useListOfListingTypes } from '@apis/lookups/apis';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 type Props = {
   onClose: () => void;
@@ -55,7 +55,12 @@ export default function UbsertListingPackage({
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
 
   const { data: listOfSuppliers } = useListOfSupppliers();
-  const { data: ListingCategories } = useListOfListingCategories();
+  const { data: listOfListingType } = useListOfListingTypes();
+  const center = {
+    lat: 24.4666667,
+    lng: 54.3666667,
+  };
+  const [selectedPosition, setSelectedPosition] = useState(center);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertListingPackages(req),
@@ -76,33 +81,10 @@ export default function UbsertListingPackage({
       }
     }
     data.id = intialValues.id || 0;
-    data.packageCategories = values.listOfPackageCategories.map(
-      (item: number) => ({
-          listingCategory_Id: item,
-          isDeleted:
-            mode === 'add'
-              ? false
-              : intialValues.packageCategories.map((x) => x.id).includes(item)
-              ? false
-              : !!intialValues.packageCategories.map((x) => x.id).includes(item),
-          id:
-            mode === 'add'
-              ? 0
-              : data.packageCategories?.find((x) => x.id === item)?.id ?? 0,
-        }),
-    );
-    if (mode === 'edit') {
-      intialValues.packageCategories.forEach((item) => {
-        if (!data.packageCategories.map((x) => x.id).includes(item.id)) {
-          item.isDeleted = true;
-          data.packageCategories.push(item);
-        }
-      });
-    }
 
-    const { packageCategories, ...rest } = data;
+    const { lat, long, ...res } = data;
 
-    const formData = convertObjectToFormData(rest);
+    const formData = convertObjectToFormData(res);
     if (MediaFiles.length > 0) {
       MediaFiles.forEach((file) => {
         formData.append('mediaImages', new Blob([file.file]), file.name);
@@ -115,42 +97,32 @@ export default function UbsertListingPackage({
         RoutesMapImage.name,
       );
     }
-    packageCategories.forEach((item, index) => {
-      formData.append(`packageCategories[${index}].id`, item.id.toString());
-      formData.append(
-        `packageCategories[${index}].listingCategory_Id`,
-        item.listingCategory_Id.toString(),
-      );
-      formData.append(
-        `packageCategories[${index}].listingCategoryName`,
-        item.listingCategoryName ?? '',
-      );
-      formData.append(
-        `packageCategories[${index}].isDeleted`,
-        item.isDeleted.toString(),
-      );
-    });
+    formData.append('lat', selectedPosition.lat.toString());
+    formData.append('long', selectedPosition.lng.toString());
 
     mutate(formData);
   };
   const handelUploadMediaFiles = useCallback((files?: File[]) => {
     if (files) {
-      const promises = files.map((file) => new Promise<{ file: ArrayBuffer; name: string }>(
-          (resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = () => {
-              const data = reader.result as ArrayBuffer;
-              if (data) {
-                resolve({
-                  file: data,
-                  name: file.name,
-                });
-              }
-            };
-            reader.onerror = reject;
-          },
-        ));
+      const promises = files.map(
+        (file) =>
+          new Promise<{ file: ArrayBuffer; name: string }>(
+            (resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsArrayBuffer(file);
+              reader.onload = () => {
+                const data = reader.result as ArrayBuffer;
+                if (data) {
+                  resolve({
+                    file: data,
+                    name: file.name,
+                  });
+                }
+              };
+              reader.onerror = reject;
+            },
+          ),
+      );
 
       Promise.all(promises)
         .then((filesData) => {
@@ -192,15 +164,12 @@ export default function UbsertListingPackage({
           )?.attachmentPath ?? '',
         );
       }
-      intialValues.packageCategories = intialValues.categories;
-      if (
-        intialValues.packageCategories &&
-        intialValues.packageCategories.length > 0
-      ) {
-        form.setValue(
-          'listOfPackageCategories',
-          intialValues.packageCategories?.map((x) => x.listingCategory_Id),
-        );
+
+      if (intialValues.lat && intialValues.long) {
+        setSelectedPosition({
+          lat: intialValues.lat,
+          lng: intialValues.long,
+        });
       }
     }
   }, [intialValues]);
@@ -212,6 +181,14 @@ export default function UbsertListingPackage({
       </span>
     </div>
   );
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (event.latLng) {
+      setSelectedPosition({
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
+      });
+    }
+  };
 
   const handleClose = () => {
     onClose();
@@ -258,13 +235,13 @@ export default function UbsertListingPackage({
               }}
             />
 
-            <MultiSelectInput
+            <DropDownInput
               control={form.control}
-              options={ListingCategories || []}
+              options={listOfListingType || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'listOfPackageCategories',
-                title: 'Listing Package Category',
+                inputName: 'listingType_Id',
+                title: 'Listing Type',
                 isRequired: true,
               }}
             />
@@ -319,6 +296,22 @@ export default function UbsertListingPackage({
                 isNumber: true,
               }}
             />
+          </div>
+          <FormHead title="Location" />
+
+          <div className="col-md-12 mt-2">
+            <div className="mt-4">
+              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
+                <GoogleMap
+                  mapContainerStyle={{ height: '600px', width: '100%' }}
+                  center={center}
+                  zoom={7}
+                  onClick={handleMapClick}
+                >
+                  {selectedPosition && <Marker position={selectedPosition} />}
+                </GoogleMap>
+              </LoadScript>
+            </div>
           </div>
 
           {mode === 'add' && (

@@ -7,6 +7,7 @@ import ProtectRoutes from './ProtectRoutes';
 const MainLayout = lazy(() => import('../modules/layout'));
 const DashboardPage = lazy(() => import('../modules/dashboard'));
 const SupplierPage = lazy(() => import('../modules/supplier'));
+const UserPage = lazy(() => import('../modules/users'));
 const ListingPage = lazy(() => import('../modules/listing'));
 const ListingPackagePage = lazy(() => import('../modules/listingPackage'));
 
@@ -20,6 +21,15 @@ const MainRoute: RouteObject[] = [
         element: (
           <ProtectRoutes auth>
             <DashboardPage />
+          </ProtectRoutes>
+        ),
+        index: true,
+      },
+      {
+        path: 'users',
+        element: (
+          <ProtectRoutes auth>
+            <UserPage />
           </ProtectRoutes>
         ),
         index: true,
