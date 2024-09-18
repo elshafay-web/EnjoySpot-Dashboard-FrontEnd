@@ -21,6 +21,10 @@ function App() {
         position="top-center"
         offset={5}
       />
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhh5vStE6yx_Plr_blirddSNwpapV-xuY&loading=async&libraries=places"
+        async
+      />
     </Suspense>
   );
 }

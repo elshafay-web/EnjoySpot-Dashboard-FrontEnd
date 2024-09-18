@@ -92,6 +92,7 @@ export default function UsersDataTable({ onEdit, Users }: Props) {
           <Column field="userName" header="User Name" />
           <Column field="email" header="Email" />
           <Column field="phoneNumber" header="Phone Number" />
+          <Column field="roleName" header="Role" />
           <Column
             className="w-[100px]"
             field="isActive"

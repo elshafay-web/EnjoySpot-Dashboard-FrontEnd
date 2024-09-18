@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines-per-function */
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Sidebar } from 'primereact/sidebar';
 import FormHead from '@components/formHead';
@@ -29,7 +29,12 @@ import MultiFileUpload from '@components/MultiFileUpload';
 import YouTubeIFrame from '@components/YouTubeIFrame';
 import { convertObjectToFormData } from '@helpers/helpingFun';
 import EditorInput from '@components/editor';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  StandaloneSearchBox,
+} from '@react-google-maps/api';
 
 type Props = {
   onClose: () => void;
@@ -76,10 +81,7 @@ export default function UbsertListing({
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
-  const center = {
-    lat: 24.4666667,
-    lng: 54.3666667,
-  };
+  const center = { lat: 25.276987, lng: 55.296249 };
   const [selectedPosition, setSelectedPosition] = useState(center);
 
   const { mutate, isPending } = useMutation({
@@ -332,6 +334,8 @@ export default function UbsertListing({
   const handleClose = () => {
     onClose();
   };
+  const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
+
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
       setSelectedPosition({
@@ -627,11 +631,44 @@ export default function UbsertListing({
 
           <div className="col-md-12 mt-2">
             <div className="mt-4">
-              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
+              <LoadScript
+                googleMapsApiKey="AIzaSyDcBNvhTn41CVismsIzNM3Fr7ztlE73DRc"
+                libraries={['places']}
+              >
+                <StandaloneSearchBox
+                  onLoad={(ref) => {
+                    if (ref) {
+                      console.log(ref);
+
+                      searchBoxRef.current = ref;
+                    }
+                  }}
+                  onPlacesChanged={() => {
+                    const places = searchBoxRef.current?.getPlaces();
+                    console.log(searchBoxRef);
+
+                    if (places && places.length > 0) {
+                      const place = places[0];
+                      const location = place.geometry?.location;
+                      if (location) {
+                        setSelectedPosition({
+                          lat: location.lat(),
+                          lng: location.lng(),
+                        });
+                      }
+                    }
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Search for a place"
+                    className="border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200 h-[42px] w-full !py-[0.75rem] !px-[0.45rem]  transition duration-300 rounded-[6px] my-4"
+                  />
+                </StandaloneSearchBox>
                 <GoogleMap
                   mapContainerStyle={{ height: '600px', width: '100%' }}
                   center={center}
-                  zoom={7}
+                  zoom={12}
                   onClick={handleMapClick}
                 >
                   {selectedPosition && <Marker position={selectedPosition} />}
