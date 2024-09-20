@@ -114,6 +114,14 @@ export enum HttpPaths {
   Api_emailTypes_ToggleIsActive = '/api/emailTypes/toggelActive/',
   Api_emailTypes_Upsert = '/api/emailTypes/upsert',
 
+  // ************** emailMessageKeywords ******************
+
+  Api_emailMessageKeywords_GetAll = '/api/emailMessageKeywords/getAll',
+  Api_emailMessageKeywords_ListOf = '/api/emailMessageKeywords/listOf',
+  Api_emailMessageKeywords_Delete = '/api/emailMessageKeywords/delete/',
+  Api_emailMessageKeywords_ToggleIsActive = '/api/emailMessageKeywords/toggelActive/',
+  Api_emailMessageKeywords_Upsert = '/api/emailMessageKeywords/upsert',
+
   // ************** emailTemplates ******************
 
   Api_emailTemplates_GetAll = '/api/emailTemplates/getAll',

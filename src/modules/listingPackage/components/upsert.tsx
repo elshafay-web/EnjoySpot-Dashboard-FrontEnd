@@ -21,7 +21,7 @@ import { IListingPackages } from '@domains/IListingPackage';
 import { UpsertListingPackages } from '@apis/listingPackage/apis';
 import EditorInput from '@components/editor';
 import { useListOfListingTypes } from '@apis/lookups/apis';
-import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
+import GoogleMapWithSearch from '@components/googleMap/map';
 
 type Props = {
   onClose: () => void;
@@ -181,14 +181,6 @@ export default function UbsertListingPackage({
       </span>
     </div>
   );
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (event.latLng) {
-      setSelectedPosition({
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-      });
-    }
-  };
 
   const handleClose = () => {
     onClose();
@@ -299,19 +291,12 @@ export default function UbsertListingPackage({
           </div>
           <FormHead title="Location" />
 
-          <div className="col-md-12 mt-2">
-            <div className="mt-4">
-              <LoadScript googleMapsApiKey="AIzaSyAtKwuPnLrfrCRda600VKNGR2SFV4pAqtk">
-                <GoogleMap
-                  mapContainerStyle={{ height: '600px', width: '100%' }}
-                  center={center}
-                  zoom={7}
-                  onClick={handleMapClick}
-                >
-                  {selectedPosition && <Marker position={selectedPosition} />}
-                </GoogleMap>
-              </LoadScript>
-            </div>
+          <div className="col-md-12 mt-2 max-h-[700px] min-h-[700px] ">
+            <GoogleMapWithSearch
+              zoom={12}
+              selectedPosition={selectedPosition}
+              setSelectedPosition={setSelectedPosition}
+            />
           </div>
 
           {mode === 'add' && (

@@ -13,6 +13,7 @@ export interface IListing {
   price: number;
   priceDiscountValue: number;
   priceDiscountPercentage: number;
+  minimumBookingHours: number;
   extraHours: number;
   lat: number;
   long: number;

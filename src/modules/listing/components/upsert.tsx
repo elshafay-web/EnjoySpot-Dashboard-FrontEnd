@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines-per-function */
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Sidebar } from 'primereact/sidebar';
 import FormHead from '@components/formHead';
@@ -29,12 +29,7 @@ import MultiFileUpload from '@components/MultiFileUpload';
 import YouTubeIFrame from '@components/YouTubeIFrame';
 import { convertObjectToFormData } from '@helpers/helpingFun';
 import EditorInput from '@components/editor';
-import {
-  GoogleMap,
-  LoadScript,
-  Marker,
-  StandaloneSearchBox,
-} from '@react-google-maps/api';
+import GoogleMapWithSearch from '@components/googleMap/map';
 
 type Props = {
   onClose: () => void;
@@ -73,7 +68,6 @@ export default function UbsertListing({
     control: form.control,
     name: 'entertainmentPrices',
   });
-
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
@@ -82,7 +76,10 @@ export default function UbsertListing({
   const { data: listOfListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
   const center = { lat: 25.276987, lng: 55.296249 };
-  const [selectedPosition, setSelectedPosition] = useState(center);
+  const [selectedPosition, setSelectedPosition] = useState<{
+    lat: number;
+    lng: number;
+  }>(center);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (req: FormData) => UpsertListing(req),
@@ -235,8 +232,8 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
-    formData.append('lat', selectedPosition.lat.toString());
-    formData.append('long', selectedPosition.lng.toString());
+    formData.append('lat', selectedPosition?.lat.toString() ?? '0');
+    formData.append('long', selectedPosition?.lng.toString() ?? '0');
 
     mutate(formData);
   };
@@ -289,7 +286,7 @@ export default function UbsertListing({
   }, []);
 
   useEffect(() => {
-    if (intialValues) {
+    if (intialValues && mode === 'edit') {
       const filteredObj = Object.fromEntries(
         Object.entries(intialValues).filter(([, v]) => v !== null),
       );
@@ -334,21 +331,12 @@ export default function UbsertListing({
   const handleClose = () => {
     onClose();
   };
-  const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
 
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (event.latLng) {
-      setSelectedPosition({
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-      });
-    }
-  };
   return (
     <Sidebar
       position="right"
       visible={open}
-      style={{ width: '50vw', fontFamily: 'Cairo' }}
+      style={{ width: '60vw', fontFamily: 'Cairo' }}
       modal
       className="d-flex dss"
       onHide={() => {
@@ -520,15 +508,26 @@ export default function UbsertListing({
             )}
 
             {priceType === 'Hour' && (
-              <Input
-                register={form.register}
-                errors={form.formState.errors}
-                field={{
-                  inputName: 'extraHours',
-                  title: 'Extra Hours',
-                  isNumber: true,
-                }}
-              />
+              <>
+                <Input
+                  register={form.register}
+                  errors={form.formState.errors}
+                  field={{
+                    inputName: 'minimumBookingHours',
+                    title: 'Minimum Booking Hours',
+                    isNumber: true,
+                  }}
+                />
+                <Input
+                  register={form.register}
+                  errors={form.formState.errors}
+                  field={{
+                    inputName: 'extraHours',
+                    title: 'Extra Hours',
+                    isNumber: true,
+                  }}
+                />
+              </>
             )}
           </div>
 
@@ -629,52 +628,12 @@ export default function UbsertListing({
 
           <FormHead title="Location" />
 
-          <div className="col-md-12 mt-2">
-            <div className="mt-4">
-              <LoadScript
-                googleMapsApiKey="AIzaSyDcBNvhTn41CVismsIzNM3Fr7ztlE73DRc"
-                libraries={['places']}
-              >
-                <StandaloneSearchBox
-                  onLoad={(ref) => {
-                    if (ref) {
-                      console.log(ref);
-
-                      searchBoxRef.current = ref;
-                    }
-                  }}
-                  onPlacesChanged={() => {
-                    const places = searchBoxRef.current?.getPlaces();
-                    console.log(searchBoxRef);
-
-                    if (places && places.length > 0) {
-                      const place = places[0];
-                      const location = place.geometry?.location;
-                      if (location) {
-                        setSelectedPosition({
-                          lat: location.lat(),
-                          lng: location.lng(),
-                        });
-                      }
-                    }
-                  }}
-                >
-                  <input
-                    type="text"
-                    placeholder="Search for a place"
-                    className="border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200 h-[42px] w-full !py-[0.75rem] !px-[0.45rem]  transition duration-300 rounded-[6px] my-4"
-                  />
-                </StandaloneSearchBox>
-                <GoogleMap
-                  mapContainerStyle={{ height: '600px', width: '100%' }}
-                  center={center}
-                  zoom={12}
-                  onClick={handleMapClick}
-                >
-                  {selectedPosition && <Marker position={selectedPosition} />}
-                </GoogleMap>
-              </LoadScript>
-            </div>
+          <div className="col-md-12 mt-2 max-h-[700px] min-h-[700px] ">
+            <GoogleMapWithSearch
+              zoom={12}
+              selectedPosition={selectedPosition}
+              setSelectedPosition={setSelectedPosition}
+            />
           </div>
 
           {mode === 'add' && (
