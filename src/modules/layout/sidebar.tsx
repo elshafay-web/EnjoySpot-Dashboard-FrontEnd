@@ -52,6 +52,13 @@ export default function Sidebar() {
       command: () => navigate('/users'),
     },
     {
+      label: 'Customers',
+      icon: 'fa-solid fa-person-circle-check text-2xl w-[42px]',
+      routing: '/customers',
+      template: itemRenderer,
+      command: () => navigate('/customers'),
+    },
+    {
       label: 'Suppliers',
       icon: 'fa-solid fa-people-group text-2xl w-[42px]',
       routing: '/suppliers',
@@ -71,6 +78,13 @@ export default function Sidebar() {
       routing: '/listing-package',
       template: itemRenderer,
       command: () => navigate('/listing-package'),
+    },
+    {
+      label: 'Role',
+      icon: 'fa-solid fa-unlock-keyhole text-2xl w-[42px]',
+      routing: '/roles',
+      template: itemRenderer,
+      command: () => navigate('/roles'),
     },
     {
       label: 'Settings',

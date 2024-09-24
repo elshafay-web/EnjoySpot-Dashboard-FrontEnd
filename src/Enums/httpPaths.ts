@@ -13,6 +13,16 @@ export enum HttpPaths {
   Api_users_Upsert = '/api/users/upsert',
   Api_users_Profile = '/api/users/GetProfile/',
 
+  // ************** roles ******************
+
+  Api_permissions_ListOf = '/api/roles/getPermissions',
+  Api_roles_ListOf = '/api/roles/listOf',
+  Api_roles_GetAll = '/api/roles/getAll',
+  Api_roles_Delete = '/api/roles/delete/',
+  Api_roles_ToggleIsActive = '/api/roles/toggelActive/',
+  Api_roles_Upsert = '/api/roles/upsert',
+  Api_roles_Profile = '/api/roles/GetProfile/',
+
   // ************** Notification ******************
 
   Api_Notification_GETALL = '/api/v1/NotiMessage/GetUserMessages?User_Id=',
@@ -145,4 +155,18 @@ export enum HttpPaths {
   Api_currencies_Delete = '/api/currencies/delete/',
   Api_currencies_ToggleIsActive = '/api/currencies/toggelActive/',
   Api_currencies_Upsert = '/api/currencies/upsert',
+
+  // ************** customers ******************
+
+  Api_customers_GetAll = '/api/customers/getAll',
+  Api_customers_ListOf = '/api/customers/listOf',
+  Api_customers_Delete = '/api/customers/delete/',
+  Api_customers_ToggleIsActive = '/api/customers/toggelActive/',
+  Api_customers_Upsert = '/api/customers/upsert',
+
+  // ************** transactions ******************
+
+  Api_transactions_GetAll = '/api/transactions/getAll',
+  Api_transactions_Refund = '/api/transactions/listOf',
+  Api_transactions_Add = '/api/transactions/upsert',
 }

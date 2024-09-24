@@ -8,44 +8,42 @@ import FormHead from '@components/formHead';
 import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import { Button } from 'primereact/button';
-import { useListOfCountries, useListOfNationalitie } from '@apis/lookups/apis';
+import { useListOfNationalitie } from '@apis/lookups/apis';
 import { toast } from 'sonner';
-import { IUser } from '@domains/IUser';
-import { UpsertUser } from '@apis/user/api';
-import { useListOfRoles } from '@apis/roles/apis';
+import { ICustomer } from '@domains/ICustomer';
+import { UpsertCustomer } from '@apis/customer/apis';
+import CalendarInput from '@components/calendar';
 
 type Props = {
   onClose: () => void;
-  intialValues: IUser;
+  intialValues: ICustomer;
   mode: 'edit' | 'add';
   open: boolean;
 };
 
-export default function UbsertUsers({
+export default function UbsertCustomers({
   onClose,
   intialValues,
   mode = 'add',
   open,
 }: Props) {
-  const form = useForm<IUser>({
+  const form = useForm<ICustomer>({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
     defaultValues: intialValues,
   });
 
-  const { data: listOfRoles } = useListOfRoles();
   const { data: listOfNationalites } = useListOfNationalitie();
-  const { data: listOfCountries } = useListOfCountries();
   const { mutate, isPending } = useMutation({
-    mutationFn: (req: IUser) => UpsertUser(req),
+    mutationFn: (req: ICustomer) => UpsertCustomer(req),
     onSuccess: async (res) => {
       toast.success(res.message);
       onClose();
     },
   });
 
-  const onSubmit = (values: IUser) => {
-    values.id = intialValues?.id || '';
+  const onSubmit = (values: ICustomer) => {
+    values.id = intialValues?.id || 0;
     mutate(values);
   };
 
@@ -61,7 +59,7 @@ export default function UbsertUsers({
   const customHeader = (
     <div className="items-center flex gap-4">
       <span className="text-3xl font-bold">
-        {mode === 'add' ? 'Add User' : 'Edit User'}
+        {mode === 'add' ? 'Add Customer' : 'Edit Customer'}
       </span>
     </div>
   );
@@ -92,20 +90,8 @@ export default function UbsertUsers({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'firstName',
-                title: 'First Name',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            />
-
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'lastName',
-                title: 'Last Name',
+                inputName: 'name',
+                title: 'Name',
                 isRequired: true,
                 minLength: 3,
                 maxLength: 100,
@@ -123,6 +109,16 @@ export default function UbsertUsers({
                 maxLength: 100,
               }}
             />
+            <CalendarInput
+              control={form.control}
+              max={new Date()}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'dateOfBirth',
+                title: 'Birth Date',
+                isRequired: true,
+              }}
+            />
 
             <Input
               register={form.register}
@@ -133,23 +129,22 @@ export default function UbsertUsers({
                 isRequired: true,
               }}
             />
+
             <Input
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'phoneNumber',
-                title: 'Phone Number',
+                inputName: 'source',
+                title: 'Source',
                 isRequired: true,
               }}
             />
-
-            <DropDownInput
-              control={form.control}
-              options={listOfRoles || []}
+            <Input
+              register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'role_Id',
-                title: 'Role',
+                inputName: 'landlineOrMobile',
+                title: 'Mobile Or Landline',
                 isRequired: true,
               }}
             />
@@ -161,17 +156,6 @@ export default function UbsertUsers({
               field={{
                 inputName: 'nationality_Id',
                 title: 'Nationality',
-                isRequired: true,
-              }}
-            />
-
-            <DropDownInput
-              control={form.control}
-              options={listOfCountries || []}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'country_Id',
-                title: 'Country',
                 isRequired: true,
               }}
             />

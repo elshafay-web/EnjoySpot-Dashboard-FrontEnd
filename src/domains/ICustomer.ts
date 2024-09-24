@@ -1,0 +1,21 @@
+export interface ICustomer {
+  id: number;
+  name: string;
+  email: string;
+  landlineOrMobile: string;
+  dateOfBirth: string;
+  nationality_Id: number;
+  nationalityName: string;
+  source: string;
+  username: string;
+  password: string;
+  isActive: boolean;
+}
+
+export interface ICustomerGetRequestFilter {
+  IsLead: boolean;
+  Search: string;
+  IsActive: boolean;
+  PageNumber: number;
+  PageSize: number;
+}

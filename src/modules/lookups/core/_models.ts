@@ -68,7 +68,10 @@ export interface IList {
   id: number;
   name: string;
 }
-
+export interface IListString {
+  id: string;
+  name: string;
+}
 export interface InputCreateModel {
   inputName: string;
   title: ReactNode;

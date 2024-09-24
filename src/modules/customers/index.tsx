@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useGetAllUsers } from '@apis/user/api';
 import FilterButton from '@components/FilterButton';
 import { PageHeader } from '@components/page-header';
-import { IUser, IUserGetRequestFilter } from '@domains/IUser';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from 'primereact/button';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import React, { useRef, useState } from 'react';
 import AddButton from '@components/AddButton';
-import SearchForUsers from './components/search';
-import UsersDataTable from './components/dataTable';
-import UbsertUsers from './components/upsert';
+import { ICustomer, ICustomerGetRequestFilter } from '@domains/ICustomer';
+import { useGetAllCustomers } from '@apis/customer/apis';
+import CustomersDataTable from './components/dataTable';
+import SearchForCustomers from './components/search';
+import UbsertCustomers from './components/upsert';
 
-export default function UserPage() {
+export default function CustomerPage() {
   const op = useRef<any>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [UserObj, setUserObj] = useState<IUser>({} as IUser);
+  const [customerObj, setCustomerObj] = useState<ICustomer>({} as ICustomer);
   const [filter, setFilter] = useState({
-    ...({} as IUserGetRequestFilter),
+    ...({} as ICustomerGetRequestFilter),
     isActive: true,
   });
-  const { data: Users } = useGetAllUsers(filter);
+  const { data: customers } = useGetAllCustomers(filter);
   const queryClient = useQueryClient();
 
-  const onEdit = (profile: IUser) => {
-    if (profile && profile.id.length > 0) {
-      setUserObj(profile);
+  const onEdit = (profile: ICustomer) => {
+    if (profile && profile.id > 0) {
+      setCustomerObj(profile);
       setOpen(true);
     }
   };
@@ -35,7 +35,7 @@ export default function UserPage() {
   };
 
   const handleAddButton = () => {
-    setUserObj({} as IUser);
+    setCustomerObj({} as ICustomer);
     setOpen(true);
   };
 
@@ -43,7 +43,7 @@ export default function UserPage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Users" icon="fa-solid fa-users" />
+          <PageHeader title="Users" icon="fa-solid fa-person-circle-check" />
           <div className="flex items-center justify-start">
             <Button
               onClick={() => setFilter({ ...filter, isActive: true })}
@@ -64,11 +64,11 @@ export default function UserPage() {
               <FilterButton onClick={handleFilterButton} />
               <OverlayPanel ref={op}>
                 <div className="d-flex justify-center items-center flex-column">
-                  <SearchForUsers
+                  <SearchForCustomers
                     onSearch={(data) => setFilter(data)}
                     onClear={() => {
                       setFilter({
-                        ...({} as IUserGetRequestFilter),
+                        ...({} as ICustomerGetRequestFilter),
                         isActive: true,
                       });
                     }}
@@ -80,17 +80,17 @@ export default function UserPage() {
             <AddButton onClick={handleAddButton} buttonText="Add User" />
           </div>
         </div>
-        <UsersDataTable onEdit={onEdit} Users={Users || []} />
+        <CustomersDataTable onEdit={onEdit} Customers={customers || []} />
       </div>
 
-      <UbsertUsers
+      <UbsertCustomers
         open={open}
-        intialValues={UserObj || ({} as IUser)}
-        mode={Object.keys(UserObj ?? {}).length > 0 ? 'edit' : 'add'}
+        intialValues={customerObj || ({} as ICustomer)}
+        mode={Object.keys(customerObj ?? {}).length > 0 ? 'edit' : 'add'}
         onClose={() => {
-          setUserObj({} as IUser);
+          setCustomerObj({} as ICustomer);
           setOpen(false);
-          queryClient.invalidateQueries({ queryKey: ['getAllUsers'] });
+          queryClient.invalidateQueries({ queryKey: ['getAllCustomers'] });
         }}
       />
     </div>
