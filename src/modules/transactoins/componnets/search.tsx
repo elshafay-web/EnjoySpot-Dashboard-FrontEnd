@@ -2,26 +2,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
-import Input from '@components/input';
-import { ICustomerGetRequestFilter } from '@domains/ICustomer';
 import DropDownInput from '@components/Dropdown';
+import { ITransactionRequestFilter } from '@domains/ITransactions';
+import { useListOfCustomers } from '@apis/customer/apis';
+import { useListOfListings } from '@apis/listing/apis';
+import { useListOfListingPackages } from '@apis/listingPackage/apis';
+import CalendarInput from '@components/calendar';
 
 type Props = {
   onSearch: (data: any) => void;
   onClear?: () => void;
-  defualtValues: ICustomerGetRequestFilter;
+  defualtValues: ITransactionRequestFilter;
 };
 
-export default function SearchForCustomers({
+export default function SearchForTransactions({
   onSearch,
   onClear,
   defualtValues,
 }: Props) {
-  const form = useForm<ICustomerGetRequestFilter>({
+  const form = useForm<ITransactionRequestFilter>({
     criteriaMode: 'all',
     defaultValues: defualtValues,
     mode: 'onChange', // or 'onBlur', 'onTouched'
   });
+  const { data: customers } = useListOfCustomers();
+  const { data: listings } = useListOfListings();
+  const { data: listingPackages } = useListOfListingPackages();
+
   const onSubmit = (values: any) => {
     onSearch(values);
   };
@@ -32,28 +39,48 @@ export default function SearchForCustomers({
       className="row align-items-center rounded p-0"
       style={{ width: '30rem' }}
     >
-      <div className="grid grid-cols-1 gap-4">
-        <Input
-          register={form.register}
-          errors={form.formState.errors}
-          field={{
-            inputName: 'Search',
-            title: 'searchHere',
-            minLength: 1,
-            maxLength: 20,
-          }}
-        />
-
+      <div className="grid grid-cols-2 gap-4 mt-4">
         <DropDownInput
           control={form.control}
+          options={customers || []}
           errors={form.formState.errors}
-          options={[
-            { name: 'Active', id: true },
-            { name: 'Not Active', id: false },
-          ]}
           field={{
-            inputName: 'IsLead',
-            title: 'Active Leads',
+            inputName: 'Customer_Id',
+            title: 'Customer',
+          }}
+        />
+        <DropDownInput
+          control={form.control}
+          options={listings || []}
+          errors={form.formState.errors}
+          field={{
+            inputName: 'Listing_Id',
+            title: 'Listing',
+          }}
+        />
+        <DropDownInput
+          control={form.control}
+          options={listingPackages || []}
+          errors={form.formState.errors}
+          field={{
+            inputName: 'ListingPackage_Id',
+            title: 'Listing Package',
+          }}
+        />
+        <CalendarInput
+          control={form.control}
+          errors={form.formState.errors}
+          field={{
+            inputName: 'StartDate',
+            title: 'Start Date',
+          }}
+        />
+        <CalendarInput
+          control={form.control}
+          errors={form.formState.errors}
+          field={{
+            inputName: 'EndDate',
+            title: 'End Date',
           }}
         />
       </div>
@@ -76,9 +103,7 @@ export default function SearchForCustomers({
               className="rounded p-2 ms-4"
               style={{ width: '100px' }}
               onClick={() => {
-                form.reset({
-                  Search: '',
-                });
+                form.reset();
                 if (onClear) {
                   onClear();
                 }

@@ -53,6 +53,9 @@ export default function UbsertCustomers({
         Object.entries(intialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
+      if (intialValues.dateOfBirth) {
+        form.setValue('dateOfBirth', new Date(intialValues.dateOfBirth));
+      }
     }
   }, [intialValues]);
 

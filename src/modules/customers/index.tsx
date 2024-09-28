@@ -18,7 +18,10 @@ export default function CustomerPage() {
   const [customerObj, setCustomerObj] = useState<ICustomer>({} as ICustomer);
   const [filter, setFilter] = useState({
     ...({} as ICustomerGetRequestFilter),
+    PageNumber: 1,
+    PageSize: 1000,
     isActive: true,
+    IsLead: true,
   });
   const { data: customers } = useGetAllCustomers(filter);
   const queryClient = useQueryClient();
@@ -43,7 +46,10 @@ export default function CustomerPage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Users" icon="fa-solid fa-person-circle-check" />
+          <PageHeader
+            title="Customers"
+            icon="fa-solid fa-person-circle-check"
+          />
           <div className="flex items-center justify-start">
             <Button
               onClick={() => setFilter({ ...filter, isActive: true })}
@@ -69,7 +75,10 @@ export default function CustomerPage() {
                     onClear={() => {
                       setFilter({
                         ...({} as ICustomerGetRequestFilter),
+                        PageNumber: 1,
+                        PageSize: 1000,
                         isActive: true,
+                        IsLead: false,
                       });
                     }}
                     defualtValues={filter}
@@ -77,7 +86,7 @@ export default function CustomerPage() {
                 </div>
               </OverlayPanel>
             </div>
-            <AddButton onClick={handleAddButton} buttonText="Add User" />
+            <AddButton onClick={handleAddButton} buttonText="Add Customer" />
           </div>
         </div>
         <CustomersDataTable onEdit={onEdit} Customers={customers || []} />

@@ -45,6 +45,13 @@ export default function Sidebar() {
       command: () => navigate('/'),
     },
     {
+      label: 'Tranasctions',
+      icon: 'fa-solid fa-circle-dollar-to-slot text-2xl w-[42px]',
+      routing: '/transactions',
+      template: itemRenderer,
+      command: () => navigate('/transactions'),
+    },
+    {
       label: 'Users',
       icon: 'fa-solid fa-users text-2xl w-[42px]',
       routing: '/users',

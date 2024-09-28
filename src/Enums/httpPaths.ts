@@ -167,6 +167,6 @@ export enum HttpPaths {
   // ************** transactions ******************
 
   Api_transactions_GetAll = '/api/transactions/getAll',
-  Api_transactions_Refund = '/api/transactions/listOf',
-  Api_transactions_Add = '/api/transactions/upsert',
+  Api_transactions_Refund = '/api/transactions/Refund',
+  Api_transactions_Add = '/api/transactions/Add',
 }

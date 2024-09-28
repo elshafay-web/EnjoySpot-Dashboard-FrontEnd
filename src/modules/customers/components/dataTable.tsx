@@ -13,6 +13,7 @@ import ToggleButton from '@components/ToggleButton';
 import { DataTable } from 'primereact/datatable';
 import { toggleCustomer } from '@apis/customer/apis';
 import { ICustomer } from '@domains/ICustomer';
+import { formatDate } from '@helpers/helpingFun';
 
 type Props = {
   onEdit: (data: ICustomer) => void;
@@ -91,7 +92,11 @@ export default function CustomersDataTable({ onEdit, Customers }: Props) {
           <Column field="landlineOrMobile" header="Mobile" />
           <Column field="userName" header="User Name" />
           <Column field="email" header="Email" />
-          <Column field="dateOfBirth" header="Birth Date" />
+          <Column
+            field="dateOfBirth"
+            header="Birth Date"
+            body={(x) => formatDate(new Date(x.dateOfBirth))}
+          />
           <Column field="source" header="Source" />
           <Column field="nationalityName" header="Nationality" />
           <Column

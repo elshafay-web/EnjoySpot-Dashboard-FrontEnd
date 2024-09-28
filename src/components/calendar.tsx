@@ -6,12 +6,12 @@ import { Calendar } from 'primereact/calendar';
 import { Control, Controller } from 'react-hook-form';
 
 type Props = {
-  field: InputCreateModel
-  errors: any
-  control: Control<any>
-  showTime?: boolean
-  min?: Date
-  max?: Date
+  field: InputCreateModel;
+  errors: any;
+  control: Control<any>;
+  showTime?: boolean;
+  min?: Date;
+  max?: Date;
 };
 
 export default function CalendarInput({
@@ -23,7 +23,7 @@ export default function CalendarInput({
   max,
 }: Props) {
   return (
-    <div className="col-12 w-100">
+    <div className="w-100">
       <label
         htmlFor={field.inputName}
         className="w-full form-label font-bold text-secondary !mb-1"

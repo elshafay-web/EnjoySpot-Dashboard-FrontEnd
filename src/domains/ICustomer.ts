@@ -3,7 +3,7 @@ export interface ICustomer {
   name: string;
   email: string;
   landlineOrMobile: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
   nationality_Id: number;
   nationalityName: string;
   source: string;
@@ -13,7 +13,7 @@ export interface ICustomer {
 }
 
 export interface ICustomerGetRequestFilter {
-  IsLead: boolean;
+  IsLead?: boolean;
   Search: string;
   IsActive: boolean;
   PageNumber: number;

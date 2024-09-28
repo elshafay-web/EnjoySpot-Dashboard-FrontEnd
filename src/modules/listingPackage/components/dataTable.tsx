@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Column } from 'primereact/column';
 import { Tag } from 'primereact/tag';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
@@ -16,6 +16,7 @@ import {
   toggleListingPackages,
 } from '@apis/listingPackage/apis';
 import { IListingPackages } from '@domains/IListingPackage';
+import Booking from '@components/Booking';
 
 type Props = {
   onEdit: (data: IListingPackages) => void;
@@ -53,7 +54,9 @@ export default function ListingsPackageDataTable({
       severity={data.isActive ? 'success' : 'danger'}
     />
   );
-
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedListPackage, setSelectedListPackage] =
+    useState<IListingPackages | null>(null);
   const reject = () => {};
 
   const togglePopUp = (event: any, data: IListingPackages) => {
@@ -170,6 +173,19 @@ export default function ListingsPackageDataTable({
         </DataTable>
       </div>
       <ConfirmPopup />
+      <Booking
+        onCancel={() => {
+          setOpen(false);
+          setSelectedListPackage(null);
+        }}
+        onSubmit={() => {
+          setOpen(false);
+          setSelectedListPackage(null);
+        }}
+        open={open}
+        listing={undefined}
+        listingPackage={selectedListPackage ?? undefined}
+      />
     </div>
   );
 }

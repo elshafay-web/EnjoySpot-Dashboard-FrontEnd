@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputCreateModel } from '@domains/IShardInput'
-import { ErrorMessage } from '@hookform/error-message'
-import clsx from 'clsx'
-import { Dropdown } from 'primereact/dropdown'
-import { Control, Controller } from 'react-hook-form'
+import { InputCreateModel } from '@domains/IShardInput';
+import { ErrorMessage } from '@hookform/error-message';
+import clsx from 'clsx';
+import { Dropdown } from 'primereact/dropdown';
+import { Control, Controller } from 'react-hook-form';
 
 type Props = {
-  field: InputCreateModel
-  errors: any
-  control: Control<any>
-  options: Array<any>
-}
+  field: InputCreateModel;
+  errors: any;
+  control: Control<any>;
+  options: Array<any>;
+};
 
 export default function DropDownInput({
   field,
@@ -37,11 +37,11 @@ export default function DropDownInput({
         render={({ field: { onChange, value } }) => (
           <Dropdown
             value={value}
-            onChange={e => {
+            onChange={(e) => {
               if (e.value !== null || e.value !== undefined) {
-                onChange(e.value)
+                onChange(e.value);
               } else {
-                onChange(undefined)
+                onChange(undefined);
               }
             }}
             filter
@@ -60,7 +60,7 @@ export default function DropDownInput({
               {
                 'border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-200':
                   !errors[field.inputName],
-              }
+              },
             )}
           />
         )}
@@ -78,5 +78,5 @@ export default function DropDownInput({
         }
       />
     </div>
-  )
+  );
 }

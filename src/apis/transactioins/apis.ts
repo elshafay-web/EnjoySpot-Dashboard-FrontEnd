@@ -2,12 +2,17 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { CommonGetRequestsWithQuery } from '@helpers/helpingFun';
 import { IResponse } from '@domains/IResponse';
-import { ICustomer, ICustomerGetRequestFilter } from '@domains/ICustomer';
+import {
+  IAddTransaction,
+  IRefund,
+  ITransaction,
+  ITransactionRequestFilter,
+} from '@domains/ITransactions';
 import { HttpPaths } from '@/Enums/httpPaths';
 
 export const getAllTransactions = async (
-  req: ICustomerGetRequestFilter,
-): Promise<ICustomer[]> => {
+  req: ITransactionRequestFilter,
+): Promise<ITransaction[]> => {
   const response = await CommonGetRequestsWithQuery(
     HttpPaths.Api_transactions_GetAll,
     req,
@@ -15,8 +20,8 @@ export const getAllTransactions = async (
   return response.data?.data?.data;
 };
 
-export const useGetAllTransactions = (req: ICustomerGetRequestFilter) => {
-  const query = useQuery<ICustomer[], Error>({
+export const useGetAllTransactions = (req: ITransactionRequestFilter) => {
+  const query = useQuery<ITransaction[], Error>({
     queryKey: ['getAllTransactions', req],
     queryFn: () => getAllTransactions(req),
   });
@@ -24,12 +29,12 @@ export const useGetAllTransactions = (req: ICustomerGetRequestFilter) => {
 };
 
 export async function addTransaction(
-  req: ICustomer,
-): Promise<IResponse<ICustomer>> {
+  req: IAddTransaction,
+): Promise<IResponse<string>> {
   const data = await axios.post(`${HttpPaths.Api_transactions_Add}`, req);
   return data?.data;
 }
-export async function refund(req: ICustomer): Promise<IResponse<ICustomer>> {
+export async function refund(req: IRefund): Promise<IResponse<string>> {
   const data = await axios.post(`${HttpPaths.Api_transactions_Refund}`, req);
   return data?.data;
 }

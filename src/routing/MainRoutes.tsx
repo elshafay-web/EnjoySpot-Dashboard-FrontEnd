@@ -12,6 +12,7 @@ const UserPage = lazy(() => import('../modules/users'));
 const ListingPage = lazy(() => import('../modules/listing'));
 const ListingPackagePage = lazy(() => import('../modules/listingPackage'));
 const CustomerPage = lazy(() => import('../modules/customers'));
+const TransactioinsPage = lazy(() => import('../modules/transactoins'));
 
 const MainRoute: RouteObject[] = [
   {
@@ -23,6 +24,15 @@ const MainRoute: RouteObject[] = [
         element: (
           <ProtectRoutes auth>
             <DashboardPage />
+          </ProtectRoutes>
+        ),
+        index: true,
+      },
+      {
+        path: 'transactions',
+        element: (
+          <ProtectRoutes auth>
+            <TransactioinsPage />
           </ProtectRoutes>
         ),
         index: true,

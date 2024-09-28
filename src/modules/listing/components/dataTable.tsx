@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Column } from 'primereact/column';
 import { Tag } from 'primereact/tag';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
@@ -13,14 +13,16 @@ import { IListing } from '@domains/IListing';
 import ToggleButton from '@components/ToggleButton';
 import { DataTable } from 'primereact/datatable';
 import { toggleListing } from '@apis/listing/apis';
+import Booking from '@components/Booking';
 
 type Props = {
-  onEdit: (data: IListing) => void
-  onView: (data: IListing) => void
-  listings: IListing[]
+  onEdit: (data: IListing) => void;
+  onView: (data: IListing) => void;
+  listings: IListing[];
 };
-
 export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedList, setSelectedList] = useState<IListing | null>(null);
   const queryClient = useQueryClient();
   const { mutate: toggleListingMutation } = useMutation({
     mutationKey: ['toggleListing'],
@@ -30,14 +32,12 @@ export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
       queryClient.invalidateQueries({ queryKey: ['getAllListings'] });
     },
   });
-
   const statusBodyTemplate = (data: IListing): ReactNode => (
     <Tag
       value={data.isActive ? 'Active' : 'Not Active'}
       severity={data.isActive ? 'success' : 'danger'}
     />
   );
-
   const reject = () => {};
 
   const togglePopUp = (event: any, data: IListing) => {
@@ -87,6 +87,21 @@ export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
         className="me-2"
         onClick={() => onView(rowData)}
       />
+      <Button
+        icon="fa-solid fa-clipboard-check text-xl"
+        rounded
+        text
+        raised
+        aria-label="Filter"
+        tooltipOptions={{ position: 'bottom' }}
+        tooltip="reserve"
+        severity="secondary"
+        className="me-2"
+        onClick={() => {
+          setSelectedList(rowData);
+          setOpen(true);
+        }}
+      />
     </div>
   );
 
@@ -124,6 +139,19 @@ export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
         </DataTable>
       </div>
       <ConfirmPopup />
+
+      <Booking
+        onCancel={() => {
+          setOpen(false);
+          setSelectedList(null);
+        }}
+        onSubmit={() => {
+          setOpen(false);
+          setSelectedList(null);
+        }}
+        open={open}
+        listing={selectedList ?? undefined}
+      />
     </div>
   );
 }
