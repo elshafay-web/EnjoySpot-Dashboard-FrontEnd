@@ -102,6 +102,7 @@ export default function Booking({
       }}
       header="Reserve"
       style={{ width: '50vw', minHeight: '50vh' }}
+      resizable={false}
     >
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-3">
