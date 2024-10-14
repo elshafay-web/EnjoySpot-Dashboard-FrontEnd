@@ -4,6 +4,8 @@ export interface IPermission {
 }
 export interface IRole {
   id: string;
+  nameAr: string;
+  nameEn: string;
   name: string;
   modules: {
     moduleName: string;

@@ -1,5 +1,7 @@
 export interface ICustomer {
   id: number;
+  nameAr: string;
+  nameEn: string;
   name: string;
   email: string;
   landlineOrMobile: string;

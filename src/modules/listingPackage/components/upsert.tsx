@@ -129,7 +129,7 @@ export default function UbsertListingPackage({
           setMediaFiles(filesData);
         })
         .catch((error) => {
-          console.error('Error reading files:', error);
+          toast.error(`Error reading files:${error}`);
         });
     }
   }, []);
@@ -208,8 +208,19 @@ export default function UbsertListingPackage({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'name',
-                title: 'Name',
+                inputName: 'nameAr',
+                title: 'Name In Arabic',
+                isRequired: true,
+                minLength: 3,
+                maxLength: 100,
+              }}
+            />
+            <Input
+              register={form.register}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'nameEn',
+                title: 'Name In English',
                 isRequired: true,
                 minLength: 3,
                 maxLength: 100,

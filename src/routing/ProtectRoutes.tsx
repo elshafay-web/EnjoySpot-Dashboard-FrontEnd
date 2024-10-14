@@ -2,7 +2,7 @@
 import { Navigate, useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { checkTokenCookie } from '@helpers/cookies';
-import LockStyle from './Lock';
+import useAxiosInterceptors from '@apis/interceptor';
 
 type Props = {
   children: React.ReactNode;
@@ -15,6 +15,7 @@ export default function ProtectRoutes({
   permission,
   auth = true,
 }: Props) {
+  useAxiosInterceptors();
   let token = checkTokenCookie();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -35,5 +36,4 @@ export default function ProtectRoutes({
   if (!token || !permission) {
     return children;
   }
-  return <LockStyle />;
 }

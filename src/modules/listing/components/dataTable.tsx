@@ -115,7 +115,8 @@ export default function ListingsDataTable({ onEdit, onView, listings }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field="name" header="Name" />
+          <Column field="nameAr" header="Name In Arabic" />
+          <Column field="nameEN" header="Name In English" />
           <Column field="supplierName" header="Supplier Name" />
           <Column field="listingTypeName" header="Listing Type" />
           <Column field="listingCategoryName" header="Listing Category" />

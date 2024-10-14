@@ -27,6 +27,8 @@ export interface IListing {
   routesMapImage: File;
   youTubeVideoIframe: string;
   isActive: boolean;
+  nameAr: string;
+  nameEn: string;
   name: string;
   supplierName: string;
   listingTypeName: string;

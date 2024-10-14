@@ -2,6 +2,8 @@
 export interface ISupplier {
   id: number;
   email: string;
+  nameAr: string;
+  nameEn: string;
   name: string;
   officeAddress: string;
   landlineOrMobile: string;

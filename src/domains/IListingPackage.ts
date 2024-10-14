@@ -1,5 +1,7 @@
 export interface IListingPackages {
   id: number;
+  nameAr: string;
+  nameEn: string;
   name: string;
   summary: string;
   overview: string;
