@@ -1,7 +1,7 @@
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate, useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import { checkTokenCookie } from '@helpers/cookies';
 import useAxiosInterceptors from '@apis/interceptor';
 
 type Props = {
@@ -16,7 +16,7 @@ export default function ProtectRoutes({
   auth = true,
 }: Props) {
   useAxiosInterceptors();
-  let token = checkTokenCookie();
+  let token = localStorage.getItem('token') ? true : false;
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const externalParam = searchParams.get('token');

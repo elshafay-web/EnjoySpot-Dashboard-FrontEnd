@@ -35,6 +35,7 @@ export enum HttpPaths {
   Api_City_Delete = '/api/cities/delete/',
   Api_City_ToggleIsActive = '/api/cities/toggelActive/',
   Api_City_Upsert = '/api/cities/upsert',
+  Api_City_Profile = '/api/cities/getProfile/',
 
   // ************** Country ******************
 
@@ -43,10 +44,12 @@ export enum HttpPaths {
   Api_Country_Delete = '/api/countries/delete/',
   Api_Country_ToggleIsActive = '/api/countries/toggelActive/',
   Api_Country_Upsert = '/api/countries/upsert',
+  Api_Country_Profile = '/api/countries/getProfile/',
 
   // ************** listingType ******************
 
   Api_listingType_GetAll = '/api/listingTypes/getAll',
+  Api_listingType_Profile = '/api/listingTypes/getProfile/',
   Api_listingType_ListOf = '/api/listingTypes/listOf',
   Api_listingType_Delete = '/api/listingTypes/delete/',
   Api_listingType_ToggleIsActive = '/api/listingTypes/toggelActive/',
@@ -60,6 +63,7 @@ export enum HttpPaths {
   Api_listingCategories_Delete = '/api/listingCategories/delete/',
   Api_listingCategories_ToggleIsActive = '/api/listingCategories/toggelActive/',
   Api_listingCategories_Upsert = '/api/listingCategories/upsert',
+  Api_listingCategories_Profile = '/api/listingCategories/GetProfile/',
 
   // ************** listingAmenities ******************
 
@@ -68,6 +72,16 @@ export enum HttpPaths {
   Api_listingAmenities_Delete = '/api/listingAmenities/delete/',
   Api_listingAmenities_ToggleIsActive = '/api/listingAmenities/toggelActive/',
   Api_listingAmenities_Upsert = '/api/listingAmenities/upsert',
+  Api_listingAmenities_Profile = '/api/listingAmenities/GetProfile/',
+
+  // ************** listingAmenityTypes ******************
+
+  Api_listingAmenityTypes_GetAll = '/api/listingAmenityTypes/getAll',
+  Api_listingAmenityTypes_ListOf = '/api/listingAmenityTypes/listOf',
+  Api_listingAmenityTypes_Delete = '/api/listingAmenityTypes/delete/',
+  Api_listingAmenityTypes_ToggleIsActive = '/api/listingAmenityTypes/toggelActive/',
+  Api_listingAmenityTypes_Upsert = '/api/listingAmenityTypes/upsert',
+  Api_listingAmenityTypes_Profile = '/api/listingAmenityTypes/GetProfile/',
 
   // ************** listingEntertainments ******************
 
@@ -115,6 +129,7 @@ export enum HttpPaths {
   Api_listingCategoryDetails_Delete = '/api/listingCategoryDetails/delete/',
   Api_listingCategoryDetails_ToggleIsActive = '/api/listingCategoryDetails/toggelActive/',
   Api_listingCategoryDetails_Upsert = '/api/listingCategoryDetails/upsert',
+  Api_listingCategoryDetails_Profile = '/api/listingCategoryDetails/GetProfile/',
 
   // ************** emailTypes ******************
 
@@ -147,6 +162,7 @@ export enum HttpPaths {
   Api_nationalities_Delete = '/api/nationalities/delete/',
   Api_nationalities_ToggleIsActive = '/api/nationalities/toggelActive/',
   Api_nationalities_Upsert = '/api/nationalities/upsert',
+  Api_nationalities_Profile = '/api/nationalities/getProfile/',
 
   // ************** currencies ******************
 
@@ -155,6 +171,7 @@ export enum HttpPaths {
   Api_currencies_Delete = '/api/currencies/delete/',
   Api_currencies_ToggleIsActive = '/api/currencies/toggelActive/',
   Api_currencies_Upsert = '/api/currencies/upsert',
+  Api_currencies_Profile = '/api/currencies/getProfile/',
 
   // ************** customers ******************
 
@@ -169,4 +186,9 @@ export enum HttpPaths {
   Api_transactions_GetAll = '/api/transactions/getAll',
   Api_transactions_Refund = '/api/transactions/Refund',
   Api_transactions_Add = '/api/transactions/Add',
+
+  // ************** site Configuration ******************
+
+  Api_siteConfigurations_Get = '/api/siteConfigurations/getSiteConfigurationDetails',
+  Api_siteConfigurations_Update = '/api/siteConfigurations/update',
 }

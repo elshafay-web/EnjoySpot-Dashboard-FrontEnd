@@ -13,6 +13,7 @@ const ListingPage = lazy(() => import('../modules/listing'));
 const ListingPackagePage = lazy(() => import('../modules/listingPackage'));
 const CustomerPage = lazy(() => import('../modules/customers'));
 const TransactioinsPage = lazy(() => import('../modules/transactoins'));
+const SitConfigurationPage = lazy(() => import('../modules/siteConfigration'));
 
 const MainRoute: RouteObject[] = [
   {
@@ -60,6 +61,15 @@ const MainRoute: RouteObject[] = [
         element: (
           <ProtectRoutes auth>
             <UserPage />
+          </ProtectRoutes>
+        ),
+        index: true,
+      },
+      {
+        path: 'site-configuration',
+        element: (
+          <ProtectRoutes auth>
+            <SitConfigurationPage />
           </ProtectRoutes>
         ),
         index: true,

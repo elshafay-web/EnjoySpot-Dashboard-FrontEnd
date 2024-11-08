@@ -8,6 +8,12 @@ export interface UserData {
   employeeid: number;
   companyid: number;
   roles: Array<string>;
+  isAuthenticated: boolean;
+  token: string;
+  userName: string;
+  expiresOn: string;
+  userId: string;
+  supportedLanguages: { name: string; code: string }[];
 }
 
 export interface LoginRequest {
@@ -15,9 +21,6 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  token: string;
-}
 export interface IUser {
   id: string;
   firstName: string;

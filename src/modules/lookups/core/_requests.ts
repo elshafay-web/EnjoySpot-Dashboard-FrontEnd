@@ -24,3 +24,6 @@ export function toggleLookup(id: number, Api_Toggle_Url: string) {
 export function deleteLookup(id: number, Api_Delete_Url: string) {
   return axios.delete(`${Api_Delete_Url}${id}`);
 }
+export function getProfile(Api_Profile_Url: string, id: number) {
+  return CommonGetRequestsWithQuery(`${Api_Profile_Url + id}`, {});
+}

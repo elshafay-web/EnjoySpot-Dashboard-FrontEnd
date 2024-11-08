@@ -94,6 +94,13 @@ export default function Sidebar() {
       command: () => navigate('/roles'),
     },
     {
+      label: 'Site Configuration',
+      icon: 'fa-solid fa-gear text-2xl m-0 w-[42px] ',
+      routing: '/roles',
+      template: itemRenderer,
+      command: () => navigate('/site-configuration'),
+    },
+    {
       label: 'Settings',
       icon: 'fa-solid fa-gear text-2xl m-0 w-[42px] ',
       routing: '/lookups',

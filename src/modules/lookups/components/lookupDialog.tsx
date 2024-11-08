@@ -12,8 +12,10 @@ import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import CheckBoxInput from '@components/checkBox';
 import EditorInput from '@components/editor';
-import { ILookups, IPostLookup } from '../core/_models';
-import { addLookup, listOfLookups } from '../core/_requests';
+import { useUserData } from '@store/auth';
+import MultiSelectInput from '@components/MultiSeelct';
+import { IInputShape, ILookups, IPostLookup } from '../core/_models';
+import { addLookup, getProfile, listOfLookups } from '../core/_requests';
 
 type Props = {
   dialogVisable: boolean;
@@ -43,6 +45,7 @@ export default function LookupDialog({
   });
 
   const [loading, setLoading] = useState(false);
+  const { userData } = useUserData();
 
   const closeModel = () => {
     closeDialog({ visible: false, editObj: {} });
@@ -60,6 +63,13 @@ export default function LookupDialog({
     } else {
       sendObject = { ...values, id: editObj.id ?? 0 };
     }
+    if (obj.isRequiredSupportedLanguages) {
+      sendObject.translationProperties.forEach((elem: any, index: number) => {
+        elem.languageCode = userData.supportedLanguages[index].code;
+      });
+    }
+
+    console.log(values);
 
     try {
       const { data } = await addLookup(sendObject, obj.addApi);
@@ -83,11 +93,13 @@ export default function LookupDialog({
     );
     if (arr.length > 0) {
       arr.forEach(async (elem) => {
-        const { data } = await listOfLookups(elem.supplayDataURL);
-        if (data.isSuccess) {
-          elem.supplayData = data.data;
-        } else {
-          elem.supplayData = [];
+        if (!elem.supplayData || elem.supplayData.length === 0) {
+          const { data } = await listOfLookups(elem.supplayDataURL);
+          if (data.isSuccess) {
+            elem.supplayData = data.data;
+          } else {
+            elem.supplayData = [];
+          }
         }
       });
     }
@@ -96,12 +108,24 @@ export default function LookupDialog({
   useEffect(() => {
     getLookupsData();
     if (Object.keys(editObj).length > 0) {
-      obj.inputs.forEach((elem) => {
-        if (elem.isDropDown || elem.isMultiSelect) {
-          setValue(elem.name, +editObj[elem.name]);
+      (async () => {
+        const { data } = await getProfile(obj.profileApi, editObj.id);
+        if (data.isSuccess) {
+          obj.inputs.forEach((elem) => {
+            if (elem.isDropDown || elem.isMultiSelect) {
+              setValue(elem.name, +data.data[elem.name]);
+            }
+            setValue(elem.name, data.data[elem.name]);
+          });
+          if (data.data.translationProperties) {
+            data.data.translationProperties.forEach(
+              (elem: any, index: number) => {
+                setValue(`translationProperties[${index}].name`, elem.name);
+              },
+            );
+          }
         }
-        setValue(elem.name, editObj[elem.name]);
-      });
+      })();
     }
 
     return () => {
@@ -121,84 +145,119 @@ export default function LookupDialog({
       onHide={() => closeModel()}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div
-          className={`grid  ${
-            obj.inputs.length > 1 ? 'grid-cols-2' : 'grid-cols-1'
-          } gap-4`}
-        >
-          {obj.inputs.map((field, i) => (
-            <div key={i} className={field.isHtml ? 'col-span-2' : 'col-span-1'}>
-              {field.isInput && (
-                <Input
-                  register={register}
-                  errors={errors}
-                  field={{
-                    inputName: field.name,
-                    title: field.title,
-                    minLength: field.minLength,
-                    maxLength: field.maxLength,
-                    isRequired: field.isRequired,
-                  }}
-                />
-              )}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {obj.inputs
+            .filter((x) => !x.isRequiredSupportedLanguages)
+            .map((field, i) => (
+              <div
+                key={i}
+                className={field.isHtml ? 'col-span-2' : 'col-span-1'}
+              >
+                {field.isInput && (
+                  <Input
+                    register={register}
+                    errors={errors}
+                    field={{
+                      inputName: field.name,
+                      title: field.title,
+                      minLength: field.minLength,
+                      maxLength: field.maxLength,
+                      isRequired: field.isRequired,
+                    }}
+                  />
+                )}
 
-              {field.isCheckBox && (
-                <div className="fv-row h-100  d-flex justify-content-start align-items-center border rounded p-2">
-                  <CheckBoxInput
+                {field.isCheckBox && (
+                  <div className="fv-row h-100  d-flex justify-content-start align-items-center border rounded p-2">
+                    <CheckBoxInput
+                      control={control}
+                      errors={errors}
+                      field={{
+                        inputName: field.name,
+                        title: field.title,
+                      }}
+                    />
+                  </div>
+                )}
+
+                {field.isDropDown && (
+                  <div>
+                    <DropDownInput
+                      control={control}
+                      options={field.supplayData || []}
+                      errors={errors}
+                      field={{
+                        inputName: field.name,
+                        title: field.title,
+                      }}
+                    />
+                  </div>
+                )}
+                {field.isMultiSelect && (
+                  <div>
+                    <MultiSelectInput
+                      control={control}
+                      options={field.supplayData || []}
+                      errors={errors}
+                      field={{
+                        inputName: field.name,
+                        title: field.title,
+                      }}
+                    />
+                  </div>
+                )}
+
+                {field.isHtml && (
+                  <EditorInput
                     control={control}
                     errors={errors}
                     field={{
                       inputName: field.name,
                       title: field.title,
+                      isRequired: field.isRequired,
+                      minLength: field.minLength,
+                      maxLength: field.maxLength,
                     }}
                   />
-                </div>
-              )}
+                )}
 
-              {field.isDropDown && (
-                <div>
-                  <DropDownInput
-                    control={control}
-                    options={field.supplayData || []}
-                    errors={errors}
-                    field={{
-                      inputName: field.name,
-                      title: field.title,
-                    }}
-                  />
-                </div>
-              )}
-
-              {field.isHtml && (
-                <EditorInput
-                  control={control}
+                <ErrorMessage
                   errors={errors}
-                  field={{
-                    inputName: field.name,
-                    title: field.title,
-                    isRequired: field.isRequired,
-                    minLength: field.minLength,
-                    maxLength: field.maxLength,
-                  }}
+                  name={field.name}
+                  render={({ messages }) =>
+                    messages &&
+                    Object.entries(messages).map(([type, message]) => (
+                      <p className="text-danger fs-6 pt-2" key={type}>
+                        {message}
+                      </p>
+                    ))
+                  }
                 />
-              )}
-
-              <ErrorMessage
-                errors={errors}
-                name={field.name}
-                render={({ messages }) =>
-                  messages &&
-                  Object.entries(messages).map(([type, message]) => (
-                    <p className="text-danger fs-6 pt-2" key={type}>
-                      {message}
-                    </p>
-                  ))
-                }
-              />
-            </div>
-          ))}
+              </div>
+            ))}
         </div>
-        <div className="flex items-center mt-4 grid  ">
+        <div className="col-span-1 grid grid-cols-2 gap-4">
+          {obj.inputs
+            .filter((x) => x.isRequiredSupportedLanguages)
+            .map(
+              (field: IInputShape) =>
+                userData.supportedLanguages?.map((lang, index) => (
+                  <Input
+                    key={lang.code}
+                    register={register}
+                    errors={errors}
+                    field={{
+                      inputName: `translationProperties[${index}].name`,
+                      title: `${field.title} In ${lang.name}`,
+                      minLength: field.minLength,
+                      maxLength: field.maxLength,
+                      isRequired: field.isRequired,
+                    }}
+                  />
+                )),
+            )}
+        </div>
+        <div className="col-span-1 items-center mt-4 grid  ">
           <div className="col-12 ">
             <Button
               label="Submit"

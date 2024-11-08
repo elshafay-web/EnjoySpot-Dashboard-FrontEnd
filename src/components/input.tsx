@@ -13,7 +13,7 @@ type Props = {
 
 export default function Input({ field, errors, register }: Props) {
   return (
-    <div className="col-12 w-full">
+    <div className="w-full">
       <label
         htmlFor={field.inputName}
         className="w-full form-label font-bold text-secondary !mb-1"

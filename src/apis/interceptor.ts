@@ -10,11 +10,7 @@ const useAxiosInterceptors = () => {
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
       (config) => {
-        // config.headers['Accept-Language'] = lang === 'ar' ? 'ar-EG' : 'en-US';
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
+        config.headers['Accept-Language'] = 'en-US';
         return config;
       },
       (error) => {

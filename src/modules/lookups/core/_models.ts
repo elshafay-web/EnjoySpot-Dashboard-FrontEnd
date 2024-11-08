@@ -11,6 +11,7 @@ export interface ILookups {
   deleteApi: string;
   toggleApi: string;
   getApi: string;
+  profileApi: string;
   inputs: Array<IInputShape>;
   columns: Array<{
     field: string | CallableFunction;
@@ -20,6 +21,7 @@ export interface ILookups {
   }>;
   className: string;
   requireCompanyId: boolean;
+  isRequiredSupportedLanguages: boolean;
 }
 
 export interface IInputShape {
@@ -33,10 +35,11 @@ export interface IInputShape {
   isInput: boolean;
   isHtml?: boolean;
   supplayDataURL: string;
-  supplayData: Array<any>;
+  supplayData: Array<any> | null;
   isRequired: boolean;
   minLength: number;
   maxLength: number;
+  isRequiredSupportedLanguages: boolean;
 }
 
 export interface IGetLookup {
@@ -63,6 +66,7 @@ export interface IPostLookup {
   company_Id?: number;
   isActive?: boolean;
   isDeleted?: boolean;
+  translationProperties: { languageCode: string; name: string }[];
 }
 export interface IList {
   id: number;
