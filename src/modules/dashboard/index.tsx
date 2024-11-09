@@ -7,7 +7,9 @@ export default function DashboardPage() {
     <div className="p-4">
       <div className="grid grid-cols-4 gap-4">
         {' '}
-        {[{}, {}, {}, {}].map(() => <DataCard />)}{' '}
+        {[{}, {}, {}, {}].map(() => (
+          <DataCard />
+        ))}{' '}
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -17,7 +19,9 @@ export default function DashboardPage() {
 
         <div className="col-span-1">
           {' '}
-          {[{}, {}, {}].map(() => <DataCard />)}{' '}
+          {[{}, {}].map(() => (
+            <DataCard />
+          ))}{' '}
         </div>
       </div>
     </div>
