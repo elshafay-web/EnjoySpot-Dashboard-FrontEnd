@@ -154,8 +154,8 @@ export default function UbsertSupplier({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'nameAr',
-                title: 'Name In Arabic',
+                inputName: 'name',
+                title: 'Name',
                 isRequired: true,
                 minLength: 3,
                 maxLength: 100,
@@ -165,8 +165,8 @@ export default function UbsertSupplier({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'nameEn',
-                title: 'Name In English',
+                inputName: 'LandlineOrMobile',
+                title: 'Mobile Number',
                 isRequired: true,
                 minLength: 3,
                 maxLength: 100,

@@ -93,25 +93,13 @@ export default function UbsertCustomers({
               register={form.register}
               errors={form.formState.errors}
               field={{
-                inputName: 'nameAr',
+                inputName: 'name',
                 title: 'Name In Arabic',
                 isRequired: true,
                 minLength: 3,
                 maxLength: 100,
               }}
             />
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'nameEn',
-                title: 'Name In English',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            />
-
             <Input
               register={form.register}
               errors={form.formState.errors}

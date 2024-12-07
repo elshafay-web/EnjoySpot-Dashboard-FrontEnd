@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-param-reassign */
 import { useEffect } from 'react';
 import axios from 'axios';
@@ -55,7 +54,7 @@ const useAxiosInterceptors = () => {
       axios.interceptors.request.eject(requestInterceptor);
       axios.interceptors.response.eject(responseInterceptor);
     };
-  }, []);
+  }, [navigate]);
 };
 
 export default useAxiosInterceptors;
