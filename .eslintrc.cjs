@@ -16,7 +16,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx', '*.js'],
+      files: ['*.ts', '*.tsx', '*.js', '*.mjs'],
       parser: '@typescript-eslint/parser',
     },
   ],
