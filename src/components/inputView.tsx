@@ -1,18 +1,18 @@
 type IPropsBase = {
-  title: string
-  value?: string | number
-  isVerified?: boolean
-  superscript?: string
+  title: string;
+  value?: string | number;
+  isVerified?: boolean;
+  superscript?: string;
 };
 
 type IPropsWithInfo = IPropsBase & {
-  showInfo: true
-  infoMessage: string
+  showInfo: true;
+  infoMessage: string;
 };
 
 type IPropsWithoutInfo = IPropsBase & {
-  showInfo?: false
-  infoMessage?: never
+  showInfo?: false;
+  infoMessage?: never;
 };
 
 type IProps = IPropsWithInfo | IPropsWithoutInfo;

@@ -1,8 +1,8 @@
 import { Button } from 'primereact/button';
 
 type Props = {
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  buttonText?: string
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  buttonText?: string;
 };
 
 export default function AddButton({ onClick, buttonText }: Props) {
@@ -12,3 +12,4 @@ export default function AddButton({ onClick, buttonText }: Props) {
     </Button>
   );
 }
+// AddButton
