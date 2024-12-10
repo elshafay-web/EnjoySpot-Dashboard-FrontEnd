@@ -22,7 +22,7 @@ function App() {
         offset={5}
       />
       <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhh5vStE6yx_Plr_blirddSNwpapV-xuY&loading=async&libraries=places"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcBNvhTn41CVismsIzNM3Fr7ztlE73DRc&loading=async&libraries=places"
         async
       />
     </Suspense>
