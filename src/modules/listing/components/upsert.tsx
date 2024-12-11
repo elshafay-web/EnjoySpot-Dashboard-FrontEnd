@@ -88,11 +88,11 @@ export default function UbsertListing({
       onClose();
     },
   });
-
+  // ghadeer
   const onSubmit = (values: any) => {
     const data: IListing = values;
     if (mode === 'add') {
-      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
+      if (MediaFiles.length < 1 || MediaFiles.length > 15) {
         toast.warning(
           'You can not add less than 3 images and more than 15 images',
         );

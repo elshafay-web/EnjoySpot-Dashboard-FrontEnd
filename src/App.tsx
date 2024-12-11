@@ -21,10 +21,10 @@ function App() {
         position="top-center"
         offset={5}
       />
-      <script
+      {/* <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcBNvhTn41CVismsIzNM3Fr7ztlE73DRc&loading=async&libraries=places"
         async
-      />
+      /> */}
     </Suspense>
   );
 }
