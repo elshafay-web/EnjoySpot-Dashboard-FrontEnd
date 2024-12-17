@@ -57,7 +57,7 @@ export default function AuthPage() {
                   register={register}
                   errors={errors}
                   field={{
-                    inputName: 'userName',
+                    inputName: 'UserNameOrEmail',
                     title: 'User Name',
                     isRequired: true,
                     minLength: 3,
