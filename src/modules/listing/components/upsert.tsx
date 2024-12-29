@@ -488,29 +488,6 @@ export default function UbsertListing({
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
           <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
-            {/* <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'nameAr',
-                title: 'Name In Arabic',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            /> */}
-            {/* <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'nameEn',
-                title: 'Name In English',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            /> */}
-
             <DropDownInput
               control={form.control}
               options={listOfSuppliers || []}
@@ -521,7 +498,6 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
-
             <DropDownInput
               control={form.control}
               options={listOfListingTypes || []}
@@ -532,7 +508,6 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
-
             <DropDownInput
               control={form.control}
               options={listOfListingCategories || []}
@@ -565,20 +540,6 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
-
-            {/* <div className="col-span-2">
-              <EditorInput
-                control={form.control}
-                errors={form.formState.errors}
-                field={{
-                  inputName: 'overview',
-                  title: 'Overview',
-                  isRequired: true,
-                  minLength: 3,
-                  maxLength: 100,
-                }}
-              />
-            </div> */}
           </div>
 
           <FormHead title="Price Infromation" />
