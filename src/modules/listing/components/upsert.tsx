@@ -68,6 +68,14 @@ export default function UbsertListing({
     control: form.control,
     name: 'entertainmentPrices',
   });
+  const {
+    fields: translationFields,
+    append: appendTranslation,
+    remove: removeTranslation,
+  } = useFieldArray({
+    control: form.control,
+    name: 'TranslationProperties',
+  });
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
@@ -88,11 +96,10 @@ export default function UbsertListing({
       onClose();
     },
   });
-  // ghadeer
   const onSubmit = (values: any) => {
     const data: IListing = values;
     if (mode === 'add') {
-      if (MediaFiles.length < 1 || MediaFiles.length > 15) {
+      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
         toast.warning(
           'You can not add less than 3 images and more than 15 images',
         );
@@ -128,7 +135,47 @@ export default function UbsertListing({
         }
       });
     }
-
+    // data.TranslationProperties.forEach((item) => {
+    //   item.isDeleted =
+    //     mode === 'add'
+    //       ? false
+    //       : intialValues.TranslationProperties.find((x) => x.id === item.id)
+    //       ? false
+    //       : item.id > 0;
+    // });
+    // if (mode === 'edit') {
+    //   intialValues.TranslationProperties.forEach((item) => {
+    //     if (!data.TranslationProperties.map((x) => x.id).includes(item.id)) {
+    //       item.isDeleted = true;
+    //       data.TranslationProperties.push(item);
+    //     }
+    //   });
+    // }
+    data.TranslationProperties = (data.TranslationProperties || []).map(
+      (item) => {
+        const matchingInitialItem = (
+          intialValues.TranslationProperties || []
+        ).find((x) => x.languageCode === item.languageCode);
+        return {
+          ...item,
+          ...(mode === 'edit' && matchingInitialItem
+            ? matchingInitialItem
+            : {}),
+        };
+      },
+    );
+    if (mode === 'edit') {
+      (intialValues.TranslationProperties || []).forEach((item) => {
+        if (
+          !(data.TranslationProperties || []).some(
+            (x) => x.languageCode === item.languageCode,
+          )
+        ) {
+          // Add missing items from initialValues
+          data.TranslationProperties.push(item);
+        }
+      });
+    }
     data.details = values.listOfDetails.map((item: number) => ({
       listingCategoryDetail_Id: item,
       isDeleted:
@@ -178,8 +225,15 @@ export default function UbsertListing({
       data.priceDiscountPercentage = 0;
       data.priceDiscountValue = 0;
     }
-    const { amenities, details, entertainmentPrices, lat, long, ...rest } =
-      data;
+    const {
+      amenities,
+      details,
+      entertainmentPrices,
+      lat,
+      long,
+      TranslationProperties,
+      ...rest
+    } = data;
     const formData = convertObjectToFormData(rest);
     if (MediaFiles.length > 0) {
       MediaFiles.forEach((file) => {
@@ -205,6 +259,14 @@ export default function UbsertListing({
       );
     });
 
+    // details.forEach((item, index) => {
+    //   formData.append(`details[${index}].id`, item.id.toString());
+    //   formData.append(
+    //     `details[${index}].listingCategoryDetail_Id`,
+    //     item.listingCategoryDetail_Id.toString(),
+    //   );
+    //   formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
+    // });
     details.forEach((item, index) => {
       formData.append(`details[${index}].id`, item.id.toString());
       formData.append(
@@ -212,8 +274,31 @@ export default function UbsertListing({
         item.listingCategoryDetail_Id.toString(),
       );
       formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
-    });
 
+      // Append translationProperties
+      if (item.translationProperties && item.translationProperties.length > 0) {
+        item.translationProperties.forEach((translation, translationIndex) => {
+          formData.append(
+            `details[${index}].translationProperties[${translationIndex}].languageCode`,
+            translation.languageCode,
+          );
+          formData.append(
+            `details[${index}].translationProperties[${translationIndex}].dValue`,
+            translation.dValue,
+          );
+        });
+      } else {
+        // Provide a default value if translationProperties is required but empty
+        formData.append(
+          `details[${index}].translationProperties[0].languageCode`,
+          'en',
+        );
+        formData.append(
+          `details[${index}].translationProperties[0].dValue`,
+          'Default Value',
+        );
+      }
+    });
     entertainmentPrices.forEach((item, index) => {
       formData.append(
         `entertainmentPrices[${index}].id`,
@@ -230,6 +315,28 @@ export default function UbsertListing({
       formData.append(
         `entertainmentPrices[${index}].isDeleted`,
         item.isDeleted.toString(),
+      );
+    });
+    TranslationProperties.forEach((item, index) => {
+      formData.append(
+        `TranslationProperties[${index}].languageCode`,
+        item.languageCode?.toString() ?? 'en',
+      );
+      formData.append(
+        `TranslationProperties[${index}].name`,
+        item.name?.toString() ?? '0',
+      );
+      formData.append(
+        `TranslationProperties[${index}].overview`,
+        item.overview?.toString() ?? '0',
+      );
+      formData.append(
+        `TranslationProperties[${index}].policy`,
+        item.policy ?? '',
+      );
+      formData.append(
+        `TranslationProperties[${index}].routeDetails`,
+        item.routeDetails ?? '',
       );
     });
     formData.append('lat', selectedPosition?.lat.toString() ?? '0');
@@ -261,10 +368,17 @@ export default function UbsertListing({
 
       Promise.all(promises)
         .then((filesData) => {
-          setMediaFiles(filesData);
+          setMediaFiles((prevFiles) => {
+            // Avoid duplicate files
+            const uniqueFiles = filesData.filter(
+              (newFile) =>
+                !prevFiles.some((file) => file.name === newFile.name),
+            );
+            return [...prevFiles, ...uniqueFiles];
+          });
         })
         .catch((error) => {
-          toast.error(error);
+          toast.error(error.message || 'Failed to upload files');
         });
     }
   }, []);
@@ -305,12 +419,36 @@ export default function UbsertListing({
           intialValues.amenities?.map((x) => x.listingAmenity_Id),
         );
       }
+      // if (intialValues.details && intialValues.details.length > 0) {
+      //   form.setValue(
+      //     'listOfDetails',
+      //     intialValues.details?.map((x) => x.listingCategoryDetail_Id),
+      //   );
+      // }
       if (intialValues.details && intialValues.details.length > 0) {
         form.setValue(
           'listOfDetails',
-          intialValues.details?.map((x) => x.listingCategoryDetail_Id),
+          intialValues.details.map((x) => ({
+            listingCategoryDetail_Id: x.listingCategoryDetail_Id,
+            translationProperties: x.translationProperties || [
+              { languageCode: 'en', dValue: 'Default Value' },
+            ],
+          })),
         );
       }
+      // if (intialValues.translationProperties && intialValues.translationProperties.length > 0) {
+      //   form.setValue('translationProperties', intialValues.translationProperties);
+      // } else {
+      //   form.setValue('translationProperties', [
+      //     {
+      //       languageCode: 'en',
+      //       name: 'Default Name',
+      //       overview: 'Default Overview',
+      //       policy: 'Default Policy',
+      //       routeDetails: 'Default Route Details'
+      //     },
+      //   ]);
+      // }
       if (intialValues.lat && intialValues.long) {
         setSelectedPosition({
           lat: intialValues.lat,
@@ -350,7 +488,7 @@ export default function UbsertListing({
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
           <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <Input
+            {/* <Input
               register={form.register}
               errors={form.formState.errors}
               field={{
@@ -360,8 +498,8 @@ export default function UbsertListing({
                 minLength: 3,
                 maxLength: 100,
               }}
-            />
-            <Input
+            /> */}
+            {/* <Input
               register={form.register}
               errors={form.formState.errors}
               field={{
@@ -371,7 +509,7 @@ export default function UbsertListing({
                 minLength: 3,
                 maxLength: 100,
               }}
-            />
+            /> */}
 
             <DropDownInput
               control={form.control}
@@ -428,7 +566,7 @@ export default function UbsertListing({
               }}
             />
 
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <EditorInput
                 control={form.control}
                 errors={form.formState.errors}
@@ -440,7 +578,7 @@ export default function UbsertListing({
                   maxLength: 100,
                 }}
               />
-            </div>
+            </div> */}
           </div>
 
           <FormHead title="Price Infromation" />
@@ -628,6 +766,117 @@ export default function UbsertListing({
                       className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
                       onClick={() => {
                         remove(index);
+                      }}
+                    >
+                      <i className="fa-solid fa-trash text-white" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
+            <div>
+              <i className="fa-regular fa-circle-question me-4" />
+              Translation Properties
+            </div>
+
+            <button
+              type="button"
+              className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+              onClick={() => {
+                appendTranslation({
+                  languageCode: '',
+                  name: '',
+                  overview: '',
+                  policy: '',
+                  routeDetails: '',
+                });
+              }}
+            >
+              <i className="fa-solid fa-plus text-white text-base" />
+            </button>
+          </h5>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {translationFields
+              .filter((x) => !x.languageCode)
+              .map((field, index) => (
+                <div
+                  className="w-full col-span-2 grid gap-4 grid-cols-2"
+                  key={field.id}
+                >
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].languageCode`,
+                      title: 'Language Code',
+                      isRequired: true,
+                    }}
+                  />
+
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].name`,
+                      title: 'Name',
+                      isRequired: true,
+                      minLength: 3,
+                      maxLength: 100,
+                    }}
+                  />
+
+                  {/* <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].overview`,
+                      title: 'Overview',
+                      isRequired: true,
+                    }}
+                  /> */}
+
+                  <div className="col-span-2">
+                    <EditorInput
+                      control={form.control}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].overview`,
+                        title: 'Overview',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 100,
+                      }}
+                    />
+                  </div>
+
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].policy`,
+                      title: 'Policy',
+                      isRequired: true,
+                    }}
+                  />
+
+                  <div className="flex justify-between items-end">
+                    <Input
+                      register={form.register}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].routeDetails`,
+                        title: 'Route Details',
+                        isRequired: true,
+                      }}
+                    />
+
+                    <button
+                      type="button"
+                      className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                      onClick={() => {
+                        removeTranslation(index);
                       }}
                     >
                       <i className="fa-solid fa-trash text-white" />

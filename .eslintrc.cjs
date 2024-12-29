@@ -35,6 +35,7 @@ module.exports = {
     '@tanstack/query',
   ],
   rules: {
+      "react/jsx-props-no-spreading": "off",
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },

@@ -1,4 +1,5 @@
 export interface IListing {
+  translationProperties: boolean;
   id: number;
   isFeatured: boolean;
   photographer: boolean;
@@ -19,6 +20,7 @@ export interface IListing {
   long: number;
   hasEntertainment: boolean;
   entertainmentPrices: Array<IListingEntertainment>;
+  TranslationProperties: Array<IListingTranslationProperties>;
   amenities: Array<IListingAmenities>;
   listOfAmenities: Array<number>;
   details: Array<IListingDetails>;
@@ -51,12 +53,20 @@ export interface IListingEntertainment {
   listingEntertainmentName?: string;
   isDeleted: boolean;
 }
+export interface IListingTranslationProperties {
+  languageCode?: string;
+  name?: string;
+  overview: string;
+  policy?: string;
+  routeDetails?: string;
+}
 
 export interface IListingDetails {
   id: number;
   listingCategoryDetail_Id: number;
   listingCategoryDetailName?: string;
   isDeleted: boolean;
+  translationProperties: { languageCode: string; dValue: string }[];
 }
 
 export interface IListingAmenities {
