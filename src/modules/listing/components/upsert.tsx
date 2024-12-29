@@ -433,7 +433,7 @@ export default function UbsertListing({
             translationProperties: x.translationProperties || [
               { languageCode: 'en', dValue: 'Default Value' },
             ],
-          })),
+          })) as unknown as number[],
         );
       }
       // if (intialValues.translationProperties && intialValues.translationProperties.length > 0) {
