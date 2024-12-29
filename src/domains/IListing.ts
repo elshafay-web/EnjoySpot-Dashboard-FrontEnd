@@ -63,7 +63,7 @@ export interface IListingTranslationProperties {
 
 export interface IListingDetails {
   id: number;
-  listingCategoryDetail_Id: number;
+  listingCategoryDetail_Id: string;
   listingCategoryDetailName?: string;
   isDeleted: boolean;
   translationProperties: { languageCode: string; dValue: string }[];
