@@ -530,7 +530,7 @@ export default function UbsertListing({
               }}
             />
 
-            <MultiSelectInput
+            {/* <MultiSelectInput
               control={form.control}
               options={listOfListingDetails || []}
               errors={form.formState.errors}
@@ -538,6 +538,41 @@ export default function UbsertListing({
                 inputName: 'listOfDetails',
                 title: 'Details',
                 isRequired: true,
+              }}
+            /> */}
+          </div>
+          <FormHead title="Details Infromation" />
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <DropDownInput
+              control={form.control}
+              options={listOfListingDetails || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'listOfDetails',
+                title: 'Details',
+                isRequired: true,
+              }}
+            />
+
+            <Input
+              register={form.register}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'languageCode',
+                title: 'languages code',
+                isRequired: true,
+                isNumber: true,
+              }}
+            />
+
+            <Input
+              register={form.register}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'dvalue',
+                title: ' value',
+                isRequired: true,
+                isNumber: true,
               }}
             />
           </div>
@@ -787,17 +822,6 @@ export default function UbsertListing({
                       maxLength: 100,
                     }}
                   />
-
-                  {/* <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `TranslationProperties[${index}].overview`,
-                      title: 'Overview',
-                      isRequired: true,
-                    }}
-                  /> */}
-
                   <div className="col-span-2">
                     <EditorInput
                       control={form.control}
@@ -810,18 +834,18 @@ export default function UbsertListing({
                         maxLength: 100,
                       }}
                     />
+                    <EditorInput
+                      control={form.control}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].policy`,
+                        title: 'Policy',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 50,
+                      }}
+                    />
                   </div>
-
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `TranslationProperties[${index}].policy`,
-                      title: 'Policy',
-                      isRequired: true,
-                    }}
-                  />
-
                   <div className="flex justify-between items-end">
                     <Input
                       register={form.register}
