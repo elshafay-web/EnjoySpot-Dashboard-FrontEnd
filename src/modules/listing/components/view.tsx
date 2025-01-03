@@ -295,8 +295,8 @@ export default function ViewListing({ onClose, profile, open }: Props) {
           Listing Details
         </h4>
         <div className="border-b border-dashed mb-2" />{' '}
-        {profile.details &&
-          profile.details.map((elem, i) => (
+        {profile.Details &&
+          profile.Details.map((elem, i) => (
             <div className="flex justify-between items-center" key={i}>
               <InputView
                 title="Category Detail Name"
