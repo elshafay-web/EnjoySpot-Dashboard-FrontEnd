@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 interface YouTubeIFrameProps {
-  iframeSrc?: string | undefined
+  iframeSrc?: string | undefined;
 }
 
 export default function YouTubeIFrame({ iframeSrc }: YouTubeIFrameProps) {
@@ -9,7 +9,7 @@ export default function YouTubeIFrame({ iframeSrc }: YouTubeIFrameProps) {
     <div className="youtube-video-container">
       <iframe
         src={iframeSrc}
-        allow="accelerometer; autoplay; clipboard-write;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         title="YouTube video player"
         className="w-full h-[500px]"

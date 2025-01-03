@@ -376,6 +376,15 @@ export default function UbsertListing({
     }
   }, []);
 
+  const convertToEmbedUrl = (url: any) => {
+    const urlObj = new URL(url);
+    const videoId = urlObj.searchParams.get('v');
+    const startTime = urlObj.searchParams.get('t') || 0;
+    return videoId
+      ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
+      : '';
+  };
+
   useEffect(() => {
     if (intialValues && mode === 'edit') {
       const filteredObj = Object.fromEntries(
@@ -385,9 +394,11 @@ export default function UbsertListing({
       if (intialValues.attachments && intialValues.attachments.length > 0) {
         form.setValue(
           'youTubeVideoIframe',
-          intialValues.attachments?.find(
-            (x) => x.attachmentType === 'YouTubeVideoIframe',
-          )?.attachmentPath ?? '',
+          convertToEmbedUrl(
+            intialValues.attachments?.find(
+              (x) => x.attachmentType === 'YouTubeVideoIframe',
+            )?.attachmentPath ?? '',
+          ),
         );
       }
       if (intialValues.amenities && intialValues.amenities.length > 0) {
@@ -534,7 +545,7 @@ export default function UbsertListing({
                     register={form.register}
                     errors={form.formState.errors}
                     field={{
-                      inputName: `details[${index}].translationProperties[0].languageCode`,
+                      inputName: `details[${index}].translationProperties[${index}].languageCode`,
                       title: 'languages code',
                       isRequired: true,
                     }}
@@ -544,7 +555,7 @@ export default function UbsertListing({
                     register={form.register}
                     errors={form.formState.errors}
                     field={{
-                      inputName: `details[${index}].translationProperties[0].dvalue`,
+                      inputName: `details[${index}].translationProperties[${index}].dvalue`,
                       title: ' value',
                       isRequired: true,
                     }}
@@ -916,7 +927,7 @@ export default function UbsertListing({
             </div>
           )}
           {/* ////////////////////////////////////////  Submit And cancle ///////////////////////////////// */}
-          <div className="flex items-center mt-4 grid  fixed bottom-4 ">
+          <div className="flex items-center mt-4  fixed bottom-4 ">
             <div className="col-12 ">
               <Button
                 label="Submit"
