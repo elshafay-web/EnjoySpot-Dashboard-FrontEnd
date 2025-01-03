@@ -23,7 +23,7 @@ export interface IListing {
   TranslationProperties: Array<IListingTranslationProperties>;
   amenities: Array<IListingAmenities>;
   listOfAmenities: Array<number>;
-  details: Array<IListingDetails>;
+  Details: Array<IListingDetails>;
   listOfDetails: Array<number>;
   MediaImages: Array<File>;
   routesMapImage: File;

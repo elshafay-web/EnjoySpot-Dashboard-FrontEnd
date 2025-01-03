@@ -76,6 +76,14 @@ export default function UbsertListing({
     control: form.control,
     name: 'TranslationProperties',
   });
+  const {
+    fields: detailsFields,
+    append: appendDetails,
+    remove: removeDetails,
+  } = useFieldArray({
+    control: form.control,
+    name: 'Details',
+  });
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
@@ -135,22 +143,6 @@ export default function UbsertListing({
         }
       });
     }
-    // data.TranslationProperties.forEach((item) => {
-    //   item.isDeleted =
-    //     mode === 'add'
-    //       ? false
-    //       : intialValues.TranslationProperties.find((x) => x.id === item.id)
-    //       ? false
-    //       : item.id > 0;
-    // });
-    // if (mode === 'edit') {
-    //   intialValues.TranslationProperties.forEach((item) => {
-    //     if (!data.TranslationProperties.map((x) => x.id).includes(item.id)) {
-    //       item.isDeleted = true;
-    //       data.TranslationProperties.push(item);
-    //     }
-    //   });
-    // }
     data.TranslationProperties = (data.TranslationProperties || []).map(
       (item) => {
         const matchingInitialItem = (
@@ -171,38 +163,45 @@ export default function UbsertListing({
             (x) => x.languageCode === item.languageCode,
           )
         ) {
-          // Add missing items from initialValues
           data.TranslationProperties.push(item);
         }
       });
     }
-    data.details = values.listOfDetails.map((item: number) => ({
+
+    const initialDetails = intialValues.Details || [];
+    const listOfDetails = values.listOfDetails || [];
+    data.Details = listOfDetails.map((item: number) => ({
       listingCategoryDetail_Id: item,
       isDeleted:
         mode === 'add'
           ? false
-          : intialValues.details.map((x) => x.id).includes(item)
+          : initialDetails.map((x) => x.id).includes(item)
           ? false
-          : !!intialValues.details.map((x) => x.id).includes(item),
-      id: mode === 'add' ? 0 : data.details.find((x) => x.id === item)?.id ?? 0,
+          : !!initialDetails.map((x) => x.id).includes(item),
+      id:
+        mode === 'add'
+          ? 0
+          : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
     }));
+
     if (mode === 'edit') {
-      intialValues.details.forEach((item) => {
-        if (!data.details.map((x) => x.id).includes(item.id)) {
+      initialDetails.forEach((item) => {
+        if (!data.Details.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
-          data.details.push(item);
+          data.Details.push(item);
         }
       });
     }
+
     data.amenities = values.listOfAmenities.map((item: number) => ({
       listingAmenity_Id: item,
       isDeleted:
         mode === 'add'
           ? false
-          : intialValues.details.map((x) => x.id).includes(item)
+          : intialValues.Details.map((x) => x.id).includes(item)
           ? false
-          : !!intialValues.details.map((x) => x.id).includes(item),
-      id: mode === 'add' ? 0 : data.details.find((x) => x.id === item)?.id ?? 0,
+          : !!intialValues.Details.map((x) => x.id).includes(item),
+      id: mode === 'add' ? 0 : data.Details.find((x) => x.id === item)?.id ?? 0,
     }));
     if (mode === 'edit') {
       intialValues.amenities.forEach((item) => {
@@ -227,7 +226,7 @@ export default function UbsertListing({
     }
     const {
       amenities,
-      details,
+      Details,
       entertainmentPrices,
       lat,
       long,
@@ -258,46 +257,24 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
-
-    // details.forEach((item, index) => {
-    //   formData.append(`details[${index}].id`, item.id.toString());
-    //   formData.append(
-    //     `details[${index}].listingCategoryDetail_Id`,
-    //     item.listingCategoryDetail_Id.toString(),
-    //   );
-    //   formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
-    // });
-    details.forEach((item, index) => {
-      formData.append(`details[${index}].id`, item.id.toString());
+    (Details || []).forEach((item, index) => {
+      formData.append(`Details[${index}].id`, item.id.toString());
       formData.append(
-        `details[${index}].listingCategoryDetail_Id`,
+        `Details[${index}].listingCategoryDetail_Id`,
         item.listingCategoryDetail_Id.toString(),
       );
-      formData.append(`details[${index}].isDeleted`, item.isDeleted.toString());
-
-      // Append translationProperties
-      if (item.translationProperties && item.translationProperties.length > 0) {
-        item.translationProperties.forEach((translation, translationIndex) => {
-          formData.append(
-            `details[${index}].translationProperties[${translationIndex}].languageCode`,
-            translation.languageCode,
-          );
-          formData.append(
-            `details[${index}].translationProperties[${translationIndex}].dValue`,
-            translation.dValue,
-          );
-        });
-      } else {
-        // Provide a default value if translationProperties is required but empty
+      formData.append(`Details[${index}].isDeleted`, item.isDeleted.toString());
+      const translationProperties = item.translationProperties || [];
+      translationProperties.forEach((translation, translationIndex) => {
         formData.append(
-          `details[${index}].translationProperties[0].languageCode`,
-          'en',
+          `Details[${index}].translationProperties[${translationIndex}].languageCode`,
+          translation.languageCode,
         );
         formData.append(
-          `details[${index}].translationProperties[0].dValue`,
-          'Default Value',
+          `Details[${index}].translationProperties[${translationIndex}].dValue`,
+          translation.dValue,
         );
-      }
+      });
     });
     entertainmentPrices.forEach((item, index) => {
       formData.append(
@@ -419,36 +396,19 @@ export default function UbsertListing({
           intialValues.amenities?.map((x) => x.listingAmenity_Id),
         );
       }
-      // if (intialValues.details && intialValues.details.length > 0) {
-      //   form.setValue(
-      //     'listOfDetails',
-      //     intialValues.details?.map((x) => x.listingCategoryDetail_Id),
-      //   );
-      // }
-      if (intialValues.details && intialValues.details.length > 0) {
+      if (intialValues.Details && intialValues.Details.length > 0) {
         form.setValue(
-          'listOfDetails',
-          intialValues.details.map((x) => ({
-            listingCategoryDetail_Id: x.listingCategoryDetail_Id,
+          'Details',
+          intialValues.Details.map((x) => ({
+            id: x.id || 0,
+            listingCategoryDetail_Id: x.listingCategoryDetail_Id || '',
+            isDeleted: x.isDeleted || false,
             translationProperties: x.translationProperties || [
               { languageCode: 'en', dValue: 'Default Value' },
             ],
-          })) as unknown as number[],
+          })),
         );
       }
-      // if (intialValues.translationProperties && intialValues.translationProperties.length > 0) {
-      //   form.setValue('translationProperties', intialValues.translationProperties);
-      // } else {
-      //   form.setValue('translationProperties', [
-      //     {
-      //       languageCode: 'en',
-      //       name: 'Default Name',
-      //       overview: 'Default Overview',
-      //       policy: 'Default Policy',
-      //       routeDetails: 'Default Route Details'
-      //     },
-      //   ]);
-      // }
       if (intialValues.lat && intialValues.long) {
         setSelectedPosition({
           lat: intialValues.lat,
@@ -529,52 +489,78 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
-
-            {/* <MultiSelectInput
-              control={form.control}
-              options={listOfListingDetails || []}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'listOfDetails',
-                title: 'Details',
-                isRequired: true,
-              }}
-            /> */}
           </div>
-          <FormHead title="Details Infromation" />
+          <h5 className=" flex items-center justify-between  rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
+            <div>
+              <i className="fa-regular fa-circle-question me-4" />
+              Details Information
+            </div>
+
+            <button
+              type="button"
+              className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+              onClick={() => {
+                appendDetails({
+                  listingCategoryDetail_Id: '0',
+                  isDeleted: false,
+                  id: 0,
+                  translationProperties: [{ languageCode: 'en', dValue: '' }],
+                });
+              }}
+            >
+              <i className="fa-solid fa-plus text-white text-base" />
+            </button>
+          </h5>
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <DropDownInput
-              control={form.control}
-              options={listOfListingDetails || []}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'listOfDetails',
-                title: 'Details',
-                isRequired: true,
-              }}
-            />
+            {detailsFields
+              .filter((x) => !x.isDeleted)
+              .map((field, index) => (
+                <div
+                  className="w-full col-span-2 grid gap-4 grid-cols-2"
+                  key={field.id}
+                >
+                  <DropDownInput
+                    control={form.control}
+                    options={listOfListingDetails || []}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `details[${index}].listingCategoryDetail_Id`,
+                      title: 'Details',
+                      isRequired: true,
+                    }}
+                  />
 
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'languageCode',
-                title: 'languages code',
-                isRequired: true,
-                isNumber: true,
-              }}
-            />
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `details[${index}].translationProperties[0].languageCode`,
+                      title: 'languages code',
+                      isRequired: true,
+                    }}
+                  />
 
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'dvalue',
-                title: ' value',
-                isRequired: true,
-                isNumber: true,
-              }}
-            />
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `details[${index}].translationProperties[0].dvalue`,
+                      title: ' value',
+                      isRequired: true,
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    className="mt-8 w-10 h-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                    onClick={() => {
+                      removeDetails(index);
+                    }}
+                  >
+                    <i className="fa-solid fa-trash text-white" />
+                  </button>
+                </div>
+              ))}
           </div>
 
           <FormHead title="Price Infromation" />
