@@ -65,6 +65,16 @@ export enum HttpPaths {
   Api_listingCategories_Upsert = '/api/listingCategories/upsert',
   Api_listingCategories_Profile = '/api/listingCategories/GetProfile/',
 
+  // ************** ListingComplimentary ******************
+
+  Api_ListingComplimentary_GetAll = '/api/listingComplimentary/getAll',
+  Api_ListingComplimentary_ListOf = '/api/listingComplimentary/listOf',
+  Api_ListingComplimentary_ListOf_WithListTypeId = '/api/listingComplimentary/listOf?listingTypeId=',
+  Api_ListingComplimentary_Delete = '/api/listingComplimentary/delete/',
+  Api_ListingComplimentary_ToggleIsActive = '/api/listingComplimentary/toggelActive/',
+  Api_ListingComplimentary_Upsert = '/api/listingComplimentary/upsert',
+  Api_ListingComplimentary_Profile = '/api/listingComplimentary/GetProfile/',
+
   // ************** listingAmenities ******************
 
   Api_listingAmenities_GetAll = '/api/listingAmenities/getAll',
