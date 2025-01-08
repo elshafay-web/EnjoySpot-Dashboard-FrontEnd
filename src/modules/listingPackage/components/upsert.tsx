@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { Sidebar } from 'primereact/sidebar';
 import FormHead from '@components/formHead';
 import Input from '@components/input';
@@ -51,9 +52,15 @@ export default function UbsertListingPackage({
     file: ArrayBuffer;
     name: string;
   }>({} as any);
-
+  const {
+    fields: translationFields,
+    append: appendTranslation,
+    remove: removeTranslation,
+  } = useFieldArray({
+    control: form.control,
+    name: 'TranslationProperties',
+  });
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
-
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfListingType } = useListOfListingTypes();
   const center = {
@@ -81,8 +88,32 @@ export default function UbsertListingPackage({
       }
     }
     data.id = intialValues.id || 0;
+    data.TranslationProperties = (data.TranslationProperties || []).map(
+      (item) => {
+        const matchingInitialItem = (
+          intialValues.TranslationProperties || []
+        ).find((x) => x.languageCode === item.languageCode);
+        return {
+          ...item,
+          ...(mode === 'edit' && matchingInitialItem
+            ? matchingInitialItem
+            : {}),
+        };
+      },
+    );
+    if (mode === 'edit') {
+      (intialValues.TranslationProperties || []).forEach((item) => {
+        if (
+          !(data.TranslationProperties || []).some(
+            (x) => x.languageCode === item.languageCode,
+          )
+        ) {
+          data.TranslationProperties.push(item);
+        }
+      });
+    }
 
-    const { lat, long, ...res } = data;
+    const { lat, long, TranslationProperties, ...res } = data;
 
     const formData = convertObjectToFormData(res);
     if (MediaFiles.length > 0) {
@@ -99,6 +130,24 @@ export default function UbsertListingPackage({
     }
     formData.append('lat', selectedPosition.lat.toString());
     formData.append('long', selectedPosition.lng.toString());
+    TranslationProperties.forEach((item, index) => {
+      formData.append(
+        `TranslationProperties[${index}].languageCode`,
+        item.languageCode?.toString() ?? 'en',
+      );
+      formData.append(
+        `TranslationProperties[${index}].name`,
+        item.name?.toString() ?? '0',
+      );
+      formData.append(
+        `TranslationProperties[${index}].overview`,
+        item.overview?.toString() ?? '0',
+      );
+      formData.append(
+        `TranslationProperties[${index}].summary`,
+        item.overview?.toString() ?? '0',
+      );
+    });
 
     mutate(formData);
   };
@@ -202,31 +251,93 @@ export default function UbsertListingPackage({
     >
       <div className="w-100">
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
+          <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
+            <div>
+              <i className="fa-regular fa-circle-question me-4" />
+              Translation Properties
+            </div>
+            <button
+              type="button"
+              className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+              onClick={() => {
+                appendTranslation({
+                  languageCode: '',
+                  name: '',
+                  overview: '',
+                  summary: '',
+                });
+              }}
+            >
+              <i className="fa-solid fa-plus text-white text-base" />
+            </button>
+          </h5>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {translationFields
+              .filter((x) => !x.languageCode)
+              .map((field, index) => (
+                <div
+                  className="w-full col-span-2 grid gap-4 grid-cols-2"
+                  key={field.id}
+                >
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].languageCode`,
+                      title: 'Language Code',
+                      isRequired: true,
+                    }}
+                  />
+
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].name`,
+                      title: 'Name',
+                      isRequired: true,
+                      minLength: 3,
+                      maxLength: 100,
+                    }}
+                  />
+                  <div className="col-span-2">
+                    <EditorInput
+                      control={form.control}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].overview`,
+                        title: 'Overview',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 100,
+                      }}
+                    />
+                    <TextArea
+                      register={form.register}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].summary`,
+                        title: 'Summary',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 100,
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                    onClick={() => {
+                      removeTranslation(index);
+                    }}
+                  >
+                    <i className="fa-solid fa-trash text-white" />
+                  </button>
+                </div>
+              ))}
+          </div>
           <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'nameAr',
-                title: 'Name In Arabic',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            />
-            <Input
-              register={form.register}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'nameEn',
-                title: 'Name In English',
-                isRequired: true,
-                minLength: 3,
-                maxLength: 100,
-              }}
-            />
-
             <DropDownInput
               control={form.control}
               options={listOfSuppliers || []}
@@ -237,7 +348,6 @@ export default function UbsertListingPackage({
                 isRequired: true,
               }}
             />
-
             <DropDownInput
               control={form.control}
               options={listOfListingType || []}
@@ -248,20 +358,7 @@ export default function UbsertListingPackage({
                 isRequired: true,
               }}
             />
-            <div className="col-span-2">
-              <TextArea
-                register={form.register}
-                errors={form.formState.errors}
-                field={{
-                  inputName: 'summary',
-                  title: 'Summary',
-                  isRequired: true,
-                  minLength: 3,
-                  maxLength: 100,
-                }}
-              />
-            </div>
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <EditorInput
                 control={form.control}
                 errors={form.formState.errors}
@@ -273,7 +370,7 @@ export default function UbsertListingPackage({
                   maxLength: 100,
                 }}
               />
-            </div>
+            </div> */}
           </div>
 
           <FormHead title="Price Infromation" />

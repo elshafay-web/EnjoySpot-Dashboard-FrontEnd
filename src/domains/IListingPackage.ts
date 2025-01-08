@@ -19,6 +19,7 @@ export interface IListingPackages {
   isActive: boolean;
   supplierName: string;
   attachments: Array<IListingPackageAttachment>;
+  TranslationProperties: Array<IListingPackageTranslationProperties>;
 }
 
 export interface IListingPackageCategories {
@@ -39,4 +40,10 @@ export interface IListingPackageGetRequestFilter {
   pageSize: number;
   search: string;
   isActive: boolean;
+}
+export interface IListingPackageTranslationProperties {
+  languageCode: string;
+  name: string;
+  overview: string;
+  summary: string;
 }
