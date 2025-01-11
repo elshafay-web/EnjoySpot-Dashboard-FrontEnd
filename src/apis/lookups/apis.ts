@@ -98,6 +98,32 @@ export const useListOfListingAmenities = () => {
   return query;
 };
 
+export const listOfCrewSpeakes = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_Language_ListOf);
+  return response.data?.data;
+};
+export const useListOfCrewSpeakes = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfCrewSpeakes'],
+    queryFn: () => listOfCrewSpeakes(),
+    ...options,
+  });
+  return query;
+};
+
+export const listOfComplimentaryItems = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_ListingComplimentary_ListOf);
+  return response.data?.data;
+};
+export const useListOfComplimentaryItems = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfComplimentaryItems'],
+    queryFn: () => listOfComplimentaryItems(),
+    ...options,
+  });
+  return query;
+};
+
 export const listOfListingDetails = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_listingCategoryDetails_ListOf);
   return response.data?.data;

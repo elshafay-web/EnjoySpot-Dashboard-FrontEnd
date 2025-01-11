@@ -13,6 +13,8 @@ import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import { Button } from 'primereact/button';
 import {
+  useListOfComplimentaryItems,
+  useListOfCrewSpeakes,
   useListOfEnteringment,
   useListOfListingAmenities,
   useListOfListingCategoriesWithListTypeId,
@@ -89,6 +91,8 @@ export default function UbsertListing({
   const { data: listOfListingCategories } =
     useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
   const { data: listOfListingAmenities } = useListOfListingAmenities();
+  const { data: listOfCrewSpeakes } = useListOfCrewSpeakes();
+  const { data: listOfComplimentaryItems } = useListOfComplimentaryItems();
   const { data: listOfListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
   const center = { lat: 25.276987, lng: 55.296249 };
@@ -500,7 +504,127 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
+            <MultiSelectInput
+              control={form.control}
+              options={listOfCrewSpeakes || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'CrewSpeakes',
+                title: 'Crew Speaks',
+                isRequired: true,
+              }}
+            />
+            <MultiSelectInput
+              control={form.control}
+              options={listOfComplimentaryItems || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'ComplimentaryItems',
+                title: 'Complimentary Items',
+                isRequired: true,
+              }}
+            />
           </div>
+          <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
+            <div>
+              <i className="fa-regular fa-circle-question me-4" />
+              Translation Properties
+            </div>
+
+            <button
+              type="button"
+              className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+              onClick={() => {
+                appendTranslation({
+                  languageCode: '',
+                  name: '',
+                  overview: '',
+                  policy: '',
+                  routeDetails: '',
+                });
+              }}
+            >
+              <i className="fa-solid fa-plus text-white text-base" />
+            </button>
+          </h5>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {translationFields
+              .filter((x) => !x.languageCode)
+              .map((field, index) => (
+                <div
+                  className="w-full col-span-2 grid gap-4 grid-cols-2"
+                  key={field.id}
+                >
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].languageCode`,
+                      title: 'Language Code',
+                      isRequired: true,
+                    }}
+                  />
+
+                  <Input
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].name`,
+                      title: 'Name',
+                      isRequired: true,
+                      minLength: 3,
+                      maxLength: 100,
+                    }}
+                  />
+                  <div className="col-span-2">
+                    <EditorInput
+                      control={form.control}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].overview`,
+                        title: 'Overview',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 100,
+                      }}
+                    />
+                    <EditorInput
+                      control={form.control}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].policy`,
+                        title: 'Policy',
+                        isRequired: true,
+                        minLength: 3,
+                        maxLength: 50,
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <Input
+                      register={form.register}
+                      errors={form.formState.errors}
+                      field={{
+                        inputName: `TranslationProperties[${index}].routeDetails`,
+                        title: 'Route Details',
+                        isRequired: true,
+                      }}
+                    />
+
+                    <button
+                      type="button"
+                      className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                      onClick={() => {
+                        removeTranslation(index);
+                      }}
+                    >
+                      <i className="fa-solid fa-trash text-white" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+
           <h5 className=" flex items-center justify-between  rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
             <div>
               <i className="fa-regular fa-circle-question me-4" />
@@ -759,106 +883,6 @@ export default function UbsertListing({
                       className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
                       onClick={() => {
                         remove(index);
-                      }}
-                    >
-                      <i className="fa-solid fa-trash text-white" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-          </div>
-
-          <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
-            <div>
-              <i className="fa-regular fa-circle-question me-4" />
-              Translation Properties
-            </div>
-
-            <button
-              type="button"
-              className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-              onClick={() => {
-                appendTranslation({
-                  languageCode: '',
-                  name: '',
-                  overview: '',
-                  policy: '',
-                  routeDetails: '',
-                });
-              }}
-            >
-              <i className="fa-solid fa-plus text-white text-base" />
-            </button>
-          </h5>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {translationFields
-              .filter((x) => !x.languageCode)
-              .map((field, index) => (
-                <div
-                  className="w-full col-span-2 grid gap-4 grid-cols-2"
-                  key={field.id}
-                >
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `TranslationProperties[${index}].languageCode`,
-                      title: 'Language Code',
-                      isRequired: true,
-                    }}
-                  />
-
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `TranslationProperties[${index}].name`,
-                      title: 'Name',
-                      isRequired: true,
-                      minLength: 3,
-                      maxLength: 100,
-                    }}
-                  />
-                  <div className="col-span-2">
-                    <EditorInput
-                      control={form.control}
-                      errors={form.formState.errors}
-                      field={{
-                        inputName: `TranslationProperties[${index}].overview`,
-                        title: 'Overview',
-                        isRequired: true,
-                        minLength: 3,
-                        maxLength: 100,
-                      }}
-                    />
-                    <EditorInput
-                      control={form.control}
-                      errors={form.formState.errors}
-                      field={{
-                        inputName: `TranslationProperties[${index}].policy`,
-                        title: 'Policy',
-                        isRequired: true,
-                        minLength: 3,
-                        maxLength: 50,
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-between items-end">
-                    <Input
-                      register={form.register}
-                      errors={form.formState.errors}
-                      field={{
-                        inputName: `TranslationProperties[${index}].routeDetails`,
-                        title: 'Route Details',
-                        isRequired: true,
-                      }}
-                    />
-
-                    <button
-                      type="button"
-                      className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-                      onClick={() => {
-                        removeTranslation(index);
                       }}
                     >
                       <i className="fa-solid fa-trash text-white" />

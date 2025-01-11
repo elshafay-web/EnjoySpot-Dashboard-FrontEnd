@@ -201,4 +201,7 @@ export enum HttpPaths {
 
   Api_siteConfigurations_Get = '/api/siteConfigurations/getSiteConfigurationDetails',
   Api_siteConfigurations_Update = '/api/siteConfigurations/update',
+
+  // ************** shared ******************
+  Api_Language_ListOf = '/api/Language/listOf',
 }
