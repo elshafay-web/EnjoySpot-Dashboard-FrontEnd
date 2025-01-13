@@ -382,58 +382,97 @@ export default function UbsertListing({
     }
   }, []);
 
-  const convertToEmbedUrl = (url: any) => {
-    const urlObj = new URL(url);
-    const videoId = urlObj.searchParams.get('v');
-    const startTime = urlObj.searchParams.get('t') || 0;
-    return videoId
-      ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
-      : '';
+  // const convertToEmbedUrl = (url: any) => {
+  //   const urlObj = new URL(url);
+  //   const videoId = urlObj.searchParams.get('v');
+  //   const startTime = urlObj.searchParams.get('t') || 0;
+  //   return videoId
+  //     ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
+  //     : '';
+  // };
+  const convertToEmbedUrl = (url: string) => {
+    if (!url || typeof url !== 'string') {
+      console.warn('Invalid URL provided:', url);
+      return '';
+    }
+
+    try {
+      const urlObj = new URL(url);
+      const videoId = urlObj.searchParams.get('v');
+      const startTime = urlObj.searchParams.get('t') || 0;
+      return videoId
+        ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
+        : '';
+    } catch (error) {
+      console.error('Error parsing URL:', error, url);
+      return '';
+    }
   };
 
+  // useEffect(() => {
+  //   if (intialValues && mode === 'edit') {
+  //     const filteredObj = Object.fromEntries(
+  //       Object.entries(intialValues).filter(([, v]) => v !== null),
+  //     );
+  //     form.reset(filteredObj);
+  //     if (intialValues.attachments && intialValues.attachments.length > 0) {
+  //       form.setValue(
+  //         'youTubeVideoIframe',
+  //         convertToEmbedUrl(
+  //           intialValues.attachments?.find(
+  //             (x) => x.attachmentType === 'YouTubeVideoIframe',
+  //           )?.attachmentPath ?? '',
+  //         ),
+  //       );
+  //     }
+  //     if (intialValues.amenities && intialValues.amenities.length > 0) {
+  //       form.setValue(
+  //         'listOfAmenities',
+  //         intialValues.amenities?.map((x) => x.listingAmenity_Id),
+  //       );
+  //     }
+  //     if (intialValues.Details && intialValues.Details.length > 0) {
+  //       form.setValue(
+  //         'Details',
+  //         intialValues.Details.map((x) => ({
+  //           id: x.id || 0,
+  //           listingCategoryDetail_Id: x.listingCategoryDetail_Id || '',
+  //           isDeleted: x.isDeleted || false,
+  //           translationProperties: x.translationProperties || [
+  //             { languageCode: 'en', dValue: 'Default Value' },
+  //           ],
+  //         })),
+  //       );
+  //     }
+  //     if (intialValues.lat && intialValues.long) {
+  //       setSelectedPosition({
+  //         lat: intialValues.lat,
+  //         lng: intialValues.long,
+  //       });
+  //     }
+  //   }
+  // }, [intialValues]);
   useEffect(() => {
     if (intialValues && mode === 'edit') {
       const filteredObj = Object.fromEntries(
         Object.entries(intialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
+
       if (intialValues.attachments && intialValues.attachments.length > 0) {
-        form.setValue(
-          'youTubeVideoIframe',
-          convertToEmbedUrl(
-            intialValues.attachments?.find(
-              (x) => x.attachmentType === 'YouTubeVideoIframe',
-            )?.attachmentPath ?? '',
-          ),
+        const youtubeAttachment = intialValues.attachments.find(
+          (x) => x.attachmentType === 'YouTubeVideoIframe',
         );
-      }
-      if (intialValues.amenities && intialValues.amenities.length > 0) {
-        form.setValue(
-          'listOfAmenities',
-          intialValues.amenities?.map((x) => x.listingAmenity_Id),
-        );
-      }
-      if (intialValues.Details && intialValues.Details.length > 0) {
-        form.setValue(
-          'Details',
-          intialValues.Details.map((x) => ({
-            id: x.id || 0,
-            listingCategoryDetail_Id: x.listingCategoryDetail_Id || '',
-            isDeleted: x.isDeleted || false,
-            translationProperties: x.translationProperties || [
-              { languageCode: 'en', dValue: 'Default Value' },
-            ],
-          })),
-        );
-      }
-      if (intialValues.lat && intialValues.long) {
-        setSelectedPosition({
-          lat: intialValues.lat,
-          lng: intialValues.long,
-        });
+
+        if (youtubeAttachment?.attachmentPath) {
+          form.setValue(
+            'youTubeVideoIframe',
+            convertToEmbedUrl(youtubeAttachment.attachmentPath),
+          );
+        }
       }
     }
-  }, [intialValues]);
+  }, [intialValues, mode, form]);
 
   const customHeader = (
     <div className="items-center flex gap-4">
@@ -575,6 +614,16 @@ export default function UbsertListing({
                       isRequired: true,
                     }}
                   />
+                  {/* <DropDownInput
+                    control={form.control}
+                    options={listOfCrewSpeakes || []}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: 'TranslationProperties[${index}].languageCode',
+                      title: 'Language Code',
+                      isRequired: true,
+                    }}
+                  /> */}
 
                   <Input
                     register={form.register}
