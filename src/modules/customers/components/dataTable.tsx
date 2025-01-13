@@ -88,7 +88,7 @@ export default function CustomersDataTable({ onEdit, Customers }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field="nameAr" header="Name In Arabic" />
+          {/* <Column field="nameAr" header="Name In Arabic" /> */}
           <Column field="nameEN" header="Name In English" />
           <Column field="landlineOrMobile" header="Mobile" />
           <Column field="userName" header="User Name" />

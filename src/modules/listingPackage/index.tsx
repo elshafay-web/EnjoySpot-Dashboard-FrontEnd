@@ -31,6 +31,8 @@ export default function ListingPackagePage() {
   const [filter, setFilter] = useState({
     ...({} as IListingPackageGetRequestFilter),
     isActive: true,
+    PageNumber: 1,
+    PageSize: 1000,
   });
   const { data: listingsPackages } = useGetAllListingPackages(filter);
   const { data: ListingPackageProfile } = useGetListingPackageProfile(
@@ -91,6 +93,8 @@ export default function ListingPackagePage() {
                     onClear={() => {
                       setFilter({
                         ...({} as IListingPackageGetRequestFilter),
+                        PageNumber: 1,
+                        PageSize: 1000,
                         isActive: true,
                       });
                     }}

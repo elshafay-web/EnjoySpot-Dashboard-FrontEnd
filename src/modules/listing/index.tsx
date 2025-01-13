@@ -20,6 +20,8 @@ export default function ListingPage() {
   const [ListingObj, setListingObj] = useState<IListing>({} as IListing);
   const [filter, setFilter] = useState({
     ...({} as IListingGetRequestFilter),
+    PageNumber: 1,
+    PageSize: 1000,
     isActive: true,
   });
   const { data: listings } = useGetAllListings(filter);
@@ -79,6 +81,8 @@ export default function ListingPage() {
                     onClear={() => {
                       setFilter({
                         ...({} as IListingGetRequestFilter),
+                        PageNumber: 1,
+                        PageSize: 1000,
                         isActive: true,
                       });
                     }}

@@ -1,15 +1,20 @@
+/* eslint-disable max-lines-per-function */
+/* eslint-disable arrow-body-style */
+/* eslint-disable @typescript-eslint/semi */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable @typescript-eslint/comma-dangle */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios'
-import { useQuery } from '@tanstack/react-query'
-import { HttpPaths } from '@/Enums/httpPaths'
-import { IResponse } from '@domains/IResponse'
-import { INotification } from '@domains/INotification'
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { IResponse } from '@domains/IResponse';
+import { INotification } from '@domains/INotification';
+import { HttpPaths } from '@/Enums/httpPaths';
 
 export const getALLUserNotification = async (
-  id: number = 0
+  id: number = 0,
 ): Promise<INotification[]> => {
   // const response = await axios.get(HttpPaths.Api_Notification_GETALL + id)
-  //   return response.data?.data.messagesRecords;  
+  //   return response.data?.data.messagesRecords;
   return [
     {
       sender: 'C0001_System',
@@ -515,21 +520,21 @@ export const getALLUserNotification = async (
       message: 'string',
       userId: 2,
     },
-  ]
-}
+  ];
+};
 
 export const useGetAllNotification = (id: number) =>
   useQuery<INotification[]>({
     queryKey: ['getAllNotifications', id],
     queryFn: () => getALLUserNotification(id),
-  })
+  });
 
 export const markAllNotificationAsRead = async (
-  req: any
+  req: any,
 ): Promise<IResponse<string>> => {
   const response = await axios.post(
     `${HttpPaths.Api_Notification_MarkAll_As_Read}`,
-    req
-  )
-  return response.data
-}
+    req,
+  );
+  return response.data;
+};

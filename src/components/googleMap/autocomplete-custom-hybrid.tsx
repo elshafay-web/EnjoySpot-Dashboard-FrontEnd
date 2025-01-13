@@ -32,13 +32,30 @@ export const AutocompleteCustomHybrid = ({ setSelectedPosition }: Props) => {
     return () => setAutocompleteService(null);
   }, [map, places]);
 
+  // const fetchPredictions = useCallback(
+  //   async (values: string) => {
+  //     if (!autocompleteService || !values) {
+  //       return;
+  //     }
+  //     setFetchingData(true);
+  //     const request = { input: values, sessionToken };
+  //     const response = await autocompleteService.getPlacePredictions(request);
+  //     setPredictionResults(response.predictions);
+  //     setFetchingData(false);
+  //   },
+  //   [autocompleteService, sessionToken],
+  // );
   const fetchPredictions = useCallback(
     async (values: string) => {
       if (!autocompleteService || !values) {
         return;
       }
       setFetchingData(true);
-      const request = { input: values, sessionToken };
+      const request = {
+        input: values,
+        sessionToken,
+        componentRestrictions: { country: 'AE' }, // Restrict to UAE
+      };
       const response = await autocompleteService.getPlacePredictions(request);
       setPredictionResults(response.predictions);
       setFetchingData(false);
@@ -56,19 +73,61 @@ export const AutocompleteCustomHybrid = ({ setSelectedPosition }: Props) => {
     [fetchPredictions],
   );
 
+  // const onSelect = useCallback(
+  //   (prediction: google.maps.places.AutocompletePrediction | string) => {
+  //     if (!places || typeof prediction === 'string') return;
+  //     setFetchingData(true);
+  //     const detailRequestOptions = {
+  //       placeId: prediction.place_id,
+  //       fields: ['geometry', 'name', 'formatted_address'],
+  //       sessionToken,
+  //     };
+  //     const detailsRequestCallback = (
+  //       placeDetails: google.maps.places.PlaceResult | null,
+  //     ) => {
+  //       if (!placeDetails) return;
+  //       map?.panTo({
+  //         lat: placeDetails?.geometry?.location?.lat() ?? 0,
+  //         lng: placeDetails?.geometry?.location?.lng() ?? 0,
+  //       });
+  //       setSelectedPosition({
+  //         lat: placeDetails?.geometry?.location?.lat() ?? 0,
+  //         lng: placeDetails?.geometry?.location?.lng() ?? 0,
+  //       });
+  //       setInputValue(placeDetails?.formatted_address ?? '');
+  //       setSessionToken(new places.AutocompleteSessionToken());
+  //       setFetchingData(false);
+  //     };
+
+  //     placesService?.getDetails(detailRequestOptions, detailsRequestCallback);
+  //   },
+  //   [places, sessionToken, placesService, map, setSelectedPosition],
+  // );
   const onSelect = useCallback(
     (prediction: google.maps.places.AutocompletePrediction | string) => {
       if (!places || typeof prediction === 'string') return;
       setFetchingData(true);
       const detailRequestOptions = {
         placeId: prediction.place_id,
-        fields: ['geometry', 'name', 'formatted_address'],
+        fields: ['geometry', 'address_components', 'name', 'formatted_address'],
         sessionToken,
       };
       const detailsRequestCallback = (
         placeDetails: google.maps.places.PlaceResult | null,
       ) => {
         if (!placeDetails) return;
+
+        // Check if the place is in UAE
+        const isInUAE = placeDetails.address_components?.some(
+          (component) => component.short_name === 'AE',
+        );
+
+        if (!isInUAE) {
+          alert('Please select a location within the UAE.');
+          setFetchingData(false);
+          return;
+        }
+
         map?.panTo({
           lat: placeDetails?.geometry?.location?.lat() ?? 0,
           lng: placeDetails?.geometry?.location?.lng() ?? 0,

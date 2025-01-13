@@ -13,6 +13,7 @@ import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import { Button } from 'primereact/button';
 import {
+  useListOfCities1,
   useListOfComplimentaryItems,
   useListOfCrewSpeakes,
   useListOfEnteringment,
@@ -87,6 +88,7 @@ export default function UbsertListing({
     name: 'Details',
   });
   const { data: listOfSuppliers } = useListOfSupppliers();
+  const { data: listOfCities } = useListOfCities1();
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
     useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
@@ -197,19 +199,19 @@ export default function UbsertListing({
       });
     }
 
-    data.amenities = values.listOfAmenities.map((item: number) => ({
+    data.amenities = (values.listOfAmenities || []).map((item: number) => ({
       listingAmenity_Id: item,
       isDeleted:
         mode === 'add'
           ? false
-          : intialValues.Details.map((x) => x.id).includes(item)
+          : (intialValues.Details || []).map((x) => x.id).includes(item)
           ? false
-          : !!intialValues.Details.map((x) => x.id).includes(item),
+          : !!(intialValues.Details || []).map((x) => x.id).includes(item),
       id: mode === 'add' ? 0 : data.Details.find((x) => x.id === item)?.id ?? 0,
     }));
     if (mode === 'edit') {
-      intialValues.amenities.forEach((item) => {
-        if (!data.amenities.map((x) => x.id).includes(item.id)) {
+      (intialValues.amenities || []).forEach((item) => {
+        if (!(data.amenities || []).map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.amenities.push(item);
         }
@@ -493,7 +495,16 @@ export default function UbsertListing({
                 isRequired: true,
               }}
             />
-
+            <DropDownInput
+              control={form.control}
+              options={listOfCities || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'city_Id',
+                title: 'City',
+                isRequired: true,
+              }}
+            />
             <MultiSelectInput
               control={form.control}
               options={listOfListingAmenities || []}
@@ -511,7 +522,7 @@ export default function UbsertListing({
               field={{
                 inputName: 'CrewSpeakes',
                 title: 'Crew Speaks',
-                isRequired: true,
+                isRequired: false,
               }}
             />
             <MultiSelectInput
@@ -521,7 +532,7 @@ export default function UbsertListing({
               field={{
                 inputName: 'ComplimentaryItems',
                 title: 'Complimentary Items',
-                isRequired: true,
+                isRequired: false,
               }}
             />
           </div>

@@ -38,6 +38,20 @@ export const useListOfCities = (id: number) => {
   return query;
 };
 
+export const listOfCities1 = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_City_ListOf);
+  return response.data?.data;
+};
+
+export const useListOfCities1 = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfCities'],
+    queryFn: () => listOfCities1(),
+    ...options,
+  });
+  return query;
+};
+
 export const listOfCountries = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_Country_ListOf);
   return response.data?.data;

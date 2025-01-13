@@ -145,7 +145,7 @@ export default function ListingsPackageDataTable({
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field="nameAr" header="Name In Arabic" />
+          {/* <Column field="nameAr" header="Name In Arabic" /> */}
           <Column field="nameEN" header="Name In English" />
           <Column field="supplierName" header="Supplier Name" />
           <Column field="listingTypeName" header="List Type " />

@@ -1,7 +1,7 @@
 import {
+  AdvancedMarker,
   APIProvider,
   ControlPosition,
-  AdvancedMarker,
   Map,
 } from '@vis.gl/react-google-maps';
 import { CustomMapControl } from './map-control';
@@ -14,7 +14,12 @@ type Props = {
   selectedPosition: { lat: number; lng: number };
   setSelectedPosition: (position: { lat: number; lng: number }) => void;
 };
-
+const UAE_BOUNDS = {
+  north: 26.0,
+  south: 22.0,
+  east: 56.5,
+  west: 51.5,
+};
 export default function GoogleMapWithSearch({
   zoom,
   selectedPosition,
@@ -36,6 +41,10 @@ export default function GoogleMapWithSearch({
           mapTypeControl
           zoomControl
           scaleControl
+          restriction={{
+            latLngBounds: UAE_BOUNDS,
+            strictBounds: true, // Enforce strict bounds
+          }}
         >
           <AdvancedMarker
             position={{
@@ -44,7 +53,6 @@ export default function GoogleMapWithSearch({
             }}
           />
         </Map>
-
         <CustomMapControl
           controlPosition={ControlPosition.TOP}
           setSelectedPosition={setSelectedPosition}
