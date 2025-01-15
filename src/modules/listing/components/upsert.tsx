@@ -31,8 +31,8 @@ import MultiSelectInput from '@components/MultiSeelct';
 import MultiFileUpload from '@components/MultiFileUpload';
 import YouTubeIFrame from '@components/YouTubeIFrame';
 import { convertObjectToFormData } from '@helpers/helpingFun';
-import EditorInput from '@components/editor';
 import GoogleMapWithSearch from '@components/googleMap/map';
+import Edit1 from '@components/Edit1';
 
 type Props = {
   onClose: () => void;
@@ -49,7 +49,7 @@ export default function UbsertListing({
 }: Props) {
   const initialValues = {
     ...intialValues,
-    TranslationProperties: [
+    TranslationProperties: intialValues.TranslationProperties || [
       {
         languageCode: '', // Set as needed
         name: intialValues.name || '',
@@ -161,30 +161,6 @@ export default function UbsertListing({
         }
       });
     }
-    // data.TranslationProperties = (data.TranslationProperties || []).map(
-    //   (item) => {
-    //     const matchingInitialItem = (
-    //       intialValues.TranslationProperties || []
-    //     ).find((x) => x.languageCode === item.languageCode);
-    //     return {
-    //       ...item,
-    //       ...(mode === 'edit' && matchingInitialItem
-    //         ? matchingInitialItem
-    //         : {}),
-    //     };
-    //   },
-    // );
-    // if (mode === 'edit') {
-    //   (intialValues.TranslationProperties || []).forEach((item) => {
-    //     if (
-    //       !(data.TranslationProperties || []).some(
-    //         (x) => x.languageCode === item.languageCode,
-    //       )
-    //     ) {
-    //       data.TranslationProperties.push(item);
-    //     }
-    //   });
-    // }
 
     const initialDetails = initialValues.Details || [];
     const listOfDetails = values.listOfDetails || [];
@@ -640,7 +616,7 @@ export default function UbsertListing({
                     }}
                   />
                   <div className="col-span-2">
-                    <EditorInput
+                    <Edit1
                       control={form.control}
                       errors={form.formState.errors}
                       field={{
@@ -648,10 +624,10 @@ export default function UbsertListing({
                         title: 'Overview',
                         isRequired: true,
                         minLength: 3,
-                        maxLength: 100,
+                        maxLength: 500,
                       }}
                     />
-                    <EditorInput
+                    <Edit1
                       control={form.control}
                       errors={form.formState.errors}
                       field={{
@@ -659,18 +635,18 @@ export default function UbsertListing({
                         title: 'Policy',
                         isRequired: true,
                         minLength: 3,
-                        maxLength: 50,
+                        maxLength: 500,
                       }}
                     />
-                  </div>
-                  <div className="flex justify-between items-end">
-                    <Input
-                      register={form.register}
+                    <Edit1
+                      control={form.control}
                       errors={form.formState.errors}
                       field={{
                         inputName: `TranslationProperties[${index}].routeDetails`,
                         title: 'Route Details',
                         isRequired: true,
+                        minLength: 3,
+                        maxLength: 500,
                       }}
                     />
                   </div>

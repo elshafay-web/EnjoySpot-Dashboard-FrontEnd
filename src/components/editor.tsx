@@ -38,7 +38,7 @@ export default function EditorInput({ field, errors, control }: Props) {
             style={{ height: '320px' }}
             name={field.inputName}
             className={clsx(
-              ' w-full  transition duration-300 rounded-[6px] mt-1',
+              'w-full transition duration-300 rounded-[6px] mt-1',
               {
                 'border border-red-500 focus:outline-none focus:ring-4 focus:ring-red-200':
                   errors[field.inputName],
