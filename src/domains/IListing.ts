@@ -38,6 +38,8 @@ export interface IListing {
   promotion: true;
   refunds: false;
   attachments: Array<IListingAttachment>;
+  policy: string;
+  routeDetails: string;
 }
 
 export interface IListingAttachment {

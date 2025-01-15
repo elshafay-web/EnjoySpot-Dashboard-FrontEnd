@@ -47,10 +47,22 @@ export default function UbsertListing({
   mode = 'add',
   open,
 }: Props) {
+  const initialValues = {
+    ...intialValues,
+    TranslationProperties: [
+      {
+        languageCode: '', // Set as needed
+        name: intialValues.name || '',
+        overview: intialValues.overview || '',
+        policy: intialValues.policy || '',
+        routeDetails: intialValues.routeDetails, // If applicable
+      },
+    ],
+  };
   const form = useForm<IListing>({
     criteriaMode: 'all',
     mode: 'onChange', // or 'onBlur', 'onTouched'
-    defaultValues: intialValues,
+    defaultValues: initialValues,
   });
   const [MediaFiles, setMediaFiles] = useState<
     {
@@ -131,50 +143,50 @@ export default function UbsertListing({
       );
       return;
     }
-    data.id = intialValues.id || 0;
+    data.id = initialValues.id || 0;
     data.hasEntertainment = values.entertainmentPrices.length > 0;
     data.entertainmentPrices.forEach((item) => {
       item.isDeleted =
         mode === 'add'
           ? false
-          : intialValues.entertainmentPrices.find((x) => x.id === item.id)
+          : initialValues.entertainmentPrices.find((x) => x.id === item.id)
           ? false
           : item.id > 0;
     });
     if (mode === 'edit') {
-      intialValues.entertainmentPrices.forEach((item) => {
+      initialValues.entertainmentPrices.forEach((item) => {
         if (!data.entertainmentPrices.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.entertainmentPrices.push(item);
         }
       });
     }
-    data.TranslationProperties = (data.TranslationProperties || []).map(
-      (item) => {
-        const matchingInitialItem = (
-          intialValues.TranslationProperties || []
-        ).find((x) => x.languageCode === item.languageCode);
-        return {
-          ...item,
-          ...(mode === 'edit' && matchingInitialItem
-            ? matchingInitialItem
-            : {}),
-        };
-      },
-    );
-    if (mode === 'edit') {
-      (intialValues.TranslationProperties || []).forEach((item) => {
-        if (
-          !(data.TranslationProperties || []).some(
-            (x) => x.languageCode === item.languageCode,
-          )
-        ) {
-          data.TranslationProperties.push(item);
-        }
-      });
-    }
+    // data.TranslationProperties = (data.TranslationProperties || []).map(
+    //   (item) => {
+    //     const matchingInitialItem = (
+    //       intialValues.TranslationProperties || []
+    //     ).find((x) => x.languageCode === item.languageCode);
+    //     return {
+    //       ...item,
+    //       ...(mode === 'edit' && matchingInitialItem
+    //         ? matchingInitialItem
+    //         : {}),
+    //     };
+    //   },
+    // );
+    // if (mode === 'edit') {
+    //   (intialValues.TranslationProperties || []).forEach((item) => {
+    //     if (
+    //       !(data.TranslationProperties || []).some(
+    //         (x) => x.languageCode === item.languageCode,
+    //       )
+    //     ) {
+    //       data.TranslationProperties.push(item);
+    //     }
+    //   });
+    // }
 
-    const initialDetails = intialValues.Details || [];
+    const initialDetails = initialValues.Details || [];
     const listOfDetails = values.listOfDetails || [];
     data.Details = listOfDetails.map((item: number) => ({
       listingCategoryDetail_Id: item,
@@ -204,13 +216,13 @@ export default function UbsertListing({
       isDeleted:
         mode === 'add'
           ? false
-          : (intialValues.Details || []).map((x) => x.id).includes(item)
+          : (initialValues.Details || []).map((x) => x.id).includes(item)
           ? false
-          : !!(intialValues.Details || []).map((x) => x.id).includes(item),
+          : !!(initialValues.Details || []).map((x) => x.id).includes(item),
       id: mode === 'add' ? 0 : data.Details.find((x) => x.id === item)?.id ?? 0,
     }));
     if (mode === 'edit') {
-      (intialValues.amenities || []).forEach((item) => {
+      (initialValues.amenities || []).forEach((item) => {
         if (!(data.amenities || []).map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.amenities.push(item);
@@ -382,14 +394,6 @@ export default function UbsertListing({
     }
   }, []);
 
-  // const convertToEmbedUrl = (url: any) => {
-  //   const urlObj = new URL(url);
-  //   const videoId = urlObj.searchParams.get('v');
-  //   const startTime = urlObj.searchParams.get('t') || 0;
-  //   return videoId
-  //     ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
-  //     : '';
-  // };
   const convertToEmbedUrl = (url: string) => {
     if (!url || typeof url !== 'string') {
       console.warn('Invalid URL provided:', url);
@@ -409,7 +413,6 @@ export default function UbsertListing({
     }
   };
 
-  // useEffect(() => {
   //   if (intialValues && mode === 'edit') {
   //     const filteredObj = Object.fromEntries(
   //       Object.entries(intialValues).filter(([, v]) => v !== null),
@@ -453,14 +456,14 @@ export default function UbsertListing({
   //   }
   // }, [intialValues]);
   useEffect(() => {
-    if (intialValues && mode === 'edit') {
+    if (initialValues && mode === 'edit') {
       const filteredObj = Object.fromEntries(
-        Object.entries(intialValues).filter(([, v]) => v !== null),
+        Object.entries(initialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
 
-      if (intialValues.attachments && intialValues.attachments.length > 0) {
-        const youtubeAttachment = intialValues.attachments.find(
+      if (initialValues.attachments && initialValues.attachments.length > 0) {
+        const youtubeAttachment = initialValues.attachments.find(
           (x) => x.attachmentType === 'YouTubeVideoIframe',
         );
 
@@ -472,7 +475,7 @@ export default function UbsertListing({
         }
       }
     }
-  }, [intialValues, mode, form]);
+  }, [initialValues, mode, form]);
 
   const customHeader = (
     <div className="items-center flex gap-4">
@@ -670,17 +673,16 @@ export default function UbsertListing({
                         isRequired: true,
                       }}
                     />
-
-                    <button
-                      type="button"
-                      className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-                      onClick={() => {
-                        removeTranslation(index);
-                      }}
-                    >
-                      <i className="fa-solid fa-trash text-white" />
-                    </button>
                   </div>
+                  <button
+                    type="button"
+                    className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                    onClick={() => {
+                      removeTranslation(index);
+                    }}
+                  >
+                    <i className="fa-solid fa-trash text-white" />
+                  </button>
                 </div>
               ))}
           </div>
@@ -968,8 +970,8 @@ export default function UbsertListing({
               <div className="w-100 mt-4">
                 <MultiFileUpload
                   attachment={
-                    intialValues.attachments &&
-                    intialValues.attachments
+                    initialValues.attachments &&
+                    initialValues.attachments
                       .filter((x) => x.attachmentType === 'media')
                       .map((x) => x.attachmentPath)
                   }
@@ -981,8 +983,8 @@ export default function UbsertListing({
               <div className="w-100 mt-4">
                 <FileUpload
                   attachment={
-                    intialValues.attachments &&
-                    intialValues.attachments.find(
+                    initialValues.attachments &&
+                    initialValues.attachments.find(
                       (x) => x.attachmentType === 'RoutesMap',
                     )?.attachmentPath
                   }
