@@ -266,11 +266,11 @@ export default function UbsertListing({
       translationProperties.forEach((translation, translationIndex) => {
         formData.append(
           `Details[${index}].translationProperties[${translationIndex}].languageCode`,
-          translation.languageCode,
+          translation.languageCode.toString(),
         );
         formData.append(
           `Details[${index}].translationProperties[${translationIndex}].dValue`,
-          translation.dValue,
+          translation.dValue.toString(),
         );
       });
     });
@@ -401,19 +401,18 @@ export default function UbsertListing({
           form.setValue('youTubeVideoIframe', youtubeAttachment.attachmentPath);
         }
       }
-      if (initialValues.details && initialValues.details.length > 0) {
+
+      if (Array.isArray(initialValues.details)) {
         form.setValue(
-          'Details',
+          'details',
           initialValues.details.map((detail) => ({
-            id: detail.id,
-            listingCategoryDetail_Id: detail.listingCategoryDetail_Id,
-            isDeleted: detail.isDeleted,
+            ...detail,
             translationProperties: detail.translationProperties?.length
               ? detail.translationProperties
               : [
                   {
                     languageCode: 'en',
-                    dValue: detail.listingCategoryDetailValue,
+                    dValue: detail.listingCategoryDetailValue || '',
                   },
                 ],
           })),

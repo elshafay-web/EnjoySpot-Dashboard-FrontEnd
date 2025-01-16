@@ -24,6 +24,17 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
     name: `details.${detailIndex}.translationProperties`,
   });
 
+  // If no fields are present, add the default one.
+  if (translationFields.length === 0) {
+    append({ languageCode: 'en', dValue: '' });
+  }
+
+  const handleRemove = (index: number) => {
+    if (translationFields.length > 1) {
+      remove(index);
+    }
+  };
+
   return (
     <>
       {translationFields.map((field, translationIndex) => (
@@ -55,7 +66,7 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
             <button
               type="button"
               className="mt-2 p-2 bg-red-500 text-white rounded"
-              onClick={() => remove(translationIndex)}
+              onClick={() => handleRemove(translationIndex)}
             >
               remove value
             </button>
@@ -64,13 +75,15 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
       ))}
 
       {/* Add new translation */}
-      <button
-        type="button"
-        className="mt-2 bg-green-500 text-white p-2 rounded "
-        onClick={() => append({ languageCode: 'en', dValue: '' })}
-      >
-        add value
-      </button>
+      {translationFields.length > 0 && (
+        <button
+          type="button"
+          className="mt-2 bg-green-500 text-white p-2 rounded"
+          onClick={() => append({ languageCode: 'en', dValue: '' })}
+        >
+          add value
+        </button>
+      )}
     </>
   );
 };

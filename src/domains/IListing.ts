@@ -40,7 +40,7 @@ export interface IListing {
   attachments: Array<IListingAttachment>;
   policy: string;
   routeDetails: string;
-  details: string;
+  details: Array<IListingDetails>;
 }
 
 export interface IListingAttachment {
@@ -69,6 +69,7 @@ export interface IListingDetails {
   listingCategoryDetail_Id: string;
   listingCategoryDetailName?: string;
   isDeleted: boolean;
+  listingCategoryDetailValue?: string;
   translationProperties: { languageCode: string; dValue: string }[];
 }
 
