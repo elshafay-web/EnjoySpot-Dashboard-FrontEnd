@@ -1,3 +1,5 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-param-reassign */
@@ -33,6 +35,7 @@ import YouTubeIFrame from '@components/YouTubeIFrame';
 import { convertObjectToFormData } from '@helpers/helpingFun';
 import GoogleMapWithSearch from '@components/googleMap/map';
 import Edit1 from '@components/Edit1';
+import TranslationFields from './TranslationFields';
 
 type Props = {
   onClose: () => void;
@@ -99,6 +102,7 @@ export default function UbsertListing({
     control: form.control,
     name: 'Details',
   });
+
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfCities } = useListOfCities1();
   const { data: listOfListingTypes } = useListOfListingTypes();
@@ -370,89 +374,53 @@ export default function UbsertListing({
     }
   }, []);
 
-  const convertToEmbedUrl = (url: string) => {
-    if (!url || typeof url !== 'string') {
-      console.warn('Invalid URL provided:', url);
-      return '';
-    }
-
-    try {
-      const urlObj = new URL(url);
-      const videoId = urlObj.searchParams.get('v');
-      const startTime = urlObj.searchParams.get('t') || 0;
-      return videoId
-        ? `https://www.youtube.com/embed/${videoId}?start=${startTime}`
-        : '';
-    } catch (error) {
-      console.error('Error parsing URL:', error, url);
-      return '';
-    }
-  };
-
-  //   if (intialValues && mode === 'edit') {
-  //     const filteredObj = Object.fromEntries(
-  //       Object.entries(intialValues).filter(([, v]) => v !== null),
-  //     );
-  //     form.reset(filteredObj);
-  //     if (intialValues.attachments && intialValues.attachments.length > 0) {
-  //       form.setValue(
-  //         'youTubeVideoIframe',
-  //         convertToEmbedUrl(
-  //           intialValues.attachments?.find(
-  //             (x) => x.attachmentType === 'YouTubeVideoIframe',
-  //           )?.attachmentPath ?? '',
-  //         ),
-  //       );
-  //     }
-  //     if (intialValues.amenities && intialValues.amenities.length > 0) {
-  //       form.setValue(
-  //         'listOfAmenities',
-  //         intialValues.amenities?.map((x) => x.listingAmenity_Id),
-  //       );
-  //     }
-  //     if (intialValues.Details && intialValues.Details.length > 0) {
-  //       form.setValue(
-  //         'Details',
-  //         intialValues.Details.map((x) => ({
-  //           id: x.id || 0,
-  //           listingCategoryDetail_Id: x.listingCategoryDetail_Id || '',
-  //           isDeleted: x.isDeleted || false,
-  //           translationProperties: x.translationProperties || [
-  //             { languageCode: 'en', dValue: 'Default Value' },
-  //           ],
-  //         })),
-  //       );
-  //     }
-  //     if (intialValues.lat && intialValues.long) {
-  //       setSelectedPosition({
-  //         lat: intialValues.lat,
-  //         lng: intialValues.long,
-  //       });
-  //     }
-  //   }
-  // }, [intialValues]);
   useEffect(() => {
     if (initialValues && mode === 'edit') {
       const filteredObj = Object.fromEntries(
         Object.entries(initialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
-
+      if (intialValues.amenities && intialValues.amenities.length > 0) {
+        form.setValue(
+          'listOfAmenities',
+          intialValues.amenities?.map((x) => x.listingAmenity_Id),
+        );
+      }
+      if (intialValues.lat && intialValues.long) {
+        setSelectedPosition({
+          lat: intialValues.lat,
+          lng: intialValues.long,
+        });
+      }
       if (initialValues.attachments && initialValues.attachments.length > 0) {
         const youtubeAttachment = initialValues.attachments.find(
           (x) => x.attachmentType === 'YouTubeVideoIframe',
         );
 
         if (youtubeAttachment?.attachmentPath) {
-          form.setValue(
-            'youTubeVideoIframe',
-            convertToEmbedUrl(youtubeAttachment.attachmentPath),
-          );
+          form.setValue('youTubeVideoIframe', youtubeAttachment.attachmentPath);
         }
       }
+      if (initialValues.details && initialValues.details.length > 0) {
+        form.setValue(
+          'Details',
+          initialValues.details.map((detail) => ({
+            id: detail.id,
+            listingCategoryDetail_Id: detail.listingCategoryDetail_Id,
+            isDeleted: detail.isDeleted,
+            translationProperties: detail.translationProperties?.length
+              ? detail.translationProperties
+              : [
+                  {
+                    languageCode: 'en',
+                    dValue: detail.listingCategoryDetailValue,
+                  },
+                ],
+          })),
+        );
+      }
     }
-  }, [initialValues, mode, form]);
-
+  }, [mode, form]);
   const customHeader = (
     <div className="items-center flex gap-4">
       <span className="text-3xl font-bold">
@@ -677,21 +645,18 @@ export default function UbsertListing({
                   listingCategoryDetail_Id: '0',
                   isDeleted: false,
                   id: 0,
-                  translationProperties: [{ languageCode: 'en', dValue: '' }],
+                  translationProperties: [{ languageCode: '', dValue: '' }],
                 });
               }}
             >
               <i className="fa-solid fa-plus text-white text-base" />
             </button>
           </h5>
-          <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4">
             {detailsFields
               .filter((x) => !x.isDeleted)
               .map((field, index) => (
-                <div
-                  className="w-full col-span-2 grid gap-4 grid-cols-2"
-                  key={field.id}
-                >
+                <div className="w-full  grid  col-span-2 gap-4 " key={field.id}>
                   <DropDownInput
                     control={form.control}
                     options={listOfListingDetails || []}
@@ -702,7 +667,7 @@ export default function UbsertListing({
                       isRequired: true,
                     }}
                   />
-
+                  {/*
                   <Input
                     register={form.register}
                     errors={form.formState.errors}
@@ -711,17 +676,18 @@ export default function UbsertListing({
                       title: 'languages code',
                       isRequired: true,
                     }}
-                  />
+                  /> */}
 
-                  <Input
+                  {/* <Input
                     register={form.register}
                     errors={form.formState.errors}
                     field={{
-                      inputName: `details[${index}].translationProperties[${index}].dvalue`,
-                      title: ' value',
+                      inputName: `details[${index}].translationProperties[${index}].dValue`,
+                      title: 'value',
                       isRequired: true,
                     }}
-                  />
+                  /> */}
+                  <TranslationFields form={form} detailIndex={index} />
 
                   <button
                     type="button"

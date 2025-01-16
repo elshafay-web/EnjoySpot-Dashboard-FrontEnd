@@ -40,6 +40,7 @@ export interface IListing {
   attachments: Array<IListingAttachment>;
   policy: string;
   routeDetails: string;
+  details: string;
 }
 
 export interface IListingAttachment {
