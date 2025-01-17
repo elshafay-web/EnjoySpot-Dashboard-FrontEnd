@@ -209,6 +209,57 @@ export default function UbsertListing({
         }
       });
     }
+    data.crewSpeakes = (values.listOfCrewSpeakes || []).map((item: number) => ({
+      language_Id: item,
+      isDeleted:
+        mode === 'add'
+          ? false
+          : (initialValues.crewSpeakes || []).map((x) => x.id).includes(item)
+          ? false
+          : !!(initialValues.crewSpeakes || []).map((x) => x.id).includes(item),
+      id:
+        mode === 'add'
+          ? 0
+          : data.crewSpeakes.find((x) => x.id === item)?.id ?? 0,
+    }));
+    if (mode === 'edit') {
+      (initialValues.crewSpeakes || []).forEach((item) => {
+        if (!(data.crewSpeakes || []).map((x) => x.id).includes(item.id)) {
+          item.isDeleted = true;
+          data.crewSpeakes.push(item);
+        }
+      });
+    }
+    data.ComplimentaryItems = (values.listOfComplimentaryItems || []).map(
+      (item: number) => ({
+        listingComplimentary_Id: item,
+        isDeleted:
+          mode === 'add'
+            ? false
+            : (initialValues.ComplimentaryItems || [])
+                .map((x) => x.id)
+                .includes(item)
+            ? false
+            : !!(initialValues.ComplimentaryItems || [])
+                .map((x) => x.id)
+                .includes(item),
+        id:
+          mode === 'add'
+            ? 0
+            : (data.ComplimentaryItems || []).find((x) => x.id === item)?.id ??
+              0,
+      }),
+    );
+    if (mode === 'edit') {
+      (initialValues.ComplimentaryItems || []).forEach((item) => {
+        if (
+          !(data.ComplimentaryItems || []).map((x) => x.id).includes(item.id)
+        ) {
+          item.isDeleted = true;
+          (data.ComplimentaryItems || []).push(item);
+        }
+      });
+    }
 
     if (data.priceDiscountPercentage && data.priceDiscountPercentage > 0) {
       data.priceDiscountValue = 0;
@@ -229,6 +280,8 @@ export default function UbsertListing({
       lat,
       long,
       TranslationProperties,
+      crewSpeakes,
+      ComplimentaryItems,
       ...rest
     } = data;
     const formData = convertObjectToFormData(rest);
@@ -252,6 +305,28 @@ export default function UbsertListing({
       );
       formData.append(
         `amenities[${index}].isDeleted`,
+        item.isDeleted.toString(),
+      );
+    });
+    crewSpeakes.forEach((item, index) => {
+      formData.append(`crewSpeakes[${index}].id`, item.id.toString());
+      formData.append(
+        `crewSpeakes[${index}].language_Id`,
+        item.language_Id.toString(),
+      );
+      formData.append(
+        `crewSpeakes[${index}].isDeleted`,
+        item.isDeleted.toString(),
+      );
+    });
+    ComplimentaryItems.forEach((item, index) => {
+      formData.append(`ComplimentaryItems[${index}].id`, item.id.toString());
+      formData.append(
+        `ComplimentaryItems[${index}].listingComplimentary_Id`,
+        item.listingComplimentary_Id.toString(),
+      );
+      formData.append(
+        `ComplimentaryItems[${index}].isDeleted`,
         item.isDeleted.toString(),
       );
     });
@@ -380,13 +455,30 @@ export default function UbsertListing({
         Object.entries(initialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
-      if (intialValues.amenities && intialValues.amenities.length > 0) {
+      if (initialValues.amenities && initialValues.amenities.length > 0) {
         form.setValue(
           'listOfAmenities',
-          intialValues.amenities?.map((x) => x.listingAmenity_Id),
+          initialValues.amenities?.map((x) => x.listingAmenity_Id),
         );
       }
-      if (intialValues.lat && intialValues.long) {
+      if (initialValues.crewSpeakes && initialValues.crewSpeakes.length > 0) {
+        form.setValue(
+          'listOfCrewSpeakes',
+          initialValues.crewSpeakes?.map((x) => x.language_Id),
+        );
+      }
+      if (
+        initialValues.ComplimentaryItems &&
+        initialValues.ComplimentaryItems.length > 0
+      ) {
+        form.setValue(
+          'listOfComplimentaryItems',
+          initialValues.ComplimentaryItems?.map(
+            (x) => x.listingComplimentary_Id,
+          ),
+        );
+      }
+      if (initialValues.lat && initialValues.long) {
         setSelectedPosition({
           lat: intialValues.lat,
           lng: intialValues.long,
@@ -505,7 +597,7 @@ export default function UbsertListing({
               options={listOfCrewSpeakes || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'CrewSpeakes',
+                inputName: 'listOfCrewSpeakes',
                 title: 'Crew Speaks',
                 isRequired: false,
               }}
@@ -515,7 +607,7 @@ export default function UbsertListing({
               options={listOfComplimentaryItems || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'ComplimentaryItems',
+                inputName: 'listOfComplimentaryItems',
                 title: 'Complimentary Items',
                 isRequired: false,
               }}
@@ -666,26 +758,7 @@ export default function UbsertListing({
                       isRequired: true,
                     }}
                   />
-                  {/*
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `details[${index}].translationProperties[${index}].languageCode`,
-                      title: 'languages code',
-                      isRequired: true,
-                    }}
-                  /> */}
 
-                  {/* <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `details[${index}].translationProperties[${index}].dValue`,
-                      title: 'value',
-                      isRequired: true,
-                    }}
-                  /> */}
                   <TranslationFields form={form} detailIndex={index} />
 
                   <button

@@ -41,6 +41,10 @@ export interface IListing {
   policy: string;
   routeDetails: string;
   details: Array<IListingDetails>;
+  crewSpeakes: Array<IListingCrewSpeaks>;
+  listOfCrewSpeakes: Array<number>;
+  ComplimentaryItems: Array<IListingComplimentaryId>;
+  listOfComplimentaryItems: Array<number>;
 }
 
 export interface IListingAttachment {
@@ -83,4 +87,14 @@ export interface IListingGetRequestFilter {
   isActive: boolean;
   Search: string;
   SupplierId: number;
+}
+export interface IListingCrewSpeaks {
+  id: number;
+  language_Id: number;
+  isDeleted: boolean;
+}
+export interface IListingComplimentaryId {
+  id: number;
+  listingComplimentary_Id: number;
+  isDeleted: boolean;
 }
