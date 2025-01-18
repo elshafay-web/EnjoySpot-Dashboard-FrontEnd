@@ -108,6 +108,8 @@ export default function UbsertListing({
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
     useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
+  const { data: listOfListingCategories1 } =
+    useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfCrewSpeakes } = useListOfCrewSpeakes();
   const { data: listOfComplimentaryItems } = useListOfComplimentaryItems();
@@ -209,6 +211,31 @@ export default function UbsertListing({
         }
       });
     }
+    data.suitableFor = (values.listOfListingCategories1 || []).map(
+      (item: number) => ({
+        category_Id: item,
+        isDeleted:
+          mode === 'add'
+            ? false
+            : (initialValues.suitableFor || []).map((x) => x.id).includes(item)
+            ? false
+            : !!(initialValues.suitableFor || [])
+                .map((x) => x.id)
+                .includes(item),
+        id:
+          mode === 'add'
+            ? 0
+            : data.suitableFor.find((x) => x.id === item)?.id ?? 0,
+      }),
+    );
+    if (mode === 'edit') {
+      (initialValues.suitableFor || []).forEach((item) => {
+        if (!(data.suitableFor || []).map((x) => x.id).includes(item.id)) {
+          item.isDeleted = true;
+          data.suitableFor.push(item);
+        }
+      });
+    }
     data.crewSpeakes = (values.listOfCrewSpeakes || []).map((item: number) => ({
       language_Id: item,
       isDeleted:
@@ -282,6 +309,7 @@ export default function UbsertListing({
       TranslationProperties,
       crewSpeakes,
       ComplimentaryItems,
+      suitableFor,
       ...rest
     } = data;
     const formData = convertObjectToFormData(rest);
@@ -305,6 +333,17 @@ export default function UbsertListing({
       );
       formData.append(
         `amenities[${index}].isDeleted`,
+        item.isDeleted.toString(),
+      );
+    });
+    suitableFor.forEach((item, index) => {
+      formData.append(`suitableFor[${index}].id`, item.id.toString());
+      formData.append(
+        `suitableFor[${index}].category_Id`,
+        item.category_Id.toString(),
+      );
+      formData.append(
+        `suitableFor[${index}].isDeleted`,
         item.isDeleted.toString(),
       );
     });
@@ -467,6 +506,13 @@ export default function UbsertListing({
           initialValues.crewSpeakes?.map((x) => x.language_Id),
         );
       }
+      if (initialValues.suitableFor && initialValues.suitableFor.length > 0) {
+        form.setValue(
+          'listOfListingCategories1',
+          initialValues.suitableFor?.map((x) => x.category_Id),
+        );
+      }
+
       if (
         initialValues.ComplimentaryItems &&
         initialValues.ComplimentaryItems.length > 0
@@ -610,6 +656,16 @@ export default function UbsertListing({
                 inputName: 'listOfComplimentaryItems',
                 title: 'Complimentary Items',
                 isRequired: false,
+              }}
+            />
+            <MultiSelectInput
+              control={form.control}
+              options={listOfListingCategories1 || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'listOfListingCategories1',
+                title: 'Suitable For',
+                isRequired: true,
               }}
             />
           </div>
