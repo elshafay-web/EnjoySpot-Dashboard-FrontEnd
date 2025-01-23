@@ -1034,36 +1034,32 @@ export default function UbsertListing({
             />
           </div>
 
-          {mode === 'add' && (
-            <>
-              <FormHead title="Media Files" />
-              <div className="w-100 mt-4">
-                <MultiFileUpload
-                  attachment={
-                    initialValues.attachments &&
-                    initialValues.attachments
-                      .filter((x) => x.attachmentType === 'media')
-                      .map((x) => x.attachmentPath)
-                  }
-                  onFilesSelected={handelUploadMediaFiles}
-                  title="Media Image"
-                />
-              </div>
-              <FormHead title="Routes Map Image" />
-              <div className="w-100 mt-4">
-                <FileUpload
-                  attachment={
-                    initialValues.attachments &&
-                    initialValues.attachments.find(
-                      (x) => x.attachmentType === 'RoutesMap',
-                    )?.attachmentPath
-                  }
-                  onFilesSelected={handelUploadRoutesMapImage}
-                  title="Routes Map Image"
-                />
-              </div>
-            </>
-          )}
+          <FormHead title="Media Files" />
+          <div className="w-100 mt-4">
+            <MultiFileUpload
+              attachment={
+                initialValues.attachments &&
+                initialValues.attachments
+                  .filter((x) => x.attachmentType === 'media')
+                  .map((x) => x.attachmentPath)
+              }
+              onFilesSelected={handelUploadMediaFiles}
+              title="Media Image"
+            />
+          </div>
+          <FormHead title="Routes Map Image" />
+          <div className="w-100 mt-4">
+            <FileUpload
+              attachment={
+                initialValues.attachments &&
+                initialValues.attachments.find(
+                  (x) => x.attachmentType === 'RoutesMap',
+                )?.attachmentPath
+              }
+              onFilesSelected={handelUploadRoutesMapImage}
+              title="Routes Map Image"
+            />
+          </div>
 
           <FormHead title="YouTube Video" />
           <Input

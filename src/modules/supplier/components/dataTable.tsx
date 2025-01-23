@@ -88,8 +88,7 @@ export default function SuppliersDataTable({ onEdit, suppliers }: Props) {
           rowsPerPageOptions={[10, 25, 50]}
           className="data-table-custom"
         >
-          <Column field="nameAr" header="Name In Arabic" />
-          <Column field="nameEN" header="Name In English" />{' '}
+          <Column field="name" header="Name" />{' '}
           <Column header="User Name" field="username" />
           <Column field="officeAddress" header="Office Address" />
           <Column field="landlineOrMobile" header="Phone" />

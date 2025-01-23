@@ -261,7 +261,7 @@ export default function UbsertListingPackage({
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
                 appendTranslation({
-                  languageCode: '',
+                  languageCode: 'en',
                   name: '',
                   overview: '',
                   summary: '',
@@ -407,36 +407,32 @@ export default function UbsertListingPackage({
             />
           </div>
 
-          {mode === 'add' && (
-            <>
-              <FormHead title="Media Files" />
-              <div className="w-100 mt-4">
-                <MultiFileUpload
-                  attachment={
-                    intialValues.attachments &&
-                    intialValues.attachments
-                      .filter((x) => x.attachmentType === 'media')
-                      .map((x) => x.attachmentPath)
-                  }
-                  onFilesSelected={handelUploadMediaFiles}
-                  title="Media Image"
-                />
-              </div>
-              <FormHead title="Routes Map Image" />
-              <div className="w-100 mt-4">
-                <FileUpload
-                  attachment={
-                    intialValues.attachments &&
-                    intialValues.attachments.find(
-                      (x) => x.attachmentType === 'RoutesMap',
-                    )?.attachmentPath
-                  }
-                  onFilesSelected={handelUploadRoutesMapImage}
-                  title="Routes Map Image"
-                />
-              </div>
-            </>
-          )}
+          <FormHead title="Media Files" />
+          <div className="w-100 mt-4">
+            <MultiFileUpload
+              attachment={
+                intialValues.attachments &&
+                intialValues.attachments
+                  .filter((x) => x.attachmentType === 'media')
+                  .map((x) => x.attachmentPath)
+              }
+              onFilesSelected={handelUploadMediaFiles}
+              title="Media Image"
+            />
+          </div>
+          <FormHead title="Routes Map Image" />
+          <div className="w-100 mt-4">
+            <FileUpload
+              attachment={
+                intialValues.attachments &&
+                intialValues.attachments.find(
+                  (x) => x.attachmentType === 'RoutesMap',
+                )?.attachmentPath
+              }
+              onFilesSelected={handelUploadRoutesMapImage}
+              title="Routes Map Image"
+            />
+          </div>
 
           <FormHead title="YouTube Video" />
           <Input
