@@ -21,12 +21,14 @@ export default function Header() {
   const { userData } = useUserData();
   const { data: allUserNotifications } = useGetAllNotification(userData.uid);
 
-  const logout = () => {};
+  const logout = () => {
+    localStorage.removeItem('UserData');
+    localStorage.removeItem('token');
+    window.location.href = '/login#/login';
+  };
 
   const itemRenderer = (item: any) => (
-    <div
-      className="group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-4 px-3 rounded-lg transition-all"
-    >
+    <div className="group flex items-center cursor-pointer border-none hover:text-white hover:bg-lightBlue py-4 px-3 rounded-lg transition-all">
       <i
         className={`${item.icon} text-darkBlue group-hover:text-white text-2xl`}
       />
