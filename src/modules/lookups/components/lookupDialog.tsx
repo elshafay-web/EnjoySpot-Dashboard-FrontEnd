@@ -236,7 +236,7 @@ export default function LookupDialog({
               </div>
             ))}
         </div>
-        <div className="col-span-1 grid grid-cols-2 gap-4">
+        {/* <div className="col-span-1 grid grid-cols-2 gap-4">
           {obj.inputs
             .filter((x) => x.isRequiredSupportedLanguages)
             .map(
@@ -256,7 +256,31 @@ export default function LookupDialog({
                   />
                 )),
             )}
+        </div> */}
+        <div className="col-span-1 grid grid-cols-2 gap-4">
+          {obj.inputs
+            .filter((x) => x.isRequiredSupportedLanguages)
+            .map(
+              (field: IInputShape) =>
+                userData.supportedLanguages
+                  ?.filter((lang) => lang.code === 'ar' || lang.code === 'en') // Filter only Arabic and English
+                  .map((lang, index) => (
+                    <Input
+                      key={lang.code}
+                      register={register}
+                      errors={errors}
+                      field={{
+                        inputName: `translationProperties[${index}].name`,
+                        title: `${field.title} In ${lang.name}`,
+                        minLength: field.minLength,
+                        maxLength: field.maxLength,
+                        isRequired: field.isRequired,
+                      }}
+                    />
+                  )),
+            )}
         </div>
+
         <div className="col-span-1 items-center mt-4 grid  ">
           <div className="col-12 ">
             <Button
