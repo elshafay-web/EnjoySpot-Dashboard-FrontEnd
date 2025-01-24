@@ -1,7 +1,7 @@
 export enum HttpPaths {
   // ************** Auth ******************
 
-  Api_Login = '/api/auth/token',
+  Api_Login = '/api/dashboard/auth/token',
   Api_Logout = '/api/v1/Authentication/Logout/',
 
   // ************** users ******************

@@ -18,9 +18,8 @@ export default function SitConfigurationPage() {
         <div className="flex justify-between items-center">
           <PageHeader title="Sit Configuration" icon="fa-solid fa-users" />
           <AddButton onClick={() => setOpen(true)} buttonText="Update" />
-
-          <ViewSiteConfiguration />
         </div>
+        <ViewSiteConfiguration />
       </div>
 
       <UpdateSiteConfiguration
