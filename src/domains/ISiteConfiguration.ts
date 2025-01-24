@@ -11,4 +11,5 @@ export interface ISiteConfigurationItem {
   description: string;
   button: string;
   imageFile: File | undefined;
+  languageCode: string;
 }

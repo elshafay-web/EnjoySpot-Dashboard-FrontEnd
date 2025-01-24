@@ -51,9 +51,22 @@ export default function UpdateSiteConfiguration({
     );
     formData.append('Slider.MovingInSecounds', values.MovingInSecounds);
     values.items.forEach((item: any, index: number) => {
-      formData.append(`Slider.items[${index}].title`, item.title);
-      formData.append(`Slider.items[${index}].description`, item.description);
-      formData.append(`Slider.items[${index}].button`, item.button);
+      formData.append(
+        `Slider.items[${index}].translationProperties[0].title`,
+        item.title,
+      );
+      formData.append(
+        `Slider.items[${index}].translationProperties[0].description`,
+        item.description,
+      );
+      formData.append(
+        `Slider.items[${index}].translationProperties[0].button`,
+        item.button,
+      );
+      formData.append(
+        `Slider.items[${index}].translationProperties[0].languageCode`,
+        item.languageCode,
+      );
       formData.append(`Slider.items[${index}].imageFile`, files[index]);
     });
     mutate(formData);
@@ -124,6 +137,7 @@ export default function UpdateSiteConfiguration({
                   description: '',
                   imageFile: undefined,
                   title: '',
+                  languageCode: 'en',
                 });
               }}
             >
