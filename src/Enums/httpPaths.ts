@@ -46,6 +46,15 @@ export enum HttpPaths {
   Api_Country_Upsert = '/api/countries/upsert',
   Api_Country_Profile = '/api/countries/getProfile/',
 
+  // ************** suitableFor ******************
+
+  Api_Suitable_GetAll = '/api/listingSuitableFor/getAll',
+  Api_Suitable_ListOf = '/api/listingSuitableFor/listOf',
+  Api_Suitable_Delete = '/api/listingSuitableFor/delete/',
+  Api_Suitable_ToggleIsActive = '/api/listingSuitableFor/toggelActive/',
+  Api_Suitable_Upsert = '/api/listingSuitableFor/upsert',
+  Api_Suitable_Profile = '/api/listingSuitableFor/getProfile/',
+
   // ************** listingType ******************
 
   Api_listingType_GetAll = '/api/listingTypes/getAll',

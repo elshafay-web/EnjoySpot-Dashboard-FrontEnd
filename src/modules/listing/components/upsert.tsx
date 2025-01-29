@@ -23,6 +23,7 @@ import {
   useListOfListingCategoriesWithListTypeId,
   useListOfListingDetails,
   useListOfListingTypes,
+  useListOfSuitableItems,
 } from '@apis/lookups/apis';
 import { toast } from 'sonner';
 import FileUpload from '@components/FileUpload';
@@ -77,7 +78,7 @@ export default function UbsertListing({
     file: ArrayBuffer;
     name: string;
   }>({} as any);
-
+  // const [listOfInitialDetails, setListOfInitialDetails] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
   const priceType = form.watch('priceType');
@@ -108,8 +109,7 @@ export default function UbsertListing({
   const { data: listOfListingTypes } = useListOfListingTypes();
   const { data: listOfListingCategories } =
     useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
-  const { data: listOfListingCategories1 } =
-    useListOfListingCategoriesWithListTypeId(listingTypeId ?? 0);
+  const { data: listOfListingCategories1 } = useListOfSuitableItems();
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfCrewSpeakes } = useListOfCrewSpeakes();
   const { data: listOfComplimentaryItems } = useListOfComplimentaryItems();
@@ -128,6 +128,21 @@ export default function UbsertListing({
       onClose();
     },
   });
+  // const fetchListingCategoryDetails = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       'https://enjoyspot.premiumasp.net/api/listingCategoryDetails/getAll?listingCategoryId=1',
+  //     );
+  //     const result = await response.json();
+  //     if (result.isSuccess) {
+  //       console.log(result.data);
+  //       setListOfInitialDetails(result.data); // Store the fetched data
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching listing category details:', error);
+  //   }
+  // };
+
   const onSubmit = (values: any) => {
     const data: IListing = values;
     if (mode === 'add') {

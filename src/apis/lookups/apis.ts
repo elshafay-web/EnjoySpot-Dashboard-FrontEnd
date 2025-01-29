@@ -138,6 +138,19 @@ export const useListOfComplimentaryItems = () => {
   return query;
 };
 
+export const listOfSuitableItems = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_Suitable_ListOf);
+  return response.data?.data;
+};
+export const useListOfSuitableItems = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfSuitableItems '],
+    queryFn: () => listOfSuitableItems(),
+    ...options,
+  });
+  return query;
+};
+
 export const listOfListingDetails = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_listingCategoryDetails_ListOf);
   return response.data?.data;
