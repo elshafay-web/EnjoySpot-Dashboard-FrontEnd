@@ -78,7 +78,7 @@ export default function UbsertListing({
     file: ArrayBuffer;
     name: string;
   }>({} as any);
-  // const [listOfInitialDetails, setListOfInitialDetails] = useState([]);
+  const [listOfInitialDetails, setListOfInitialDetails] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
   const priceType = form.watch('priceType');
@@ -128,21 +128,23 @@ export default function UbsertListing({
       onClose();
     },
   });
-  // const fetchListingCategoryDetails = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       'https://enjoyspot.premiumasp.net/api/listingCategoryDetails/getAll?listingCategoryId=1',
-  //     );
-  //     const result = await response.json();
-  //     if (result.isSuccess) {
-  //       console.log(result.data);
-  //       setListOfInitialDetails(result.data); // Store the fetched data
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching listing category details:', error);
-  //   }
-  // };
+  useEffect(() => {
+    const fetchListingCategoryDetails = async () => {
+      try {
+        const response = await fetch(
+          `https://enjoyspot.premiumasp.net/api/listingCategoryDetails/getAll?listingCategoryId=${initialValues.id}`,
+        );
+        const result = await response.json();
+        if (result.isSuccess) {
+          setListOfInitialDetails(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching listing category details:', error);
+      }
+    };
 
+    fetchListingCategoryDetails();
+  }, [initialValues.id]);
   const onSubmit = (values: any) => {
     const data: IListing = values;
     if (mode === 'add') {
@@ -183,25 +185,46 @@ export default function UbsertListing({
       });
     }
 
-    const initialDetails = initialValues.Details || [];
+    // const initialDetails = initialValues.Details || [];
+    // const listOfDetails = values.listOfDetails || [];
+    // data.Details = listOfDetails.map((item: number) => ({
+    //   listingCategoryDetail_Id: item,
+    //   isDeleted:
+    //     mode === 'add'
+    //       ? false
+    //       : initialDetails.map((x) => x.id).includes(item)
+    //       ? false
+    //       : !!initialDetails.map((x) => x.id).includes(item),
+    //   id:
+    //     mode === 'add'
+    //       ? 0
+    //       : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
+    // }));
+
+    // if (mode === 'edit') {
+    //   initialDetails.forEach((item) => {
+    //     if (!data.Details.map((x) => x.id).includes(item.id)) {
+    //       item.isDeleted = true;
+    //       data.Details.push(item);
+    //     }
+    //   });
+    // }
+    const initialDetails = listOfInitialDetails.length
+      ? listOfInitialDetails
+      : [];
     const listOfDetails = values.listOfDetails || [];
+
     data.Details = listOfDetails.map((item: number) => ({
       listingCategoryDetail_Id: item,
       isDeleted:
-        mode === 'add'
-          ? false
-          : initialDetails.map((x) => x.id).includes(item)
-          ? false
-          : !!initialDetails.map((x) => x.id).includes(item),
+        mode === 'add' ? false : !initialDetails.some((x) => x.id === item),
       id:
-        mode === 'add'
-          ? 0
-          : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
+        mode === 'add' ? 0 : initialDetails.find((x) => x.id === item)?.id ?? 0,
     }));
 
     if (mode === 'edit') {
       initialDetails.forEach((item) => {
-        if (!data.Details.map((x) => x.id).includes(item.id)) {
+        if (!data.Details.some((x) => x.id === item.id)) {
           item.isDeleted = true;
           data.Details.push(item);
         }
@@ -388,7 +411,7 @@ export default function UbsertListing({
       formData.append(`Details[${index}].id`, item.id.toString());
       formData.append(
         `Details[${index}].listingCategoryDetail_Id`,
-        item.listingCategoryDetail_Id.toString(),
+        item.listingCategoryDetail_Id,
       );
       formData.append(`Details[${index}].isDeleted`, item.isDeleted.toString());
       const translationProperties = item.translationProperties || [];
@@ -555,19 +578,35 @@ export default function UbsertListing({
         }
       }
 
-      if (Array.isArray(initialValues.details)) {
+      // if (Array.isArray(initialValues.details)) {
+      //   form.setValue(
+      //     'details',
+      //     initialValues.details.map((detail) => ({
+      //       ...detail,
+      //       translationProperties: detail.translationProperties?.length
+      //         ? detail.translationProperties
+      //         : [
+      //             {
+      //               languageCode: 'en',
+      //               dValue: detail.listingCategoryDetailValue || '',
+      //             },
+      //           ],
+      //     })),
+      //   );
+      // }
+      if (listOfInitialDetails.length > 0) {
         form.setValue(
           'details',
-          initialValues.details.map((detail) => ({
-            ...detail,
-            translationProperties: detail.translationProperties?.length
-              ? detail.translationProperties
-              : [
-                  {
-                    languageCode: 'en',
-                    dValue: detail.listingCategoryDetailValue || '',
-                  },
-                ],
+          listOfInitialDetails.map((detail) => ({
+            id: detail.id,
+            listingCategoryDetail_Id: detail.id,
+            isDeleted: false,
+            translationProperties: [
+              {
+                languageCode: 'en',
+                dValue: detail.name || '',
+              },
+            ],
           })),
         );
       }
@@ -695,7 +734,7 @@ export default function UbsertListing({
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
                 appendTranslation({
-                  languageCode: '',
+                  languageCode: 'en',
                   name: '',
                   overview: '',
                   policy: '',
