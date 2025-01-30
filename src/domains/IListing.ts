@@ -102,6 +102,6 @@ export interface IListingComplimentaryId {
 }
 export interface IListingCategoriesId {
   id: number;
-  category_Id: number;
+  suitableFor_Id: number;
   isDeleted: boolean;
 }

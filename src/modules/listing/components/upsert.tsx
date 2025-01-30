@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/control-has-associated-label */
@@ -79,6 +81,7 @@ export default function UbsertListing({
     name: string;
   }>({} as any);
   const [listOfInitialDetails, setListOfInitialDetails] = useState([]);
+  const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
   const priceType = form.watch('priceType');
@@ -128,23 +131,72 @@ export default function UbsertListing({
       onClose();
     },
   });
+
   useEffect(() => {
     const fetchListingCategoryDetails = async () => {
       try {
         const response = await fetch(
-          `https://enjoyspot.premiumasp.net/api/listingCategoryDetails/getAll?listingCategoryId=${initialValues.id}`,
+          `https://enjoyspot.premiumasp.net/api/listings/GetProfileDetails/${initialValues.id}`,
         );
         const result = await response.json();
-        if (result.isSuccess) {
-          setListOfInitialDetails(result.data);
+
+        if (result.isSuccess && Array.isArray(result.data)) {
+          setListOfInitialDetails(result.data); // Update state
+
+          form.setValue(
+            'details',
+            result.data.map((detail: any) => ({
+              ...detail,
+              translationProperties: detail.translationProperties?.length
+                ? detail.translationProperties
+                : [
+                    {
+                      languageCode: 'en',
+                      dValue: detail.listingCategoryDetailValue || '',
+                    },
+                  ],
+            })),
+          );
         }
       } catch (error) {
-        console.error('Error fetching listing category details:', error);
+        console.log('Error fetching listing category details:', error);
       }
     };
 
-    fetchListingCategoryDetails();
-  }, [initialValues.id]);
+    if (initialValues.id) {
+      fetchListingCategoryDetails();
+    }
+  }, [initialValues.id, form]); // Added `form` to dependencies
+
+  useEffect(() => {
+    const fetchListingCategoryAmenities = async () => {
+      try {
+        const response = await fetch(
+          `https://enjoyspot.premiumasp.net/api/listings/GetProfileAmenities/${initialValues.id}`,
+        );
+        const result = await response.json();
+
+        if (result.isSuccess) {
+          setListOfInitialAmenities(result.data);
+
+          // Use result.data directly to avoid state update issues
+          if (Array.isArray(result.data) && result.data.length > 0) {
+            form.setValue(
+              'listOfAmenities',
+              result.data.map((x: any) => x.listingAmenity_Id),
+            );
+          }
+        }
+      } catch (error) {
+        console.log('Error fetching listing category amenities:', error);
+      }
+    };
+
+    if (initialValues.id) {
+      fetchListingCategoryAmenities();
+    }
+  }, [initialValues.id, form]); // Include `form` in dependencies to prevent stale state
+
   const onSubmit = (values: any) => {
     const data: IListing = values;
     if (mode === 'add') {
@@ -185,46 +237,25 @@ export default function UbsertListing({
       });
     }
 
-    // const initialDetails = initialValues.Details || [];
-    // const listOfDetails = values.listOfDetails || [];
-    // data.Details = listOfDetails.map((item: number) => ({
-    //   listingCategoryDetail_Id: item,
-    //   isDeleted:
-    //     mode === 'add'
-    //       ? false
-    //       : initialDetails.map((x) => x.id).includes(item)
-    //       ? false
-    //       : !!initialDetails.map((x) => x.id).includes(item),
-    //   id:
-    //     mode === 'add'
-    //       ? 0
-    //       : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
-    // }));
-
-    // if (mode === 'edit') {
-    //   initialDetails.forEach((item) => {
-    //     if (!data.Details.map((x) => x.id).includes(item.id)) {
-    //       item.isDeleted = true;
-    //       data.Details.push(item);
-    //     }
-    //   });
-    // }
-    const initialDetails = listOfInitialDetails.length
-      ? listOfInitialDetails
-      : [];
+    const initialDetails = listOfInitialDetails || [];
     const listOfDetails = values.listOfDetails || [];
-
     data.Details = listOfDetails.map((item: number) => ({
       listingCategoryDetail_Id: item,
       isDeleted:
-        mode === 'add' ? false : !initialDetails.some((x) => x.id === item),
+        mode === 'add'
+          ? false
+          : initialDetails.map((x) => x.id).includes(item)
+          ? false
+          : !!initialDetails.map((x) => x.id).includes(item),
       id:
-        mode === 'add' ? 0 : initialDetails.find((x) => x.id === item)?.id ?? 0,
+        mode === 'add'
+          ? 0
+          : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
     }));
 
     if (mode === 'edit') {
       initialDetails.forEach((item) => {
-        if (!data.Details.some((x) => x.id === item.id)) {
+        if (!data.Details.map((x) => x.id).includes(item.id)) {
           item.isDeleted = true;
           data.Details.push(item);
         }
@@ -251,7 +282,7 @@ export default function UbsertListing({
     }
     data.suitableFor = (values.listOfListingCategories1 || []).map(
       (item: number) => ({
-        category_Id: item,
+        suitableFor_Id: item,
         isDeleted:
           mode === 'add'
             ? false
@@ -377,8 +408,8 @@ export default function UbsertListing({
     suitableFor.forEach((item, index) => {
       formData.append(`suitableFor[${index}].id`, item.id.toString());
       formData.append(
-        `suitableFor[${index}].category_Id`,
-        item.category_Id.toString(),
+        `suitableFor[${index}].suitableFor_Id`,
+        item.suitableFor_Id.toString(),
       );
       formData.append(
         `suitableFor[${index}].isDeleted`,
@@ -407,25 +438,33 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
-    (Details || []).forEach((item, index) => {
-      formData.append(`Details[${index}].id`, item.id.toString());
-      formData.append(
-        `Details[${index}].listingCategoryDetail_Id`,
-        item.listingCategoryDetail_Id,
-      );
-      formData.append(`Details[${index}].isDeleted`, item.isDeleted.toString());
-      const translationProperties = item.translationProperties || [];
-      translationProperties.forEach((translation, translationIndex) => {
+    if (Array.isArray(Details)) {
+      Details.forEach((item, index) => {
+        formData.append(`Details[${index}].id`, item.id?.toString() ?? '0');
         formData.append(
-          `Details[${index}].translationProperties[${translationIndex}].languageCode`,
-          translation.languageCode.toString(),
+          `Details[${index}].listingCategoryDetail_Id`,
+          item.listingCategoryDetail_Id?.toString() ?? '0',
         );
         formData.append(
-          `Details[${index}].translationProperties[${translationIndex}].dValue`,
-          translation.dValue.toString(),
+          `Details[${index}].isDeleted`,
+          item.isDeleted?.toString() ?? 'false',
+        );
+
+        (item.translationProperties || []).forEach(
+          (translation, translationIndex) => {
+            formData.append(
+              `Details[${index}].translationProperties[${translationIndex}].languageCode`,
+              translation.languageCode || '',
+            );
+            formData.append(
+              `Details[${index}].translationProperties[${translationIndex}].dValue`,
+              translation.dValue || '',
+            );
+          },
         );
       });
-    });
+    }
+
     entertainmentPrices.forEach((item, index) => {
       formData.append(
         `entertainmentPrices[${index}].id`,
@@ -532,12 +571,7 @@ export default function UbsertListing({
         Object.entries(initialValues).filter(([, v]) => v !== null),
       );
       form.reset(filteredObj);
-      if (initialValues.amenities && initialValues.amenities.length > 0) {
-        form.setValue(
-          'listOfAmenities',
-          initialValues.amenities?.map((x) => x.listingAmenity_Id),
-        );
-      }
+
       if (initialValues.crewSpeakes && initialValues.crewSpeakes.length > 0) {
         form.setValue(
           'listOfCrewSpeakes',
@@ -547,7 +581,7 @@ export default function UbsertListing({
       if (initialValues.suitableFor && initialValues.suitableFor.length > 0) {
         form.setValue(
           'listOfListingCategories1',
-          initialValues.suitableFor?.map((x) => x.category_Id),
+          initialValues.suitableFor?.map((x) => x.suitableFor_Id),
         );
       }
 
@@ -576,39 +610,6 @@ export default function UbsertListing({
         if (youtubeAttachment?.attachmentPath) {
           form.setValue('youTubeVideoIframe', youtubeAttachment.attachmentPath);
         }
-      }
-
-      // if (Array.isArray(initialValues.details)) {
-      //   form.setValue(
-      //     'details',
-      //     initialValues.details.map((detail) => ({
-      //       ...detail,
-      //       translationProperties: detail.translationProperties?.length
-      //         ? detail.translationProperties
-      //         : [
-      //             {
-      //               languageCode: 'en',
-      //               dValue: detail.listingCategoryDetailValue || '',
-      //             },
-      //           ],
-      //     })),
-      //   );
-      // }
-      if (listOfInitialDetails.length > 0) {
-        form.setValue(
-          'details',
-          listOfInitialDetails.map((detail) => ({
-            id: detail.id,
-            listingCategoryDetail_Id: detail.id,
-            isDeleted: false,
-            translationProperties: [
-              {
-                languageCode: 'en',
-                dValue: detail.name || '',
-              },
-            ],
-          })),
-        );
       }
     }
   }, [mode, form]);

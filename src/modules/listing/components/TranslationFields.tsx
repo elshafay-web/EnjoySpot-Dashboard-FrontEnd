@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/quotes */
 // eslint-disable-next-line @typescript-eslint/quotes
 import Input from '@components/input';
+import { useEffect } from 'react';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 
 interface TranslationFieldsProps {
@@ -24,10 +25,11 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
     name: `details.${detailIndex}.translationProperties`,
   });
 
-  // If no fields are present, add the default one.
-  if (translationFields.length === 0) {
-    append({ languageCode: 'en', dValue: '' });
-  }
+  useEffect(() => {
+    if (translationFields.length === 0) {
+      append({ languageCode: 'en', dValue: '' });
+    }
+  }, [translationFields.length, append]); // Run only if fields are empty
 
   const handleRemove = (index: number) => {
     if (translationFields.length > 1) {
