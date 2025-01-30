@@ -7,9 +7,13 @@ export interface ISiteConfiguration {
 }
 export interface ISiteConfigurationItem {
   id: number;
-  title: string;
-  description: string;
-  button: string;
   imageFile: File | undefined;
-  languageCode: string;
+  translationProperties: [
+    {
+      languageCode: string;
+      title: string;
+      description: string;
+      button: string;
+    },
+  ];
 }

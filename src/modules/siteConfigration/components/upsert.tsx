@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { ISiteConfiguration } from '@domains/ISiteConfiguration';
 import { updateSiteConfigurationObject } from '@apis/siteConfiguration/apis';
 import FileUpload from '@components/FileUpload';
+import { TranslationFields } from './TranslationFields';
 
 type Props = {
   onClose: () => void;
@@ -51,21 +52,33 @@ export default function UpdateSiteConfiguration({
     );
     formData.append('Slider.MovingInSecounds', values.MovingInSecounds);
     values.items.forEach((item: any, index: number) => {
-      formData.append(
-        `Slider.items[${index}].translationProperties[0].title`,
-        item.title,
-      );
-      formData.append(
-        `Slider.items[${index}].translationProperties[0].description`,
-        item.description,
-      );
-      formData.append(
-        `Slider.items[${index}].translationProperties[0].button`,
-        item.button,
-      );
-      formData.append(
-        `Slider.items[${index}].translationProperties[0].languageCode`,
-        item.languageCode,
+      (item.translationProperties || []).forEach(
+        (
+          translation: {
+            title: string | Blob;
+            description: string | Blob;
+            button: string | Blob;
+            languageCode: string | Blob;
+          },
+          translationIndex: any,
+        ) => {
+          formData.append(
+            `Slider.items[${index}].translationProperties[${translationIndex}].title`,
+            translation.title,
+          );
+          formData.append(
+            `Slider.items[${index}].translationProperties[${translationIndex}].description`,
+            translation.description,
+          );
+          formData.append(
+            `Slider.items[${index}].translationProperties[${translationIndex}].button`,
+            translation.button,
+          );
+          formData.append(
+            `Slider.items[${index}].translationProperties[${translationIndex}].languageCode`,
+            translation.languageCode,
+          );
+        },
       );
       formData.append(`Slider.items[${index}].imageFile`, files[index]);
     });
@@ -133,11 +146,15 @@ export default function UpdateSiteConfiguration({
               onClick={() => {
                 append({
                   id: 0,
-                  button: '',
-                  description: '',
                   imageFile: undefined,
-                  title: '',
-                  languageCode: 'en',
+                  translationProperties: [
+                    {
+                      languageCode: '',
+                      title: '',
+                      description: '',
+                      button: '',
+                    },
+                  ],
                 });
               }}
             >
@@ -151,55 +168,26 @@ export default function UpdateSiteConfiguration({
                 className="w-full col-span-2 grid gap-4 grid-cols-2"
                 key={field.id}
               >
-                <Input
-                  register={form.register}
-                  errors={form.formState.errors}
-                  field={{
-                    inputName: `items[${index}].title`,
-                    title: 'Title',
-                    isNumber: false,
-                    isRequired: true,
+                <TranslationFields form={form} detailIndex={index} />
+                <button
+                  type="button"
+                  className="m-2 mt-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                  onClick={() => {
+                    remove(index); // Remove from useFieldArray
+                    setFiles((prev) => prev.filter((_, i) => i !== index)); // Update files
                   }}
-                />
-
-                <div className="flex items-center">
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `items[${index}].description`,
-                      title: 'Description',
-                      isNumber: false,
-                      isRequired: true,
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="m-2 mt-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-                    onClick={() => {
-                      remove(index);
-                      setFiles((prev) => prev.filter((_, i) => i !== index));
-                    }}
-                  >
-                    <i className="fa-solid fa-trash text-white" />
-                  </button>
-                </div>
-
-                <Input
-                  register={form.register}
-                  errors={form.formState.errors}
-                  field={{
-                    inputName: `items[${index}].button`,
-                    title: 'Button Text',
-                    isNumber: false,
-                    isRequired: true,
-                  }}
-                />
+                >
+                  <i className="fa-solid fa-trash text-white" />
+                </button>
 
                 <FileUpload
-                  onFilesSelected={(e) => {
-                    if (e) {
-                      setFiles([...files, e]);
+                  onFilesSelected={(file) => {
+                    if (file) {
+                      setFiles((prev) => {
+                        const updatedFiles = [...prev];
+                        updatedFiles[index] = file; // Update file at index
+                        return updatedFiles;
+                      });
                     }
                   }}
                   title="Image"
