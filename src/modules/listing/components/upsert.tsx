@@ -29,7 +29,7 @@ import {
 } from '@apis/lookups/apis';
 import { toast } from 'sonner';
 import FileUpload from '@components/FileUpload';
-import { IListing } from '@domains/IListing';
+import { IListing, IListingDetails } from '@domains/IListing';
 import { UpsertListing } from '@apis/listing/apis';
 import { useListOfSupppliers } from '@apis/supplier/api';
 import MultiSelectInput from '@components/MultiSeelct';
@@ -80,7 +80,14 @@ export default function UbsertListing({
     file: ArrayBuffer;
     name: string;
   }>({} as any);
-  const [listOfInitialDetails, setListOfInitialDetails] = useState([]);
+  type Detail = {
+    id: number;
+    listingCategoryDetail_Id?: number;
+    isDeleted?: boolean;
+  };
+  const [listOfInitialDetails, setListOfInitialDetails] = useState<Detail[]>(
+    [],
+  );
   const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
@@ -237,27 +244,26 @@ export default function UbsertListing({
       });
     }
 
-    const initialDetails = listOfInitialDetails || [];
-    const listOfDetails = values.listOfDetails || [];
-    data.Details = listOfDetails.map((item: number) => ({
-      listingCategoryDetail_Id: item,
-      isDeleted:
-        mode === 'add'
-          ? false
-          : initialDetails.map((x) => x.id).includes(item)
-          ? false
-          : !!initialDetails.map((x) => x.id).includes(item),
-      id:
-        mode === 'add'
-          ? 0
-          : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
-    }));
+    const initialDetails: Detail[] = listOfInitialDetails || [];
+    const listOfDetails: number[] = values.listOfDetails || [];
+
+    data.Details = listOfDetails.map((item: number) => {
+      const existsInInitial = initialDetails.some((x) => x.id === item);
+
+      return {
+        listingCategoryDetail_Id: item.toString(), // Convert number to string
+        isDeleted: mode === 'add' ? false : !existsInInitial,
+        id:
+          mode === 'add'
+            ? 0
+            : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
+      } as IListingDetails; // Explicitly cast to IListingDetails
+    });
 
     if (mode === 'edit') {
       initialDetails.forEach((item) => {
-        if (!data.Details.map((x) => x.id).includes(item.id)) {
-          item.isDeleted = true;
-          data.Details.push(item);
+        if (!data.Details.some((x) => x.id === item.id)) {
+          data.Details.push({ ...item, isDeleted: true } as IListingDetails); // Ensure correct type
         }
       });
     }

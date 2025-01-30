@@ -71,12 +71,12 @@ export interface IListingTranslationProperties {
 }
 
 export interface IListingDetails {
-  id: number;
-  listingCategoryDetail_Id: string;
+  id?: number;
+  listingCategoryDetail_Id?: string;
   listingCategoryDetailName?: string;
-  isDeleted: boolean;
+  isDeleted?: boolean;
   listingCategoryDetailValue?: string;
-  translationProperties: { languageCode: string; dValue: string }[];
+  translationProperties?: { languageCode: string; dValue: string }[];
 }
 
 export interface IListingAmenities {
