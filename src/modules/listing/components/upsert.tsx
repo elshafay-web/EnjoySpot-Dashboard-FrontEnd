@@ -88,7 +88,7 @@ export default function UbsertListing({
   const [listOfInitialDetails, setListOfInitialDetails] = useState<Detail[]>(
     [],
   );
-  const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
+  // const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
   const priceType = form.watch('priceType');
@@ -184,9 +184,7 @@ export default function UbsertListing({
         const result = await response.json();
 
         if (result.isSuccess) {
-          setListOfInitialAmenities(result.data);
-
-          // Use result.data directly to avoid state update issues
+          console.log(result.data);
           if (Array.isArray(result.data) && result.data.length > 0) {
             form.setValue(
               'listOfAmenities',
