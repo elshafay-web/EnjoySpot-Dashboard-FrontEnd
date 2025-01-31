@@ -25,7 +25,7 @@ export default function ViewSiteConfiguration() {
               alt={item.title}
               width={300}
               height={200}
-              className="rounded-md w-full h-[300px]"
+              className="rounded-md w-full !h-[300px]"
             />
             <h3 className="text-lg font-semibold mt-2">{item.title}</h3>
             <p className="text-sm text-gray-600">{item.description}</p>
