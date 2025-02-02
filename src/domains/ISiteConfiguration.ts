@@ -8,6 +8,7 @@ export interface ISiteConfiguration {
 export interface ISiteConfigurationItem {
   id: number;
   imageFile: File | undefined;
+  ActionUrl: any;
   translationProperties: [
     {
       languageCode: string;

@@ -81,6 +81,7 @@ export default function UpdateSiteConfiguration({
         },
       );
       formData.append(`Slider.items[${index}].imageFile`, files[index]);
+      formData.append(`Slider.items[${index}].ActionUrl`, item.ActionUrl);
     });
     mutate(formData);
   };
@@ -116,7 +117,6 @@ export default function UpdateSiteConfiguration({
         onClose();
       }}
       header={customHeader}
-      dismissable={false}
     >
       <div className="w-100">
         <form onSubmit={form.handleSubmit(onSubmit)} className="pb-20">
@@ -147,6 +147,7 @@ export default function UpdateSiteConfiguration({
                 append({
                   id: 0,
                   imageFile: undefined,
+                  ActionUrl: '',
                   translationProperties: [
                     {
                       languageCode: '',
@@ -169,16 +170,16 @@ export default function UpdateSiteConfiguration({
                 key={field.id}
               >
                 <TranslationFields form={form} detailIndex={index} />
-                <button
-                  type="button"
-                  className="m-2 mt-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-                  onClick={() => {
-                    remove(index); // Remove from useFieldArray
-                    setFiles((prev) => prev.filter((_, i) => i !== index)); // Update files
+                <Input
+                  register={form.register}
+                  errors={form.formState.errors}
+                  field={{
+                    inputName: `items[${index}].ActionUrl`,
+                    title: 'Button Url ',
+                    isRequired: true,
+                    isNumber: false,
                   }}
-                >
-                  <i className="fa-solid fa-trash text-white" />
-                </button>
+                />
 
                 <FileUpload
                   onFilesSelected={(file) => {
@@ -193,6 +194,16 @@ export default function UpdateSiteConfiguration({
                   title="Image"
                   attachment={undefined}
                 />
+                <button
+                  type="button"
+                  className="m-2 w-10 h-10 mt-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                  onClick={() => {
+                    remove(index); // Remove from useFieldArray
+                    setFiles((prev) => prev.filter((_, i) => i !== index)); // Update files
+                  }}
+                >
+                  <i className="fa-solid fa-trash text-white" />
+                </button>
               </div>
             ))}
           </div>
