@@ -78,11 +78,19 @@ export enum HttpPaths {
 
   Api_ListingComplimentary_GetAll = '/api/listingComplimentary/getAll',
   Api_ListingComplimentary_ListOf = '/api/listingComplimentary/listOf',
-  Api_ListingComplimentary_ListOf_WithListTypeId = '/api/listingComplimentary/listOf?listingTypeId=',
   Api_ListingComplimentary_Delete = '/api/listingComplimentary/delete/',
   Api_ListingComplimentary_ToggleIsActive = '/api/listingComplimentary/toggelActive/',
   Api_ListingComplimentary_Upsert = '/api/listingComplimentary/upsert',
   Api_ListingComplimentary_Profile = '/api/listingComplimentary/GetProfile/',
+
+  // ************** listingHabor ******************
+
+  Api_listingHabor_GetAll = '/api/listingHabor/getAll',
+  Api_listingHabor_ListOf = '/api/listingHabor/listOf',
+  Api_listingHabor_Delete = '/api/listingHabor/delete/',
+  Api_listingHabor_ToggleIsActive = '/api/listingHabor/toggelActive/',
+  Api_listingHabor_Upsert = '/api/listingHabor/upsert',
+  Api_listingHabor_Profile = '/api/listingHabor/GetProfile/',
 
   // ************** listingAmenities ******************
 
@@ -145,6 +153,7 @@ export enum HttpPaths {
 
   Api_listingCategoryDetails_GetAll = '/api/listingCategoryDetails/getAll',
   Api_listingCategoryDetails_ListOf = '/api/listingCategoryDetails/listOf',
+  Api_listingCategoryDetails_ListOf_withListingTypeId = '/api/listingCategoryDetails/listOf?listingCategoryId=',
   Api_listingCategoryDetails_Delete = '/api/listingCategoryDetails/delete/',
   Api_listingCategoryDetails_ToggleIsActive = '/api/listingCategoryDetails/toggelActive/',
   Api_listingCategoryDetails_Upsert = '/api/listingCategoryDetails/upsert',

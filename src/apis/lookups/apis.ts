@@ -137,6 +137,18 @@ export const useListOfComplimentaryItems = () => {
   });
   return query;
 };
+export const listOfHaborItems = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingHabor_ListOf);
+  return response.data?.data;
+};
+export const useListOfHaborItems = () => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfHaborItems'],
+    queryFn: () => listOfHaborItems(),
+    ...options,
+  });
+  return query;
+};
 
 export const listOfSuitableItems = async (): Promise<IList[]> => {
   const response = await axios.get(HttpPaths.Api_Suitable_ListOf);
@@ -160,6 +172,23 @@ export const useListOfListingDetails = () => {
   const query = useQuery<IList[]>({
     queryKey: ['listOfListingDetails'],
     queryFn: () => listOfListingDetails(),
+    ...options,
+  });
+  return query;
+};
+export const listOfListingDetailsWithListTypeId = async (
+  id: number,
+): Promise<IList[]> => {
+  const response = await axios.get(
+    HttpPaths.Api_listingCategoryDetails_ListOf_withListingTypeId + id,
+  );
+  return response.data?.data;
+};
+
+export const useListOfListingDetailsWithListTypeId = (id: number) => {
+  const query = useQuery<IList[]>({
+    queryKey: ['listOfListingDetailsWithListTypeId', id],
+    queryFn: () => listOfListingDetailsWithListTypeId(id),
     ...options,
   });
   return query;

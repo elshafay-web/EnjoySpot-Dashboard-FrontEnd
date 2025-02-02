@@ -21,9 +21,10 @@ import {
   useListOfComplimentaryItems,
   useListOfCrewSpeakes,
   useListOfEnteringment,
+  useListOfHaborItems,
   useListOfListingAmenities,
   useListOfListingCategoriesWithListTypeId,
-  useListOfListingDetails,
+  useListOfListingDetailsWithListTypeId,
   useListOfListingTypes,
   useListOfSuitableItems,
 } from '@apis/lookups/apis';
@@ -91,6 +92,7 @@ export default function UbsertListing({
   // const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const listingTypeId = form.watch('listingType_Id');
+  const listingCategoryId = form.watch('listingCategory_Id');
   const priceType = form.watch('priceType');
   const photographer = form.watch('photographer');
   const { fields, append, remove } = useFieldArray({
@@ -123,7 +125,10 @@ export default function UbsertListing({
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfCrewSpeakes } = useListOfCrewSpeakes();
   const { data: listOfComplimentaryItems } = useListOfComplimentaryItems();
-  const { data: listOfListingDetails } = useListOfListingDetails();
+  const { data: listOfHaborItems } = useListOfHaborItems();
+  const { data: listOfListingDetails } = useListOfListingDetailsWithListTypeId(
+    listingCategoryId ?? 0,
+  );
   const { data: listOfEnteringment } = useListOfEnteringment();
   const center = { lat: 25.276987, lng: 55.296249 };
   const [selectedPosition, setSelectedPosition] = useState<{
@@ -173,7 +178,7 @@ export default function UbsertListing({
     if (initialValues.id) {
       fetchListingCategoryDetails();
     }
-  }, [initialValues.id, form]); // Added `form` to dependencies
+  }, [initialValues.id]);
 
   useEffect(() => {
     const fetchListingCategoryAmenities = async () => {
@@ -200,7 +205,7 @@ export default function UbsertListing({
     if (initialValues.id) {
       fetchListingCategoryAmenities();
     }
-  }, [initialValues.id, form]); // Include `form` in dependencies to prevent stale state
+  }, [initialValues.id]);
 
   const onSubmit = (values: any) => {
     const data: IListing = values;
@@ -224,6 +229,7 @@ export default function UbsertListing({
       return;
     }
     data.id = initialValues.id || 0;
+    // data.ListingHabor_Id = initialValues.ListingHabor_Id || 0;
     data.hasEntertainment = values.entertainmentPrices.length > 0;
     data.entertainmentPrices.forEach((item) => {
       item.isDeleted =
@@ -724,7 +730,17 @@ export default function UbsertListing({
               field={{
                 inputName: 'listOfListingCategories1',
                 title: 'Suitable For',
-                isRequired: true,
+                isRequired: false,
+              }}
+            />
+            <DropDownInput
+              control={form.control}
+              options={listOfHaborItems || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'ListingHabor_Id',
+                title: 'Haber Items',
+                isRequired: false,
               }}
             />
           </div>
@@ -767,16 +783,6 @@ export default function UbsertListing({
                       isRequired: true,
                     }}
                   />
-                  {/* <DropDownInput
-                    control={form.control}
-                    options={listOfCrewSpeakes || []}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: 'TranslationProperties[${index}].languageCode',
-                      title: 'Language Code',
-                      isRequired: true,
-                    }}
-                  /> */}
 
                   <Input
                     register={form.register}

@@ -45,6 +45,7 @@ export interface IListing {
   listOfCrewSpeakes: Array<number>;
   ComplimentaryItems: Array<IListingComplimentaryId>;
   listOfComplimentaryItems: Array<number>;
+  ListingHabor_Id: number;
   suitableFor: Array<IListingCategoriesId>;
   listOfListingCategories1: Array<number>;
 }
@@ -98,6 +99,11 @@ export interface IListingCrewSpeaks {
 export interface IListingComplimentaryId {
   id: number;
   listingComplimentary_Id: number;
+  isDeleted: boolean;
+}
+export interface IListingHaberId {
+  id: number;
+  city_Id: number;
   isDeleted: boolean;
 }
 export interface IListingCategoriesId {
