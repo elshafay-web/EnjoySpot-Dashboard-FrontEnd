@@ -219,6 +219,8 @@ export enum HttpPaths {
 
   Api_siteConfigurations_Get = '/api/siteConfigurations/getSiteConfigurationDetails',
   Api_siteConfigurations_Update = '/api/siteConfigurations/update',
+  Api_siteConfigurations_Delete_Item = '/api/SliderItem/delete',
+  Api_siteConfigurations_Edit_Item = '/api/SliderItem/upsert',
 
   // ************** shared ******************
   Api_Language_ListOf = '/api/Language/listOf',
