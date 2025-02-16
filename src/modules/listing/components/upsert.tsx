@@ -64,7 +64,7 @@ export default function UbsertListing({
         name: intialValues.name || '',
         overview: intialValues.overview || '',
         policy: intialValues.policy || '',
-        routeDetails: intialValues.routeDetails, // If applicable
+        routeDetails: intialValues.routeDetails,
       },
     ],
   };
