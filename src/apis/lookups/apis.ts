@@ -137,14 +137,42 @@ export const useListOfComplimentaryItems = () => {
   });
   return query;
 };
-export const listOfHaborItems = async (): Promise<IList[]> => {
-  const response = await axios.get(HttpPaths.Api_listingHabor_ListOf);
+// export const listOfHaborItems = async (id: number): Promise<IList[]> => {
+//   const response = await axios.get(HttpPaths.Api_listingHabor_ListOf + id);
+//   return response.data?.data;
+// };
+// export const useListOfHaborItems = (id: number) => {
+//   const query = useQuery<IList[]>({
+//     queryKey: ['listOfHaborItems', id],
+//     queryFn: () => listOfHaborItems(id),
+//     ...options,
+//   });
+//   return query;
+// };
+export const listOfHaborItems = async (
+  cityId: number,
+  listingTypeID: number,
+): Promise<IList[]> => {
+  const response = await axios.get(
+    `${HttpPaths.Api_listingHabor_ListOf}?cityId=${cityId}&listingTypeID=${listingTypeID}`,
+  );
   return response.data?.data;
 };
-export const useListOfHaborItems = () => {
+
+export const useListOfHaborItems = (cityId: number, listingTypeID: number) =>
+  useQuery<IList[]>({
+    queryKey: ['listOfHaborItems', cityId, listingTypeID],
+    queryFn: () => listOfHaborItems(cityId, listingTypeID),
+    ...options,
+  });
+export const listOfLocationTypesItems = async (): Promise<IList[]> => {
+  const response = await axios.get(HttpPaths.Api_listingHaborTypes_ListOf);
+  return response.data?.data;
+};
+export const useListOfLocationTypesItems = () => {
   const query = useQuery<IList[]>({
-    queryKey: ['listOfHaborItems'],
-    queryFn: () => listOfHaborItems(),
+    queryKey: ['listOfLocationTypesItems '],
+    queryFn: () => listOfLocationTypesItems(),
     ...options,
   });
   return query;

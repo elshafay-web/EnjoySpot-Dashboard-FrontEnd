@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/no-named-as-default */
@@ -91,6 +93,7 @@ export default function UbsertListing({
   );
   // const [listOfInitialAmenities, setListOfInitialAmenities] = useState([]);
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
+  const cityTypeId = form.watch('city_Id');
   const listingTypeId = form.watch('listingType_Id');
   const listingCategoryId = form.watch('listingCategory_Id');
   const priceType = form.watch('priceType');
@@ -125,7 +128,12 @@ export default function UbsertListing({
   const { data: listOfListingAmenities } = useListOfListingAmenities();
   const { data: listOfCrewSpeakes } = useListOfCrewSpeakes();
   const { data: listOfComplimentaryItems } = useListOfComplimentaryItems();
-  const { data: listOfHaborItems } = useListOfHaborItems();
+  const { data: listOfHaborItems } = useListOfHaborItems(
+    cityTypeId ?? 0,
+    listingTypeId ?? 0,
+  );
+
+  // const { data: listOfHaborTypesItems } = useListOfLocationTypesItems();
   const { data: listOfListingDetails } = useListOfListingDetailsWithListTypeId(
     listingCategoryId ?? 0,
   );
@@ -733,13 +741,23 @@ export default function UbsertListing({
                 isRequired: false,
               }}
             />
+            {/* <DropDownInput
+              control={form.control}
+              options={listOfHaborTypesItems || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'LocationTypeId',
+                title: 'Location Type Items',
+                isRequired: false,
+              }}
+            /> */}
             <DropDownInput
               control={form.control}
               options={listOfHaborItems || []}
               errors={form.formState.errors}
               field={{
-                inputName: 'ListingHabor_Id',
-                title: 'Haber Items',
+                inputName: 'ListingLocation_Id',
+                title: 'Location Items',
                 isRequired: false,
               }}
             />

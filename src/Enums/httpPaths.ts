@@ -85,12 +85,13 @@ export enum HttpPaths {
 
   // ************** listingHabor ******************
 
-  Api_listingHabor_GetAll = '/api/listingHabor/getAll',
-  Api_listingHabor_ListOf = '/api/listingHabor/listOf',
-  Api_listingHabor_Delete = '/api/listingHabor/delete/',
-  Api_listingHabor_ToggleIsActive = '/api/listingHabor/toggelActive/',
-  Api_listingHabor_Upsert = '/api/listingHabor/upsert',
-  Api_listingHabor_Profile = '/api/listingHabor/GetProfile/',
+  Api_listingHabor_GetAll = '/api/listingLocation/getAll',
+  Api_listingHabor_ListOf = '/api/listingLocation/listOf',
+  Api_listingHaborTypes_ListOf = '/api/listingLocationType/listOf',
+  Api_listingHabor_Delete = '/api/listingLocation/delete/',
+  Api_listingHabor_ToggleIsActive = '/api/listingLocation/toggelActive/',
+  Api_listingHabor_Upsert = '/api/listingLocation/upsert',
+  Api_listingHabor_Profile = '/api/listingLocation/GetProfile/',
 
   // ************** listingAmenities ******************
 
