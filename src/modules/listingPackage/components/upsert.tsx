@@ -3,7 +3,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useMutation } from '@tanstack/react-query';
+
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Sidebar } from 'primereact/sidebar';
@@ -21,8 +21,9 @@ import { convertObjectToFormData } from '@helpers/helpingFun';
 import { IListingPackages } from '@domains/IListingPackage';
 import { UpsertListingPackages } from '@apis/listingPackage/apis';
 import EditorInput from '@components/editor';
-import { useListOfListingTypes } from '@apis/lookups/apis';
+import { useListOfCities1, useListOfListingTypes } from '@apis/lookups/apis';
 import GoogleMapWithSearch from '@components/googleMap/map';
+import { useMutation } from '@tanstack/react-query';
 
 type Props = {
   onClose: () => void;
@@ -39,9 +40,13 @@ export default function UbsertListingPackage({
 }: Props) {
   const form = useForm<IListingPackages>({
     criteriaMode: 'all',
-    mode: 'onChange', // or 'onBlur', 'onTouched'
-    defaultValues: intialValues,
+    mode: 'onChange',
+    defaultValues: {
+      ...intialValues,
+      TranslationProperties: intialValues.TranslationProperties || [],
+    },
   });
+
   const [MediaFiles, setMediaFiles] = useState<
     {
       file: ArrayBuffer;
@@ -52,6 +57,7 @@ export default function UbsertListingPackage({
     file: ArrayBuffer;
     name: string;
   }>({} as any);
+
   const {
     fields: translationFields,
     append: appendTranslation,
@@ -60,8 +66,10 @@ export default function UbsertListingPackage({
     control: form.control,
     name: 'TranslationProperties',
   });
+
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const { data: listOfSuppliers } = useListOfSupppliers();
+  const { data: listOfCities } = useListOfCities1();
   const { data: listOfListingType } = useListOfListingTypes();
   const center = {
     lat: 24.4666667,
@@ -151,6 +159,7 @@ export default function UbsertListingPackage({
 
     mutate(formData);
   };
+
   const handelUploadMediaFiles = useCallback((files?: File[]) => {
     if (files) {
       const promises = files.map(
@@ -260,6 +269,7 @@ export default function UbsertListingPackage({
               type="button"
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
+                console.log('Appending new translation');
                 appendTranslation({
                   languageCode: 'en',
                   name: '',
@@ -272,69 +282,67 @@ export default function UbsertListingPackage({
             </button>
           </h5>
           <div className="grid grid-cols-2 gap-4 mt-4">
-            {translationFields
-              .filter((x) => !x.languageCode)
-              .map((field, index) => (
-                <div
-                  className="w-full col-span-2 grid gap-4 grid-cols-2"
-                  key={field.id}
-                >
-                  <Input
-                    register={form.register}
-                    errors={form.formState.errors}
-                    field={{
-                      inputName: `TranslationProperties[${index}].languageCode`,
-                      title: 'Language Code',
-                      isRequired: true,
-                    }}
-                  />
+            {translationFields.map((field, index) => (
+              <div
+                className="w-full col-span-2 grid gap-4 grid-cols-2"
+                key={field.id}
+              >
+                <Input
+                  register={form.register}
+                  errors={form.formState.errors}
+                  field={{
+                    inputName: `TranslationProperties[${index}].languageCode`,
+                    title: 'Language Code',
+                    isRequired: true,
+                  }}
+                />
 
-                  <Input
-                    register={form.register}
+                <Input
+                  register={form.register}
+                  errors={form.formState.errors}
+                  field={{
+                    inputName: `TranslationProperties[${index}].name`,
+                    title: 'Name',
+                    isRequired: true,
+                    minLength: 3,
+                    maxLength: 100,
+                  }}
+                />
+                <div className="col-span-2">
+                  <EditorInput
+                    control={form.control}
                     errors={form.formState.errors}
                     field={{
-                      inputName: `TranslationProperties[${index}].name`,
-                      title: 'Name',
+                      inputName: `TranslationProperties[${index}].overview`,
+                      title: 'Overview',
                       isRequired: true,
                       minLength: 3,
                       maxLength: 100,
                     }}
                   />
-                  <div className="col-span-2">
-                    <EditorInput
-                      control={form.control}
-                      errors={form.formState.errors}
-                      field={{
-                        inputName: `TranslationProperties[${index}].overview`,
-                        title: 'Overview',
-                        isRequired: true,
-                        minLength: 3,
-                        maxLength: 100,
-                      }}
-                    />
-                    <TextArea
-                      register={form.register}
-                      errors={form.formState.errors}
-                      field={{
-                        inputName: `TranslationProperties[${index}].summary`,
-                        title: 'Summary',
-                        isRequired: true,
-                        minLength: 3,
-                        maxLength: 100,
-                      }}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
-                    onClick={() => {
-                      removeTranslation(index);
+                  <TextArea
+                    register={form.register}
+                    errors={form.formState.errors}
+                    field={{
+                      inputName: `TranslationProperties[${index}].summary`,
+                      title: 'Summary',
+                      isRequired: true,
+                      minLength: 3,
+                      maxLength: 100,
                     }}
-                  >
-                    <i className="fa-solid fa-trash text-white" />
-                  </button>
+                  />
                 </div>
-              ))}
+                <button
+                  type="button"
+                  className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
+                  onClick={() => {
+                    removeTranslation(index);
+                  }}
+                >
+                  <i className="fa-solid fa-trash text-white" />
+                </button>
+              </div>
+            ))}
           </div>
           <FormHead title="Basic Infromation" />
           <div className="grid grid-cols-2 gap-4 mt-4">
@@ -358,19 +366,16 @@ export default function UbsertListingPackage({
                 isRequired: true,
               }}
             />
-            {/* <div className="col-span-2">
-              <EditorInput
-                control={form.control}
-                errors={form.formState.errors}
-                field={{
-                  inputName: 'overview',
-                  title: 'Overview',
-                  isRequired: true,
-                  minLength: 3,
-                  maxLength: 100,
-                }}
-              />
-            </div> */}
+            <DropDownInput
+              control={form.control}
+              options={listOfCities || []}
+              errors={form.formState.errors}
+              field={{
+                inputName: 'city_Id',
+                title: 'City',
+                isRequired: true,
+              }}
+            />
           </div>
 
           <FormHead title="Price Infromation" />
