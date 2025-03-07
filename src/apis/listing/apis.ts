@@ -71,6 +71,15 @@ export const toggleListing = async (id: number): Promise<IResponse<string>> => {
   );
   return response.data;
 };
+export const toggleListingCash = async (
+  id: number,
+): Promise<IResponse<string>> => {
+  const response = await axios.put(
+    `${HttpPaths.Api_Listing_ToggleIsCash}${id}`,
+    {},
+  );
+  return response.data;
+};
 
 export async function UpsertListing(
   req: FormData,

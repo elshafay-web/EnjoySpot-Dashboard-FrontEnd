@@ -138,6 +138,7 @@ export enum HttpPaths {
   Api_Listing_Upsert = '/api/Listings/upsert',
   Api_Listing_addAttachment = '/api/listings/addAttachment',
   Api_Listing_Profile = '/api/Listings/GetProfile/',
+  Api_Listing_ToggleIsCash = '/api/listings/ToggleCashPayment/',
 
   // ************** ListingPackage ******************
 
