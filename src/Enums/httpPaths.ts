@@ -203,6 +203,15 @@ export enum HttpPaths {
   Api_currencies_Upsert = '/api/currencies/upsert',
   Api_currencies_Profile = '/api/currencies/getProfile/',
 
+  // ************** configuration payment ******************
+
+  Api_PaymentConfigurations_GetAll = '/api/PaymentConfigurations/getAll',
+  Api_PaymentConfigurations_ListOf = '/api/PaymentConfigurations/listOf',
+  Api_PaymentConfigurations_Delete = '/api/PaymentConfigurations/delete/',
+  Api_PaymentConfigurations_ToggleIsActive = '/api/PaymentConfigurations/toggelActive/',
+  Api_PaymentConfigurations_Upsert = '/api/PaymentConfigurations/upsert',
+  Api_PaymentConfigurations_Profile = '/api/PaymentConfigurations/getProfile/',
+
   // ************** customers ******************
 
   Api_customers_GetAll = '/api/customers/getAll',
