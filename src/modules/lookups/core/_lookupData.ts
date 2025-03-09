@@ -935,7 +935,7 @@ const LookupsData: Array<ILookups> = [
     inputs: [
       {
         name: 'title',
-        title: 'Name',
+        title: 'title',
         value: null,
         isInput: true,
         isCheckBox: false,
@@ -947,7 +947,7 @@ const LookupsData: Array<ILookups> = [
         isRequired: true,
         maxLength: 500000,
         minLength: 1,
-        isRequiredSupportedLanguages: true,
+        isRequiredSupportedLanguages: false,
       },
     ],
     className: 'col-6',
