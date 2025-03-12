@@ -11,6 +11,7 @@ const SupplierPage = lazy(() => import('../modules/supplier'));
 const UserPage = lazy(() => import('../modules/users'));
 const ListingPage = lazy(() => import('../modules/listing'));
 const ListingPackagePage = lazy(() => import('../modules/listingPackage'));
+const SupplierListingsPage = lazy(() => import('../modules/supplierListings'));
 const CustomerPage = lazy(() => import('../modules/customers'));
 const TransactioinsPage = lazy(() => import('../modules/transactoins'));
 const SitConfigurationPage = lazy(() => import('../modules/siteConfigration'));
@@ -88,6 +89,15 @@ const MainRoute: RouteObject[] = [
         element: (
           <ProtectRoutes auth>
             <ListingPage />
+          </ProtectRoutes>
+        ),
+        index: true,
+      },
+      {
+        path: 'supplier-listings',
+        element: (
+          <ProtectRoutes auth>
+            <SupplierListingsPage />
           </ProtectRoutes>
         ),
         index: true,
