@@ -55,6 +55,84 @@ export default function LookupDialog({
     closeModel();
   };
 
+  // const onSubmit: SubmitHandler<any> = async (values) => {
+  //   setLoading(true);
+  //   let sendObject: IPostLookup = {} as IPostLookup;
+  //   if (obj.requireCompanyId) {
+  //     sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 };
+  //   } else {
+  //     sendObject = { ...values, id: editObj.id ?? 0 };
+  //   }
+  //   if (obj.isRequiredSupportedLanguages) {
+  //     sendObject.translationProperties.forEach((elem: any, index: number) => {
+  //       elem.languageCode = userData.supportedLanguages[index].code;
+  //     });
+  //   }
+
+  //   console.log(values);
+
+  //   try {
+  //     const { data } = await addLookup(sendObject, obj.addApi);
+  //     if (data.isSuccess) {
+  //       closeModel();
+  //       isModieied(true);
+  //       toast.success(data.message);
+  //     } else {
+  //       toast.warning(data.message);
+  //     }
+  //     setLoading(false);
+  //   } catch (err: any) {
+  //     toast.error(`${err.response.data.Message} `);
+  //     setLoading(false);
+  //   }
+  // };
+  // const onSubmit: SubmitHandler<any> = async (values) => {
+  //   setLoading(true);
+  //   let sendObject: IPostLookup = {} as IPostLookup;
+  //   if (obj.requireCompanyId) {
+  //     sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 };
+  //   } else {
+  //     sendObject = { ...values, id: editObj.id ?? 0 };
+  //   }
+
+  //   if (obj.isRequiredSupportedLanguages) {
+  //     try {
+  //       sendObject.translationProperties =
+  //         sendObject.translationProperties || [];
+  //       sendObject.translationProperties.forEach((elem: any, index: number) => {
+  //         if (
+  //           userData.supportedLanguages &&
+  //           userData.supportedLanguages[index]
+  //         ) {
+  //           elem.languageCode = userData.supportedLanguages[index].code;
+  //         } else {
+  //           console.error(
+  //             'Supported languages are not defined or insufficient',
+  //           );
+  //         }
+  //       });
+  //     } catch (error) {
+  //       console.error('Error setting language codes:', error);
+  //     }
+  //   }
+
+  //   console.log(values);
+
+  //   try {
+  //     const { data } = await addLookup(sendObject, obj.addApi);
+  //     if (data.isSuccess) {
+  //       closeModel();
+  //       isModieied(true);
+  //       toast.success(data.message);
+  //     } else {
+  //       toast.warning(data.message);
+  //     }
+  //     setLoading(false);
+  //   } catch (err: any) {
+  //     toast.error(`${err.response.data.Message} `);
+  //     setLoading(false);
+  //   }
+  // };
   const onSubmit: SubmitHandler<any> = async (values) => {
     setLoading(true);
     let sendObject: IPostLookup = {} as IPostLookup;
@@ -63,13 +141,29 @@ export default function LookupDialog({
     } else {
       sendObject = { ...values, id: editObj.id ?? 0 };
     }
+
     if (obj.isRequiredSupportedLanguages) {
-      sendObject.translationProperties.forEach((elem: any, index: number) => {
-        elem.languageCode = userData.supportedLanguages[index].code;
-      });
+      try {
+        // Filter supported languages to only include 'en' and 'ar'
+        const filteredLanguages = userData.supportedLanguages.filter(
+          (lang) => lang.code === 'en' || lang.code === 'ar',
+        );
+
+        // Ensure translationProperties only includes entries for 'en' and 'ar'
+        sendObject.translationProperties =
+          sendObject.translationProperties || [];
+        sendObject.translationProperties = sendObject.translationProperties
+          .slice(0, filteredLanguages.length) // Trim excess entries
+          .map((elem: any, index: number) => ({
+            ...elem,
+            languageCode: filteredLanguages[index].code, // Set languageCode for 'en' and 'ar'
+          }));
+      } catch (error) {
+        console.error('Error setting language codes:', error);
+      }
     }
 
-    console.log(values);
+    console.log('Sending object:', sendObject);
 
     try {
       const { data } = await addLookup(sendObject, obj.addApi);
@@ -86,7 +180,6 @@ export default function LookupDialog({
       setLoading(false);
     }
   };
-
   const getLookupsData = () => {
     const arr = obj.inputs.filter(
       (elem) => elem.isDropDown || elem.isMultiSelect,
