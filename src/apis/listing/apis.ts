@@ -42,6 +42,27 @@ export const useGetAllListings = (req: IListingGetRequestFilter) => {
   return query;
 };
 
+// New function to get listings by supplier ID
+export const getListingsBySupplier = async (
+  supplierId: number,
+): Promise<IListing[]> => {
+  if (!supplierId || supplierId === 0) return [] as IListing[];
+  const response = await CommonGetRequestsWithQuery(
+    HttpPaths.Api_Listing_GetAll,
+    { SupplierId: supplierId, PageNumber: 1, PageSize: 1000 },
+  );
+  return response.data?.data.data;
+};
+
+export const useGetListingsBySupplier = (supplierId: number) => {
+  const query = useQuery<IListing[], Error>({
+    queryKey: ['getListingsBySupplier', supplierId],
+    queryFn: () => getListingsBySupplier(supplierId),
+    enabled: !!supplierId && supplierId > 0,
+  });
+  return query;
+};
+
 export const getListingProfile = async (id: number): Promise<IListing> => {
   if (!id || id === 0) return {} as IListing;
   const response = await CommonGetRequestsWithQuery(
