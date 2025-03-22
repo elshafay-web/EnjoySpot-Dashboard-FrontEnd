@@ -233,6 +233,11 @@ export enum HttpPaths {
   Api_siteConfigurations_Delete_Item = '/api/SliderItem/delete',
   Api_siteConfigurations_Edit_Item = '/api/SliderItem/upsert',
 
+  // ************** External Listings ******************
+  Api_External_GetAll = '/api/external/getAll',
+  Api_External_Sync = '/api/external/sync/',
+  Api_External_Publish = '/api/external/publish',
+
   // ************** shared ******************
   Api_Language_ListOf = '/api/Language/listOf',
 }

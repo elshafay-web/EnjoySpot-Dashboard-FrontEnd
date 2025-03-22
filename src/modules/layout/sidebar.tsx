@@ -80,11 +80,11 @@ export default function Sidebar() {
       command: () => navigate('/listing'),
     },
     {
-      label: 'Supplier Listings',
+      label: 'External Listings',
       icon: 'fa-solid fa-building-user text-2xl w-[42px]',
-      routing: '/supplier-listings',
+      routing: '/external-listings',
       template: itemRenderer,
-      command: () => navigate('/supplier-listings'),
+      command: () => navigate('/external-listings'),
     },
     {
       label: 'Listing Package',

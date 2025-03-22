@@ -5,98 +5,49 @@
 import { ReactNode, useState } from 'react';
 import { Column } from 'primereact/column';
 import { Tag } from 'primereact/tag';
-import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { ConfirmPopup } from 'primereact/confirmpopup';
 import { Button } from 'primereact/button';
 import { IListing } from '@domains/IListing';
 import { IList } from '@modules/lookups/core/_models';
-import ToggleButton from '@components/ToggleButton';
 import { DataTable } from 'primereact/datatable';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { toggleListing, useGetListingsBySupplier } from '@apis/listing/apis';
 
 type Props = {
-  onEdit: (data: IListing) => void;
-  onView: (data: IListing) => void;
   suppliers: IList[];
   onSelectionChange: (listings: IListing[]) => void;
+  externalListings?: IListing[];
+  onView?: (listing: IListing) => void;
 };
 
-export default function SupplierListingsCollapsible({
-  onEdit,
-  onView,
+export default function ExternalListingsCollapsible({
   suppliers,
   onSelectionChange,
+  externalListings = [],
+  onView,
 }: Props) {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const [selectedListings, setSelectedListings] = useState<IListing[]>([]);
-  const queryClient = useQueryClient();
 
-  const { mutate: toggleListingMutation } = useMutation({
-    mutationKey: ['toggleListing'],
-    mutationFn: (id: number) => toggleListing(id),
-    onSuccess(res) {
-      toast.success(res.message);
-      queryClient.invalidateQueries({ queryKey: ['getListingsBySupplier'] });
-    },
-  });
-
-  const statusBodyTemplate = (data: IListing): ReactNode => (
+  const syncStatusTemplate = (data: IListing): ReactNode => (
     <Tag
-      value={data.isActive ? 'Active' : 'Not Active'}
-      severity={data.isActive ? 'success' : 'danger'}
+      value={data.isPublished ? 'Published' : 'Not Published'}
+      severity={data.isPublished ? 'success' : 'warning'}
     />
   );
 
-  const reject = () => {};
-
-  const togglePopUp = (event: any, data: IListing) => {
-    if (data) {
-      confirmPopup({
-        target: event.currentTarget,
-        message: `Are you sure you want to ${
-          data.isActive ? 'Deactivate' : 'Activate'
-        } ${data.name}?`,
-        icon: 'pi pi-exclamation-triangle',
-        defaultFocus: 'accept',
-        accept: () => {
-          toggleListingMutation(data.id);
-        },
-        reject,
-      });
-    }
-  };
-
   const actionTemplate = (rowData: IListing) => (
     <div className="flex justify-start w-full">
-      <ToggleButton
-        isActive={rowData.isActive}
-        onClick={(e) => togglePopUp(e, rowData)}
-      />
-      <Button
-        icon="pi pi-pencil"
-        rounded
-        text
-        raised
-        aria-label="Filter"
-        tooltipOptions={{ position: 'bottom' }}
-        tooltip="Edit"
-        severity="info"
-        className="me-2"
-        onClick={() => onEdit(rowData)}
-      />
       <Button
         icon="pi pi-eye"
         rounded
         text
         raised
-        aria-label="Filter"
+        aria-label="View"
         tooltipOptions={{ position: 'bottom' }}
         tooltip="View"
         severity="secondary"
         className="me-2"
-        onClick={() => onView(rowData)}
+        onClick={() => onView && onView(rowData)}
       />
     </div>
   );
@@ -112,13 +63,19 @@ export default function SupplierListingsCollapsible({
     onSelectionChange([]);
   };
 
-  const SupplierListingsTable = ({ supplierId }: { supplierId: number }) => {
-    const { data: listings } = useGetListingsBySupplier(supplierId);
+  const ExternalListingsTable = ({
+    supplierName,
+  }: {
+    supplierName: string;
+  }) => {
+    const filteredExternalListings = externalListings.filter(
+      (listing) => listing.supplierName === supplierName,
+    );
 
     return (
       <div className="table-container" style={{ position: 'relative' }}>
         <DataTable
-          value={listings ?? []}
+          value={filteredExternalListings ?? []}
           paginator
           rows={10}
           rowsPerPageOptions={[10, 25, 50]}
@@ -127,6 +84,7 @@ export default function SupplierListingsCollapsible({
           onSelectionChange={handleSelectionChange}
           selectionMode="checkbox"
           dataKey="id"
+          emptyMessage="No external listings found for this supplier"
         >
           <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
           <Column field="name" header="Name" />
@@ -139,15 +97,15 @@ export default function SupplierListingsCollapsible({
           />
           <Column
             className="w-[100px]"
-            field="isActive"
-            header="Status"
-            body={(rowData) => statusBodyTemplate(rowData)}
+            field="isPublished"
+            header="Sync Status"
+            body={(rowData) => syncStatusTemplate(rowData)}
           />
           <Column
             field="Action"
             header="Actions"
             body={(rowData) => actionTemplate(rowData)}
-            className="w-[250px]"
+            className="w-[150px]"
           />
         </DataTable>
       </div>
@@ -159,7 +117,7 @@ export default function SupplierListingsCollapsible({
       <Accordion activeIndex={activeIndex} onTabChange={handleTabChange}>
         {suppliers.map((supplier) => (
           <AccordionTab key={supplier.id} header={supplier.name}>
-            <SupplierListingsTable supplierId={supplier.id} />
+            <ExternalListingsTable supplierName={supplier.name} />
           </AccordionTab>
         ))}
       </Accordion>

@@ -9,6 +9,7 @@ export interface IListing {
   maximumValue: number;
   minimumValue: number;
   supplier_Id: number;
+  supplierId?: number;
   listingCategory_Id: number;
   listingType_Id: number;
   price: number;
@@ -29,6 +30,7 @@ export interface IListing {
   routesMapImage: File;
   youTubeVideoIframe: string;
   isActive: boolean;
+  isPublished?: boolean;
   nameAr: string;
   nameEn: string;
   name: string;
@@ -87,9 +89,15 @@ export interface IListingAmenities {
   isDeleted: boolean;
 }
 export interface IListingGetRequestFilter {
-  isActive: boolean;
-  Search: string;
-  SupplierId: number;
+  isActive?: boolean;
+  Search?: string;
+  SupplierId?: number;
+  supplierID?: number;
+  PageNumber?: number;
+  PageSize?: number;
+  ListingTypeId?: number;
+  listingCategoryId?: number;
+  cityId?: number;
 }
 export interface IListingCrewSpeaks {
   id: number;

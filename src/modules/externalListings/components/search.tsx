@@ -5,6 +5,7 @@ import { Button } from 'primereact/button';
 import Input from '@components/input';
 import DropDownInput from '@components/Dropdown';
 import { useListOfSupppliers } from '@apis/supplier/api';
+import { useEffect } from 'react';
 
 type Props = {
   onSearch: (data: any) => void;
@@ -12,7 +13,7 @@ type Props = {
   defaultValues: any;
 };
 
-export default function SearchForSupplierListings({
+export default function SearchForExternalListings({
   onSearch,
   onClear,
   defaultValues,
@@ -24,8 +25,18 @@ export default function SearchForSupplierListings({
   });
   const { data: listOfSuppliers } = useListOfSupppliers();
 
+  // Update form values when default values change
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues]);
+
   const onSubmit = (values: any) => {
-    onSearch(values);
+    // Ensure the supplierID is set from SupplierId for API consistency
+    const searchParams = {
+      ...values,
+      supplierID: values.SupplierId,
+    };
+    onSearch(searchParams);
   };
 
   return (
@@ -59,6 +70,7 @@ export default function SearchForSupplierListings({
           }}
         />
       </div>
+
       <div className="col-12 d-flex justify-content-end align-items-end mt-4">
         <div className="col-12 ">
           <Button
@@ -81,6 +93,7 @@ export default function SearchForSupplierListings({
                 form.reset({
                   Search: '',
                   SupplierId: defaultValues.SupplierId,
+                  supplierID: defaultValues.SupplierId,
                 });
                 if (onClear) {
                   onClear();
