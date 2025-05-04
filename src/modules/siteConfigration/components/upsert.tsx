@@ -76,7 +76,7 @@ export default function UpdateSiteConfiguration({
           );
           formData.append(
             `Slider.items[${index}].translationProperties[${translationIndex}].languageCode`,
-            translation.languageCode,
+            translation.languageCode || 'en',
           );
         },
       );
@@ -150,7 +150,7 @@ export default function UpdateSiteConfiguration({
                   ActionUrl: '',
                   translationProperties: [
                     {
-                      languageCode: '',
+                      languageCode: 'en',
                       title: '',
                       description: '',
                       button: '',

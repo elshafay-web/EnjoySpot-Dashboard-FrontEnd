@@ -16,7 +16,7 @@ export default function SitConfigurationPage() {
     <div className="p-4">
       <div className="card">
         <div className="flex justify-between items-center">
-          <PageHeader title="Sit Configuration" icon="fa-solid fa-users" />
+          <PageHeader title="Site Configuration" icon="fa-solid fa-users" />
           <AddButton onClick={() => setOpen(true)} buttonText="Update" />
         </div>
         <ViewSiteConfiguration />

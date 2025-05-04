@@ -1153,7 +1153,11 @@ export default function UbsertListing({
               title: 'YouTubeVideoLink',
               isRequired: true,
               minLength: 3,
-              maxLength: 100,
+              maxLength: 500,
+              pattern: {
+                value: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+                message: 'Please enter a valid YouTube URL',
+              },
             }}
           />
           {youTubeVideoIframe && youTubeVideoIframe.length > 0 && (
