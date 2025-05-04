@@ -553,6 +553,22 @@ const LookupsData: Array<ILookups> = [
     columns: [{ field: 'name', header: 'Name' }],
     inputs: [
       {
+        name: 'webIcon',
+        title: 'Web Icon',
+        value: null,
+        isInput: true,
+        isCheckBox: false,
+        isDropDown: false,
+        isMultiSelect: false,
+        isTextArea: false,
+        supplayDataURL: '',
+        supplayData: [],
+        isRequired: true,
+        maxLength: 500000,
+        minLength: 1,
+        isRequiredSupportedLanguages: false,
+      },
+      {
         name: 'name',
         title: 'Name',
         value: null,
