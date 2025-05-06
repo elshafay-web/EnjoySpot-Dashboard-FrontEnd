@@ -153,16 +153,18 @@ export const listOfHaborItems = async (
   cityId: number,
   listingTypeID: number,
 ): Promise<IList[]> => {
+  if (!cityId || !listingTypeID) return [];
   const response = await axios.get(
     `${HttpPaths.Api_listingHabor_ListOf}?cityId=${cityId}&listingTypeID=${listingTypeID}`,
   );
-  return response.data?.data;
+  return response.data?.data || [];
 };
 
 export const useListOfHaborItems = (cityId: number, listingTypeID: number) =>
   useQuery<IList[]>({
     queryKey: ['listOfHaborItems', cityId, listingTypeID],
     queryFn: () => listOfHaborItems(cityId, listingTypeID),
+    enabled: !!cityId && !!listingTypeID, // Only run query when both parameters are available
     ...options,
   });
 export const listOfLocationTypesItems = async (): Promise<IList[]> => {

@@ -28,6 +28,7 @@ import {
   useListOfListingCategoriesWithListTypeId,
   useListOfListingDetailsWithListTypeId,
   useListOfListingTypes,
+  useListOfLocationTypesItems,
   useListOfSuitableItems,
 } from '@apis/lookups/apis';
 import { toast } from 'sonner';
@@ -50,6 +51,13 @@ type Props = {
   open: boolean;
 };
 
+const MANDATORY_DETAILS: { [key: number]: number[] } = {
+  1: [8, 3, 7], // Category ID 1 requires details 8, 3, and 7
+  2: [16, 11], // Category ID 2 requires details 8, 3, and 7
+  3: [7, 11], // Category ID 3 requires details 8, 3, and 7
+  4: [15, 11], // Category ID 4 requires details 8, 3, and 7
+};
+
 export default function UbsertListing({
   onClose,
   intialValues,
@@ -65,6 +73,41 @@ export default function UbsertListing({
         overview: intialValues.overview || '',
         policy: intialValues.policy || '',
         routeDetails: intialValues.routeDetails,
+      },
+    ],
+    Details: intialValues.details || [
+      {
+        id: 0,
+        listingCategoryDetail_Id: 3,
+        isDeleted: false,
+        translationProperties: [
+          {
+            languageCode: '',
+            dValue: '',
+          },
+        ],
+      },
+      {
+        id: 0,
+        listingCategoryDetail_Id: 7,
+        isDeleted: false,
+        translationProperties: [
+          {
+            languageCode: '',
+            dValue: '',
+          },
+        ],
+      },
+      {
+        id: 0,
+        listingCategoryDetail_Id: 8,
+        isDeleted: false,
+        translationProperties: [
+          {
+            languageCode: '',
+            dValue: '',
+          },
+        ],
       },
     ],
   };
@@ -133,7 +176,7 @@ export default function UbsertListing({
     listingTypeId ?? 0,
   );
 
-  // const { data: listOfHaborTypesItems } = useListOfLocationTypesItems();
+  const { data: listOfHaborTypesItems } = useListOfLocationTypesItems();
   const { data: listOfListingDetails } = useListOfListingDetailsWithListTypeId(
     listingCategoryId ?? 0,
   );
@@ -171,7 +214,7 @@ export default function UbsertListing({
                 ? detail.translationProperties
                 : [
                     {
-                      languageCode: 'en',
+                      languageCode: '',
                       dValue: detail.listingCategoryDetailValue || '',
                     },
                   ],
@@ -217,14 +260,69 @@ export default function UbsertListing({
 
   const onSubmit = (values: any) => {
     const data: IListing = values;
-    if (mode === 'add') {
-      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
-        toast.warning(
-          'You can not add less than 3 images and more than 15 images',
-        );
-        return;
-      }
+    console.log(data);
+
+    // Validate required fields
+    if (!values.supplier_Id) {
+      toast.warning('Supplier is required');
+      return;
     }
+    if (!values.listingCategory_Id) {
+      toast.warning('Listing Category is required');
+      return;
+    }
+    if (!values.city_Id) {
+      toast.warning('City is required');
+      return;
+    }
+    if (!values.ListingLocation_Id) {
+      toast.warning(
+        'Location is required. Please select a location from the dropdown.',
+      );
+      return;
+    }
+    if (!values.listingType_Id) {
+      toast.warning('Listing Type is required');
+      return;
+    }
+    if (!values.listOfAmenities?.length) {
+      toast.warning('At least one Amenity is required');
+      return;
+    }
+    if (!values.details?.length) {
+      toast.warning('At least one Detail is required');
+      return;
+    }
+    if (!values.TranslationProperties?.length) {
+      toast.warning('At least one Translation Property is required');
+      return;
+    }
+
+    // Validate mandatory details
+    const categoryId = values.listingCategory_Id;
+    const mandatoryDetails = MANDATORY_DETAILS[categoryId] || [];
+    const selectedDetailIds = values.details.map((d: any) =>
+      Number(d.listingCategoryDetail_Id),
+    );
+
+    const missingDetails = mandatoryDetails.filter(
+      (id) => !selectedDetailIds.includes(id),
+    );
+    if (missingDetails.length > 0) {
+      toast.warning(
+        `Please add all mandatory details for this category. Missing details: ${missingDetails.join(
+          ', ',
+        )}`,
+      );
+      return;
+    }
+
+    // Add back media files validation
+    if (mode === 'add' && (MediaFiles.length < 3 || MediaFiles.length > 15)) {
+      toast.warning('Please upload between 3 and 15 images for the listing');
+      return;
+    }
+
     if (
       data.priceDiscountPercentage &&
       data.priceDiscountPercentage > 0 &&
@@ -236,8 +334,8 @@ export default function UbsertListing({
       );
       return;
     }
+
     data.id = initialValues.id || 0;
-    // data.ListingHabor_Id = initialValues.ListingHabor_Id || 0;
     data.hasEntertainment = values.entertainmentPrices.length > 0;
     data.entertainmentPrices.forEach((item) => {
       item.isDeleted =
@@ -247,6 +345,7 @@ export default function UbsertListing({
           ? false
           : item.id > 0;
     });
+
     if (mode === 'edit') {
       initialValues.entertainmentPrices.forEach((item) => {
         if (!data.entertainmentPrices.map((x) => x.id).includes(item.id)) {
@@ -257,25 +356,22 @@ export default function UbsertListing({
     }
 
     const initialDetails: Detail[] = listOfInitialDetails || [];
-    const listOfDetails: number[] = values.listOfDetails || [];
 
-    data.Details = listOfDetails.map((item: number) => {
-      const existsInInitial = initialDetails.some((x) => x.id === item);
-
+    // Fix the Details array handling
+    data.Details = values.details.map((item: any) => {
+      const existsInInitial = initialDetails.some((x) => x.id === item.id);
       return {
-        listingCategoryDetail_Id: item.toString(), // Convert number to string
+        listingCategoryDetail_Id: Number(item.listingCategoryDetail_Id),
         isDeleted: mode === 'add' ? false : !existsInInitial,
-        id:
-          mode === 'add'
-            ? 0
-            : (data.Details || []).find((x) => x.id === item)?.id ?? 0,
-      } as IListingDetails; // Explicitly cast to IListingDetails
+        id: mode === 'add' ? 0 : item.id || 0,
+        translationProperties: item.translationProperties || [],
+      };
     });
 
     if (mode === 'edit') {
       initialDetails.forEach((item) => {
         if (!data.Details.some((x) => x.id === item.id)) {
-          data.Details.push({ ...item, isDeleted: true } as IListingDetails); // Ensure correct type
+          data.Details.push({ ...item, isDeleted: true });
         }
       });
     }
@@ -290,6 +386,7 @@ export default function UbsertListing({
           : !!(initialValues.Details || []).map((x) => x.id).includes(item),
       id: mode === 'add' ? 0 : data.Details.find((x) => x.id === item)?.id ?? 0,
     }));
+
     if (mode === 'edit') {
       (initialValues.amenities || []).forEach((item) => {
         if (!(data.amenities || []).map((x) => x.id).includes(item.id)) {
@@ -298,6 +395,7 @@ export default function UbsertListing({
         }
       });
     }
+
     data.suitableFor = (values.listOfListingCategories1 || []).map(
       (item: number) => ({
         suitableFor_Id: item,
@@ -315,6 +413,7 @@ export default function UbsertListing({
             : data.suitableFor.find((x) => x.id === item)?.id ?? 0,
       }),
     );
+
     if (mode === 'edit') {
       (initialValues.suitableFor || []).forEach((item) => {
         if (!(data.suitableFor || []).map((x) => x.id).includes(item.id)) {
@@ -323,6 +422,7 @@ export default function UbsertListing({
         }
       });
     }
+
     data.crewSpeakes = (values.listOfCrewSpeakes || []).map((item: number) => ({
       language_Id: item,
       isDeleted:
@@ -336,6 +436,7 @@ export default function UbsertListing({
           ? 0
           : data.crewSpeakes.find((x) => x.id === item)?.id ?? 0,
     }));
+
     if (mode === 'edit') {
       (initialValues.crewSpeakes || []).forEach((item) => {
         if (!(data.crewSpeakes || []).map((x) => x.id).includes(item.id)) {
@@ -344,6 +445,7 @@ export default function UbsertListing({
         }
       });
     }
+
     data.ComplimentaryItems = (values.listOfComplimentaryItems || []).map(
       (item: number) => ({
         listingComplimentary_Id: item,
@@ -364,6 +466,7 @@ export default function UbsertListing({
               0,
       }),
     );
+
     if (mode === 'edit') {
       (initialValues.ComplimentaryItems || []).forEach((item) => {
         if (
@@ -387,6 +490,7 @@ export default function UbsertListing({
       data.priceDiscountPercentage = 0;
       data.priceDiscountValue = 0;
     }
+
     const {
       amenities,
       Details,
@@ -399,12 +503,17 @@ export default function UbsertListing({
       suitableFor,
       ...rest
     } = data;
+
     const formData = convertObjectToFormData(rest);
+
+    // Add media files if they exist (optional)
     if (MediaFiles.length > 0) {
       MediaFiles.forEach((file) => {
         formData.append('mediaImages', new Blob([file.file]), file.name);
       });
     }
+
+    // Add routes map image if it exists (optional)
     if (RoutesMapImage.file) {
       formData.append(
         'routesMapImage',
@@ -412,6 +521,8 @@ export default function UbsertListing({
         RoutesMapImage.name,
       );
     }
+
+    // Add all the arrays
     amenities.forEach((item, index) => {
       formData.append(`amenities[${index}].id`, item.id.toString());
       formData.append(
@@ -423,6 +534,7 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
+
     suitableFor.forEach((item, index) => {
       formData.append(`suitableFor[${index}].id`, item.id.toString());
       formData.append(
@@ -434,6 +546,7 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
+
     crewSpeakes.forEach((item, index) => {
       formData.append(`crewSpeakes[${index}].id`, item.id.toString());
       formData.append(
@@ -445,6 +558,7 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
+
     ComplimentaryItems.forEach((item, index) => {
       formData.append(`ComplimentaryItems[${index}].id`, item.id.toString());
       formData.append(
@@ -456,6 +570,7 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
+
     if (Array.isArray(Details)) {
       Details.forEach((item, index) => {
         formData.append(`Details[${index}].id`, item.id?.toString() ?? '0');
@@ -501,6 +616,7 @@ export default function UbsertListing({
         item.isDeleted.toString(),
       );
     });
+
     TranslationProperties.forEach((item, index) => {
       formData.append(
         `TranslationProperties[${index}].languageCode`,
@@ -523,6 +639,7 @@ export default function UbsertListing({
         item.routeDetails ?? '',
       );
     });
+
     formData.append('lat', selectedPosition?.lat.toString() ?? '0');
     formData.append('long', selectedPosition?.lng.toString() ?? '0');
 
@@ -751,16 +868,37 @@ export default function UbsertListing({
                 isRequired: false,
               }}
             /> */}
-            <DropDownInput
-              control={form.control}
-              options={listOfHaborItems || []}
-              errors={form.formState.errors}
-              field={{
-                inputName: 'ListingLocation_Id',
-                title: 'Location Items',
-                isRequired: false,
-              }}
-            />
+          </div>
+          <FormHead title="Location" />
+          <div className="col-md-12 mt-2">
+            <div className="text-red-500 font-bold mb-2">
+              * Please select a location from the dropdown below. You can use
+              the map to search and find your location.
+            </div>
+            <div className="max-h-[700px] min-h-[700px]">
+              <GoogleMapWithSearch
+                zoom={12}
+                selectedPosition={selectedPosition}
+                setSelectedPosition={setSelectedPosition}
+              />
+            </div>
+            {cityTypeId && listingTypeId ? (
+              <DropDownInput
+                control={form.control}
+                options={listOfHaborItems || []}
+                errors={form.formState.errors}
+                field={{
+                  inputName: 'ListingLocation_Id',
+                  title: 'Location Items',
+                  isRequired: true,
+                }}
+              />
+            ) : (
+              <div className="text-yellow-600 font-bold mt-2">
+                Please select both City and Listing Type to see available
+                locations
+              </div>
+            )}
           </div>
           <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
             <div>
@@ -861,10 +999,16 @@ export default function UbsertListing({
               ))}
           </div>
 
-          <h5 className=" flex items-center justify-between  rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
+          <h5 className="flex items-center justify-between rounded-[8px] bg-gray-300 py-2 px-3 fw-bold font-bold mt-4">
             <div>
               <i className="fa-regular fa-circle-question me-4" />
               Details Information
+              {MANDATORY_DETAILS[listingCategoryId] && (
+                <span className="text-red-500 text-sm ml-2">
+                  (Mandatory details:{' '}
+                  {MANDATORY_DETAILS[listingCategoryId].join(', ')})
+                </span>
+              )}
             </div>
 
             <button
@@ -872,10 +1016,15 @@ export default function UbsertListing({
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
                 appendDetails({
-                  listingCategoryDetail_Id: '0',
+                  listingCategoryDetail_Id: 0,
                   isDeleted: false,
                   id: 0,
-                  translationProperties: [{ languageCode: '', dValue: '' }],
+                  translationProperties: [
+                    {
+                      languageCode: '',
+                      dValue: '',
+                    },
+                  ],
                 });
               }}
             >
@@ -1107,18 +1256,11 @@ export default function UbsertListing({
               ))}
           </div>
 
-          <FormHead title="Location" />
-
-          <div className="col-md-12 mt-2 max-h-[700px] min-h-[700px] ">
-            <GoogleMapWithSearch
-              zoom={12}
-              selectedPosition={selectedPosition}
-              setSelectedPosition={setSelectedPosition}
-            />
-          </div>
-
           <FormHead title="Media Files" />
           <div className="w-100 mt-4">
+            <div className="text-red-500 font-bold mb-2">
+              * Please upload between 3 and 15 images for the listing
+            </div>
             <MultiFileUpload
               attachment={
                 initialValues.attachments &&
@@ -1151,7 +1293,7 @@ export default function UbsertListing({
             field={{
               inputName: 'youTubeVideoIframe',
               title: 'YouTubeVideoLink',
-              isRequired: true,
+              isRequired: false,
               minLength: 3,
               maxLength: 500,
               pattern: {
