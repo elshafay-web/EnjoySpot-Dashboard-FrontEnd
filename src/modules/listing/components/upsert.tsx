@@ -26,7 +26,7 @@ import {
   useListOfHaborItems,
   useListOfListingAmenities,
   useListOfListingCategoriesWithListTypeId,
-  useListOfListingDetailsWithListTypeId,
+  useListOfListingDetails,
   useListOfListingTypes,
   useListOfLocationTypesItems,
   useListOfSuitableItems,
@@ -87,28 +87,6 @@ export default function UbsertListing({
           },
         ],
       },
-      {
-        id: 0,
-        listingCategoryDetail_Id: 7,
-        isDeleted: false,
-        translationProperties: [
-          {
-            languageCode: '',
-            dValue: '',
-          },
-        ],
-      },
-      {
-        id: 0,
-        listingCategoryDetail_Id: 8,
-        isDeleted: false,
-        translationProperties: [
-          {
-            languageCode: '',
-            dValue: '',
-          },
-        ],
-      },
     ],
   };
   const form = useForm<IListing>({
@@ -157,6 +135,7 @@ export default function UbsertListing({
     fields: detailsFields,
     append: appendDetails,
     remove: removeDetails,
+    replace: replaceDetails,
   } = useFieldArray({
     control: form.control,
     name: 'Details',
@@ -177,9 +156,7 @@ export default function UbsertListing({
   );
 
   const { data: listOfHaborTypesItems } = useListOfLocationTypesItems();
-  const { data: listOfListingDetails } = useListOfListingDetailsWithListTypeId(
-    listingCategoryId ?? 0,
-  );
+  const { data: allListingDetails } = useListOfListingDetails();
   const { data: listOfEnteringment } = useListOfEnteringment();
   const center = { lat: 25.276987, lng: 55.296249 };
   const [selectedPosition, setSelectedPosition] = useState<{
@@ -191,6 +168,14 @@ export default function UbsertListing({
     mutationFn: (req: FormData) => UpsertListing(req),
     onSuccess: async (res) => {
       toast.success(res.message);
+      if (mode === 'add') {
+        // Reset form to initial values
+        form.reset();
+        // Also reset any other state
+        setMediaFiles([]);
+        setRoutesMapImage({} as any);
+        setSelectedPosition(center);
+      }
       onClose();
     },
   });
@@ -222,7 +207,7 @@ export default function UbsertListing({
           );
         }
       } catch (error) {
-        console.log('Error fetching listing category details:', error);
+        console.error('Error fetching listing category details:', error);
       }
     };
 
@@ -240,7 +225,6 @@ export default function UbsertListing({
         const result = await response.json();
 
         if (result.isSuccess) {
-          console.log(result.data);
           if (Array.isArray(result.data) && result.data.length > 0) {
             form.setValue(
               'listOfAmenities',
@@ -249,7 +233,7 @@ export default function UbsertListing({
           }
         }
       } catch (error) {
-        console.log('Error fetching listing category amenities:', error);
+        console.error('Error fetching listing category amenities:', error);
       }
     };
 
@@ -258,9 +242,89 @@ export default function UbsertListing({
     }
   }, [initialValues.id]);
 
+  // Update the getMandatoryDetailNames function
+  const getMandatoryDetailNames = (typeId: number, detailsList: any[] = []) => {
+    if (!typeId || !MANDATORY_DETAILS[typeId] || !detailsList?.length) {
+      return [];
+    }
+
+    const mandatoryIds = MANDATORY_DETAILS[typeId];
+    return mandatoryIds.map((id) => {
+      const detail = detailsList.find((d) => d.id === id);
+      return detail ? detail.name : `Detail #${id}`;
+    });
+  };
+
+  // Update the useEffect for listing type changes to ensure valid default values
+  useEffect(() => {
+    if (
+      listingTypeId &&
+      MANDATORY_DETAILS[listingTypeId] &&
+      allListingDetails?.length > 0
+    ) {
+      // Get current details
+      const currentDetails = form.getValues('details') || [];
+
+      // Get mandatory details for this listing type
+      const mandatoryDetailIds = MANDATORY_DETAILS[listingTypeId] || [];
+
+      if (mandatoryDetailIds.length > 0) {
+        // Check if we need to add or replace details
+        const currentDetailIds = currentDetails.map((d: any) =>
+          Number(d.listingCategoryDetail_Id),
+        );
+
+        // If in add mode or no existing details, replace with mandatory details
+        if (mode === 'add' || currentDetailIds.length === 0) {
+          // Create new detail fields for each mandatory detail
+          const newDetails = mandatoryDetailIds.map((detailId) => ({
+            listingCategoryDetail_Id: detailId, // Use the number directly
+            isDeleted: false,
+            id: 0,
+            translationProperties: [
+              {
+                languageCode: 'en',
+                dValue: '',
+              },
+            ],
+          }));
+
+          // Replace all details with the new mandatory ones
+          replaceDetails(newDetails);
+        } else {
+          // In edit mode, add any missing mandatory details
+          const missingDetailIds = mandatoryDetailIds.filter(
+            (id) => !currentDetailIds.includes(id),
+          );
+
+          missingDetailIds.forEach((detailId) => {
+            appendDetails({
+              listingCategoryDetail_Id: detailId, // Use the number directly
+              isDeleted: false,
+              id: 0,
+              translationProperties: [
+                {
+                  languageCode: 'en',
+                  dValue: '',
+                },
+              ],
+            });
+          });
+        }
+      }
+    }
+  }, [
+    listingTypeId,
+    allListingDetails,
+    mode,
+    appendDetails,
+    replaceDetails,
+    form,
+  ]);
+
   const onSubmit = (values: any) => {
+    console.log(values);
     const data: IListing = values;
-    console.log(data);
 
     // Validate required fields
     if (!values.supplier_Id) {
@@ -298,19 +362,57 @@ export default function UbsertListing({
       return;
     }
 
-    // Validate mandatory details
-    const categoryId = values.listingCategory_Id;
-    const mandatoryDetails = MANDATORY_DETAILS[categoryId] || [];
-    const selectedDetailIds = values.details.map((d: any) =>
-      Number(d.listingCategoryDetail_Id),
-    );
+    // Validate details - check for NaN and empty dValue
+    if (values.details && Array.isArray(values.details)) {
+      for (let i = 0; i < values.details.length; i += 1) {
+        const detail = values.details[i];
 
-    const missingDetails = mandatoryDetails.filter(
+        // Check for invalid or missing listingCategoryDetail_Id
+        if (
+          !detail.listingCategoryDetail_Id ||
+          detail.listingCategoryDetail_Id === '0' ||
+          Number.isNaN(Number(detail.listingCategoryDetail_Id))
+        ) {
+          toast.warning(
+            `Detail #${
+              i + 1
+            } has an invalid category detail ID. Please select a valid detail.`,
+          );
+          return;
+        }
+
+        // Check for empty dValue in translationProperties
+        if (
+          !detail.translationProperties ||
+          !detail.translationProperties[0] ||
+          !detail.translationProperties[0].dValue
+        ) {
+          toast.warning(
+            `Detail #${
+              i + 1
+            } is missing a description value. Please fill in all required fields.`,
+          );
+          return;
+        }
+      }
+    }
+
+    // Validate mandatory details
+    const typeId = values.listingType_Id;
+    const mandatoryDetails = MANDATORY_DETAILS[typeId] || [];
+    const selectedDetailIds =
+      values.details?.map((d: any) => Number(d.listingCategoryDetail_Id)) || [];
+
+    const missingDetailIds = mandatoryDetails.filter(
       (id) => !selectedDetailIds.includes(id),
     );
-    if (missingDetails.length > 0) {
+    if (missingDetailIds.length > 0) {
+      const missingDetailNames = getMandatoryDetailNames(
+        typeId,
+        allListingDetails,
+      );
       toast.warning(
-        `Please add all mandatory details for this category. Missing details: ${missingDetails.join(
+        `Please add all mandatory details for this listing type. Missing: ${missingDetailNames.join(
           ', ',
         )}`,
       );
@@ -357,11 +459,15 @@ export default function UbsertListing({
 
     const initialDetails: Detail[] = listOfInitialDetails || [];
 
-    // Fix the Details array handling
-    data.Details = values.details.map((item: any) => {
+    // Update the Details array handling to ensure valid IDs
+    data.Details = (values.details || []).map((item: any) => {
       const existsInInitial = initialDetails.some((x) => x.id === item.id);
+
+      // Ensure listingCategoryDetail_Id is a valid number
+      const categoryDetailId = Number(item.listingCategoryDetail_Id);
+
       return {
-        listingCategoryDetail_Id: Number(item.listingCategoryDetail_Id),
+        listingCategoryDetail_Id: categoryDetailId,
         isDeleted: mode === 'add' ? false : !existsInInitial,
         id: mode === 'add' ? 0 : item.id || 0,
         translationProperties: item.translationProperties || [],
@@ -760,6 +866,16 @@ export default function UbsertListing({
     onClose();
   };
 
+  // Add this useEffect to ensure no automatic focus when the form opens
+  useEffect(() => {
+    if (open) {
+      // Remove focus from any input element
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    }
+  }, [open]);
+
   return (
     <Sidebar
       position="right"
@@ -1003,25 +1119,37 @@ export default function UbsertListing({
             <div>
               <i className="fa-regular fa-circle-question me-4" />
               Details Information
-              {MANDATORY_DETAILS[listingCategoryId] && (
-                <span className="text-red-500 text-sm ml-2">
-                  (Mandatory details:{' '}
-                  {MANDATORY_DETAILS[listingCategoryId].join(', ')})
-                </span>
-              )}
+              {listingTypeId &&
+                MANDATORY_DETAILS[listingTypeId] &&
+                allListingDetails?.length > 0 && (
+                  <span className="text-red-500 text-sm ml-2">
+                    (Mandatory details for this listing type:{' '}
+                    {getMandatoryDetailNames(
+                      listingTypeId,
+                      allListingDetails,
+                    ).join(', ')}
+                    )
+                  </span>
+                )}
             </div>
 
             <button
               type="button"
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
+                // If there are mandatory details for this listing type, add the first one by default
+                const currentTypeId = form.getValues('listingType_Id');
+                const mandatoryDetails = MANDATORY_DETAILS[currentTypeId] || [];
+                const defaultDetailId =
+                  mandatoryDetails.length > 0 ? mandatoryDetails[0] : 0;
+
                 appendDetails({
-                  listingCategoryDetail_Id: 0,
+                  listingCategoryDetail_Id: defaultDetailId,
                   isDeleted: false,
                   id: 0,
                   translationProperties: [
                     {
-                      languageCode: '',
+                      languageCode: 'en',
                       dValue: '',
                     },
                   ],
@@ -1035,10 +1163,10 @@ export default function UbsertListing({
             {detailsFields
               .filter((x) => !x.isDeleted)
               .map((field, index) => (
-                <div className="w-full  grid  col-span-2 gap-4 " key={field.id}>
+                <div className="w-full grid col-span-2 gap-4" key={field.id}>
                   <DropDownInput
                     control={form.control}
-                    options={listOfListingDetails || []}
+                    options={allListingDetails || []}
                     errors={form.formState.errors}
                     field={{
                       inputName: `details[${index}].listingCategoryDetail_Id`,
@@ -1046,9 +1174,7 @@ export default function UbsertListing({
                       isRequired: true,
                     }}
                   />
-
                   <TranslationFields form={form} detailIndex={index} />
-
                   <button
                     type="button"
                     className="mt-8 w-10 h-10 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"

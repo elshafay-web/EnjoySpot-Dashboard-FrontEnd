@@ -27,7 +27,7 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
 
   useEffect(() => {
     if (translationFields.length === 0) {
-      append({ languageCode: 'en', dValue: '' });
+      append({ languageCode: 'en', dValue: '' }, { shouldFocus: false });
     }
   }, [translationFields.length, append]); // Run only if fields are empty
 
@@ -60,6 +60,7 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
               inputName: `details.${detailIndex}.translationProperties.${translationIndex}.dValue`,
               title: 'Value',
               isRequired: true,
+              minLength: 1,
             }}
           />
 
@@ -70,7 +71,7 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
               className="mt-2 p-2 bg-red-500 text-white rounded"
               onClick={() => handleRemove(translationIndex)}
             >
-              remove value
+              Remove value
             </button>
           )}
         </div>
@@ -81,9 +82,11 @@ export const TranslationFields: React.FC<TranslationFieldsProps> = ({
         <button
           type="button"
           className="mt-2 bg-green-500 text-white p-2 rounded"
-          onClick={() => append({ languageCode: 'en', dValue: '' })}
+          onClick={() =>
+            append({ languageCode: 'en', dValue: '' }, { shouldFocus: false })
+          }
         >
-          add value
+          Add value
         </button>
       )}
     </>
