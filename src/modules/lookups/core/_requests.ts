@@ -10,7 +10,24 @@ export function listOfLookups(Api_Get_Url: string) {
   return CommonGetRequestsWithQuery(`${Api_Get_Url}`, {});
 }
 export function addLookup(model: IPostLookup, Api_Add_Url: string) {
-  return axios.post(`${Api_Add_Url}`, model);
+  const formData = new FormData();
+
+  // Append all model properties to FormData
+  Object.entries(model).forEach(([key, value]) => {
+    if (key === 'translationProperties') {
+      formData.append(key, JSON.stringify(value));
+    } else if (key === 'iconFile' && value) {
+      formData.append(key, value);
+    } else if (value !== undefined) {
+      formData.append(key, value.toString());
+    }
+  });
+
+  return axios.post(`${Api_Add_Url}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 }
 
 export function updateLookup(model: IPostLookup, Api_Update_Url: string) {

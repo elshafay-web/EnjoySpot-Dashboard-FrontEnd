@@ -13,11 +13,38 @@ import { deleteLookup, toggleLookup } from '../core/_requests';
 import { HeaderColumn, IGetLookup, ILookups } from '../core/_models';
 
 type Props = {
-  lookups: Array<IGetLookup>
-  openDialog: (edit: { visible: boolean; editObj: any }) => void
-  isModieied: (visable: boolean) => void
-  lookupModel: ILookups
+  lookups: Array<IGetLookup>;
+  openDialog: (edit: { visible: boolean; editObj: any }) => void;
+  isModieied: (visable: boolean) => void;
+  lookupModel: ILookups;
 };
+
+const IconColumn = ({ rowData }: { rowData: IGetLookup | undefined }) => {
+  if (!rowData?.iconFile) return null;
+
+  // Check if the iconFile is an SVG
+  if (rowData.iconFile.trim().startsWith('<svg')) {
+    return (
+      <div
+        style={{ width: '30px', height: '30px' }}
+        dangerouslySetInnerHTML={{ __html: rowData.iconFile }}
+      />
+    );
+  }
+
+  // If it's an image URL
+  return (
+    <img
+      src={rowData.iconFile}
+      alt="Icon"
+      style={{ width: '30px', height: '30px' }}
+    />
+  );
+};
+
+const iconColumnBody = (rowData: IGetLookup) => (
+  <IconColumn rowData={rowData} />
+);
 
 export default function DataTableComponent({
   lookups,
@@ -144,18 +171,23 @@ export default function DataTableComponent({
         rowsPerPageOptions={[10, 25, 50]}
         size="normal"
       >
-        {lookupModel.columns.map((col, i) =>
-          (!col.isBoolean ? (
-            <Column key={i} field={`${col.field}`} header={col.header} />
-          ) : (
+        {lookupModel.columns.map((col, i) => {
+          if (!col.isBoolean) {
+            return (
+              <Column key={i} field={`${col.field}`} header={col.header} />
+            );
+          }
+          return (
             <Column
               key={i}
               field={`${col.field}`}
               header={col.header}
               body={(data) => checkValue(data, col)}
             />
-          )),
-        )}
+          );
+        })}
+
+        <Column field="iconFile" header="Icon" body={iconColumnBody} />
 
         <Column
           field="isActive"

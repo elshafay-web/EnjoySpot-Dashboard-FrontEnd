@@ -34,12 +34,18 @@ export interface IInputShape {
   isTextArea: boolean;
   isInput: boolean;
   isHtml?: boolean;
+  isFile?: boolean;
   supplayDataURL: string;
   supplayData: Array<any> | null;
   isRequired: boolean;
   minLength: number;
   maxLength: number;
   isRequiredSupportedLanguages: boolean;
+}
+
+export interface ITranslationProperty {
+  languageId: number;
+  name: string;
 }
 
 export interface IGetLookup {
@@ -51,10 +57,11 @@ export interface IGetLookup {
   isDeleted?: boolean;
   webColor?: string;
   mobileColor?: string;
-  webIcon?: string;
+  iconFile?: string;
   mobileIcon?: string;
   isRequestByCustomerOnly?: boolean;
   isOnePerson?: boolean;
+  translationProperties?: ITranslationProperty[];
 }
 
 export interface IPostLookup {
@@ -66,16 +73,20 @@ export interface IPostLookup {
   company_Id?: number;
   isActive?: boolean;
   isDeleted?: boolean;
+  iconFile?: File;
   translationProperties: { languageCode: string; name: string }[];
 }
+
 export interface IList {
   id: number;
   name: string;
 }
+
 export interface IListString {
   id: string;
   name: string;
 }
+
 export interface InputCreateModel {
   inputName: string;
   title: ReactNode;
@@ -86,6 +97,7 @@ export interface InputCreateModel {
   isPassword?: boolean;
   isNumber?: boolean;
 }
+
 export interface HeaderColumn {
   field: string | CallableFunction;
   header: string;
