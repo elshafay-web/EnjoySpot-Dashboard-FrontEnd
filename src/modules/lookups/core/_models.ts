@@ -58,6 +58,7 @@ export interface IGetLookup {
   webColor?: string;
   mobileColor?: string;
   iconFile?: string;
+  webIcon?: string;
   mobileIcon?: string;
   isRequestByCustomerOnly?: boolean;
   isOnePerson?: boolean;

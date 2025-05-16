@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
@@ -38,14 +39,92 @@ export default function UbsertListingPackage({
   mode = 'add',
   open,
 }: Props) {
+  // Prepare default values with at least one translation property
+  const defaultTranslationProps = intialValues.TranslationProperties?.length
+    ? intialValues.TranslationProperties
+    : [{ languageCode: 'en', name: '', overview: '', summary: '' }];
+
   const form = useForm<IListingPackages>({
     criteriaMode: 'all',
     mode: 'onChange',
     defaultValues: {
       ...intialValues,
-      TranslationProperties: intialValues.TranslationProperties || [],
+      TranslationProperties: defaultTranslationProps,
     },
   });
+
+  // Validation helper function
+  const validateFormData = (
+    values: any,
+    selectedPos: any,
+    mediaFiles: any[],
+  ): boolean => {
+    if (!values.supplier_Id) {
+      toast.warning('Supplier is required');
+      return false;
+    }
+    if (!values.listingType_Id) {
+      toast.warning('Listing Type is required');
+      return false;
+    }
+    if (!values.city_Id) {
+      toast.warning('City is required');
+      return false;
+    }
+    if (!values.originalPriceAED) {
+      toast.warning('Original Price is required');
+      return false;
+    }
+    if (!values.salePrice) {
+      toast.warning('Sale Price is required');
+      return false;
+    }
+    if (!selectedPos || !selectedPos.lat || !selectedPos.lng) {
+      toast.warning(
+        'Location coordinates are required. Please select a location on the map.',
+      );
+      return false;
+    }
+
+    if (
+      !values.TranslationProperties ||
+      values.TranslationProperties.length === 0
+    ) {
+      toast.warning('At least one Translation Property is required');
+      return false;
+    }
+
+    // Validate each translation property has required fields
+    if (values.TranslationProperties.some((prop: any) => !prop.languageCode)) {
+      toast.warning('Language Code is required for all Translation Properties');
+      return false;
+    }
+
+    if (values.TranslationProperties.some((prop: any) => !prop.name)) {
+      toast.warning('Name is required for all Translation Properties');
+      return false;
+    }
+
+    if (values.TranslationProperties.some((prop: any) => !prop.overview)) {
+      toast.warning('Overview is required for all Translation Properties');
+      return false;
+    }
+
+    if (values.TranslationProperties.some((prop: any) => !prop.summary)) {
+      toast.warning('Summary is required for all Translation Properties');
+      return false;
+    }
+
+    // Validate media files only for add mode
+    if (mode === 'add' && (mediaFiles.length < 3 || mediaFiles.length > 15)) {
+      toast.warning(
+        'Please upload between 3 and 15 images for the listing package',
+      );
+      return false;
+    }
+
+    return true;
+  };
 
   const [MediaFiles, setMediaFiles] = useState<
     {
@@ -67,6 +146,21 @@ export default function UbsertListingPackage({
     name: 'TranslationProperties',
   });
 
+  // Ensure there's always at least one translation property
+  useEffect(() => {
+    if (translationFields.length === 0) {
+      appendTranslation(
+        {
+          languageCode: 'en',
+          name: '',
+          overview: '',
+          summary: '',
+        },
+        { shouldFocus: false },
+      );
+    }
+  }, [translationFields.length, appendTranslation]);
+
   const youTubeVideoIframe = form.watch('youTubeVideoIframe');
   const { data: listOfSuppliers } = useListOfSupppliers();
   const { data: listOfCities } = useListOfCities1();
@@ -81,20 +175,26 @@ export default function UbsertListingPackage({
     mutationFn: (req: FormData) => UpsertListingPackages(req),
     onSuccess: async (res) => {
       toast.success(res.message);
+      if (mode === 'add') {
+        // Reset form to initial values
+        form.reset();
+        // Also reset any other state
+        setMediaFiles([]);
+        setRoutesMapImage({} as any);
+        setSelectedPosition(center);
+      }
       onClose();
     },
   });
 
   const onSubmit = (values: any) => {
     const data: IListingPackages = values;
-    if (mode === 'add') {
-      if (MediaFiles.length < 3 || MediaFiles.length > 15) {
-        toast.warning(
-          'You can not add less than 3 images and more than 15 images',
-        );
-        return;
-      }
+
+    // Validate required fields according to API spec
+    if (!validateFormData(values, selectedPosition, MediaFiles)) {
+      return;
     }
+
     data.id = intialValues.id || 0;
     data.TranslationProperties = (data.TranslationProperties || []).map(
       (item) => {
@@ -153,7 +253,7 @@ export default function UbsertListingPackage({
       );
       formData.append(
         `TranslationProperties[${index}].summary`,
-        item.overview?.toString() ?? '0',
+        item.summary?.toString() ?? '0',
       );
     });
 
@@ -264,12 +364,14 @@ export default function UbsertListingPackage({
             <div>
               <i className="fa-regular fa-circle-question me-4" />
               Translation Properties
+              <span className="text-red-500 text-sm ml-2">
+                (At least one required)
+              </span>
             </div>
             <button
               type="button"
               className="bg-lightBlue border-none outline-none rounded-[6px] flex items-center justify-center p-2"
               onClick={() => {
-                console.log('Appending new translation');
                 appendTranslation({
                   languageCode: 'en',
                   name: '',
@@ -337,6 +439,9 @@ export default function UbsertListingPackage({
                   className="m-2 bg-red-500 border-none outline-none rounded-[6px] flex items-center justify-center p-2"
                   onClick={() => {
                     removeTranslation(index);
+                  }}
+                  style={{
+                    display: translationFields.length > 1 ? 'flex' : 'none',
                   }}
                 >
                   <i className="fa-solid fa-trash text-white" />
@@ -414,6 +519,9 @@ export default function UbsertListingPackage({
 
           <FormHead title="Media Files" />
           <div className="w-100 mt-4">
+            <div className="text-red-500 font-bold mb-2">
+              * Please upload between 3 and 15 images for the listing package
+            </div>
             <MultiFileUpload
               attachment={
                 intialValues.attachments &&
@@ -446,9 +554,9 @@ export default function UbsertListingPackage({
             field={{
               inputName: 'youTubeVideoIframe',
               title: 'YouTubeVideoLink',
-              isRequired: true,
+              isRequired: false,
               minLength: 3,
-              maxLength: 100,
+              maxLength: 500,
             }}
           />
           {youTubeVideoIframe && youTubeVideoIframe.length > 0 && (

@@ -30,7 +30,7 @@ export default function RolePage() {
 
   return (
     <div className="p-4">
-      <div className="card w-1/2">
+      <div className="card">
         <div className="flex justify-between items-center">
           <PageHeader title="Roles" icon="fa-solid fa-unlock-keyhole" />
           <div className="flex justify-between items-end gap-3">

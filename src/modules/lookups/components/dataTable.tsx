@@ -20,14 +20,16 @@ type Props = {
 };
 
 const IconColumn = ({ rowData }: { rowData: IGetLookup | undefined }) => {
-  if (!rowData?.iconFile) return null;
+  // Check for both iconFile and webIcon for backward compatibility
+  const iconSource = rowData?.iconFile || rowData?.webIcon;
+  if (!iconSource) return null;
 
-  // Check if the iconFile is an SVG
-  if (rowData.iconFile.trim().startsWith('<svg')) {
+  // Check if the icon is an SVG
+  if (iconSource.trim().startsWith('<svg')) {
     return (
       <div
         style={{ width: '30px', height: '30px' }}
-        dangerouslySetInnerHTML={{ __html: rowData.iconFile }}
+        dangerouslySetInnerHTML={{ __html: iconSource }}
       />
     );
   }
@@ -35,7 +37,7 @@ const IconColumn = ({ rowData }: { rowData: IGetLookup | undefined }) => {
   // If it's an image URL
   return (
     <img
-      src={rowData.iconFile}
+      src={iconSource}
       alt="Icon"
       style={{ width: '30px', height: '30px' }}
     />
@@ -187,7 +189,7 @@ export default function DataTableComponent({
           );
         })}
 
-        <Column field="iconFile" header="Icon" body={iconColumnBody} />
+        <Column header="Icon" body={iconColumnBody} />
 
         <Column
           field="isActive"
