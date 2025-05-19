@@ -19,9 +19,10 @@ type Props = {
   lookupModel: ILookups;
 };
 
-const IconColumn = ({ rowData }: { rowData: IGetLookup | undefined }) => {
-  // Check for both iconFile and webIcon for backward compatibility
-  const iconSource = rowData?.iconFile || rowData?.webIcon;
+const IconColumn = ({ rowData }: { rowData: any }) => {
+  // For Language table, use countryFlagImage if present
+  const iconSource =
+    rowData?.iconFile || rowData?.webIcon || rowData?.countryFlagImage;
   if (!iconSource) return null;
 
   // Check if the icon is an SVG
@@ -44,9 +45,7 @@ const IconColumn = ({ rowData }: { rowData: IGetLookup | undefined }) => {
   );
 };
 
-const iconColumnBody = (rowData: IGetLookup) => (
-  <IconColumn rowData={rowData} />
-);
+const iconColumnBody = (rowData: any) => <IconColumn rowData={rowData} />;
 
 export default function DataTableComponent({
   lookups,

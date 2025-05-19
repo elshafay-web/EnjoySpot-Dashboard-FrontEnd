@@ -240,4 +240,9 @@ export enum HttpPaths {
 
   // ************** shared ******************
   Api_Language_ListOf = '/api/Language/listOf',
+  Api_Language_GetAll = '/api/Language/getAll',
+  Api_Language_Upsert = '/api/Language/upsert',
+  Api_Language_Delete = '/api/Language/delete/',
+  Api_Language_ToggleIsActive = '/api/Language/toggelActive/',
+  Api_Language_Profile = '/api/Language/getProfile/',
 }

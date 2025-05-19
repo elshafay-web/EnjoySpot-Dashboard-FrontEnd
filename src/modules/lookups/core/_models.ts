@@ -105,3 +105,18 @@ export interface HeaderColumn {
   isDate?: boolean;
   isBoolean?: { value: boolean; iconTrue: string; iconFalse: string };
 }
+
+export interface IGetLanguage {
+  id: number;
+  languageCode: string;
+  isActive: boolean;
+  countryFlagImage?: string;
+  translationProperties?: ITranslationProperty[];
+}
+
+export interface IPostLanguage {
+  id: number;
+  languageCode: string;
+  countryFlagImage?: File;
+  translationProperties: { languageCode: string; name: string }[];
+}

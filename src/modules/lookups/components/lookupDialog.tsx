@@ -15,7 +15,12 @@ import EditorInput from '@components/editor';
 import { useUserData } from '@store/auth';
 import MultiSelectInput from '@components/MultiSeelct';
 import { IInputShape, ILookups, IPostLookup } from '../core/_models';
-import { addLookup, getProfile, listOfLookups } from '../core/_requests';
+import {
+  addLookup,
+  getProfile,
+  listOfLookups,
+  addLanguage,
+} from '../core/_requests';
 
 type Props = {
   dialogVisable: boolean;
@@ -57,7 +62,7 @@ export default function LookupDialog({
 
   const onSubmit: SubmitHandler<any> = async (values) => {
     setLoading(true);
-    let sendObject: IPostLookup = {} as IPostLookup;
+    let sendObject: IPostLookup | any = {};
 
     if (obj.requireCompanyId) {
       sendObject = { ...values, id: editObj.id ?? 0, company_Id: 1 };
@@ -70,15 +75,27 @@ export default function LookupDialog({
         const filteredLanguages = userData.supportedLanguages.filter(
           (lang) => lang.code === 'en' || lang.code === 'ar',
         );
-
-        sendObject.translationProperties =
-          sendObject.translationProperties || [];
-        sendObject.translationProperties = sendObject.translationProperties
-          .slice(0, filteredLanguages.length)
-          .map((elem: any, index: number) => ({
-            ...elem,
-            languageCode: filteredLanguages[index].code,
-          }));
+        if (obj.routing === '/lookups/language') {
+          sendObject.translationProperties = filteredLanguages.map(
+            (lang, index) => ({
+              languageCode: lang.code,
+              name:
+                values.translationProperties?.[index]?.name ||
+                values.name ||
+                '',
+            }),
+          );
+          // Do NOT delete top-level languageCode
+        } else {
+          sendObject.translationProperties =
+            sendObject.translationProperties || [];
+          sendObject.translationProperties = sendObject.translationProperties
+            .slice(0, filteredLanguages.length)
+            .map((elem: any, index: number) => ({
+              ...elem,
+              languageCode: filteredLanguages[index].code,
+            }));
+        }
       } catch (error) {
         console.error('Error setting language codes:', error);
       }
@@ -89,9 +106,18 @@ export default function LookupDialog({
     if (iconFile) {
       sendObject.iconFile = iconFile;
     }
+    // Handle countryFlagImage for Language
+    const [countryFlagImage] = values.countryFlagImage || [];
+    if (countryFlagImage) {
+      sendObject.countryFlagImage = countryFlagImage;
+    }
 
     try {
-      const { data } = await addLookup(sendObject, obj.addApi);
+      // Use addLanguage for Language, addLookup for others
+      const { data } =
+        obj.routing === '/lookups/language'
+          ? await addLanguage(sendObject, obj.addApi)
+          : await addLookup(sendObject, obj.addApi);
       if (data.isSuccess) {
         closeModel();
         isModieied(true);
