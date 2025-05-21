@@ -47,6 +47,9 @@ export default function FileUpload({
       'image/gif': [],
       'image/svg': [],
       'application/pdf': [],
+      'video/mp4': [],
+      'video/quicktime': [], // .mov
+      'video/x-msvideo': [], // .avi
     },
     maxFiles: 1,
   });
@@ -99,7 +102,7 @@ export default function FileUpload({
         id="gallery"
         className="flex items-center justify-center list-unstyled my-0  gap-4 p-0"
       >
-        {files && files.name.length > 0 && files.type !== 'application/pdf' && (
+        {files && files.name.length > 0 && files.type.startsWith('image/') && (
           <li
             key={files.name}
             className="relative m-1 flex flex-column flex-wrap items-center justify-center"
@@ -135,6 +138,49 @@ export default function FileUpload({
           >
             <i className="fa-solid fa-file-pdf text-8xl text-lightBlue cursor-pointer" />
           </div>
+        )}
+        {files && files.name.length > 0 && files.type.startsWith('video/') && (
+          <li
+            key={files.name}
+            className="relative m-1 flex flex-column flex-wrap items-center justify-center"
+          >
+            <h6 className="font-bold py-1 text-base w-full text-center">
+              {title}
+            </h6>
+            <video
+              controls
+              width="320"
+              height="240"
+              className="rounded-md mt-2"
+              src={
+                files.url
+                  ? `${import.meta.env.VITE_BASE_URL}${files.url}`
+                  : memoFile(files)
+              }
+            >
+              <track kind="captions" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="flex items-center mt-2 w-full">
+              <span className="text-center text-muted w-full">
+                {files.name}
+              </span>
+            </div>
+            <Button
+              type="button"
+              onClick={() => removeFile()}
+              style={{
+                borderRadius: '6px',
+                backgroundColor: '#f87171',
+                color: '#fff',
+                border: 'none',
+                marginTop: '8px',
+              }}
+              className="p-2"
+            >
+              Remove Video
+            </Button>
+          </li>
         )}
       </ul>
     </section>
