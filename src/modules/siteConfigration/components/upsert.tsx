@@ -91,6 +91,40 @@ export default function UpdateSiteConfiguration({
       const filteredObj = Object.fromEntries(
         Object.entries(initialValues).filter(([, v]) => v !== null),
       );
+      // Ensure at least one item exists
+      if (!filteredObj.items || filteredObj.items.length === 0) {
+        filteredObj.items = [
+          {
+            id: 0,
+            imageFile: undefined,
+            ActionUrl: '',
+            translationProperties: [
+              {
+                languageCode: 'en',
+                title: '',
+                description: '',
+                button: '',
+              },
+            ],
+          },
+        ];
+      } else {
+        // Ensure each item has at least one translation property
+        filteredObj.items = filteredObj.items.map((item: any) => ({
+          ...item,
+          translationProperties:
+            item.translationProperties && item.translationProperties.length > 0
+              ? item.translationProperties
+              : [
+                  {
+                    languageCode: 'en',
+                    title: '',
+                    description: '',
+                    button: '',
+                  },
+                ],
+        }));
+      }
       form.reset(filteredObj);
     }
   }, [initialValues]);

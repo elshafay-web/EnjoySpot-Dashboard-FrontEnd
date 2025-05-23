@@ -10,7 +10,7 @@
 // @ts-nocheck
 
 import { useGetSiteConfigurationObject } from '@apis/siteConfiguration/apis';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -18,15 +18,23 @@ import { HttpPaths } from '@Enums/httpPaths';
 import Input from '@components/input';
 import FileUpload from '@components/FileUpload';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { isVedioPath } from '@helpers/helpingFun';
 // import { toast } from 'react-toastify';
 
-export default function ViewSiteConfiguration() {
+export default function ViewSiteConfiguration({
+  setSelectedItem,
+  setOpen,
+  selectedItem,
+}: {
+  setSelectedItem: (item: any) => void;
+  setOpen: (open: boolean) => void;
+  selectedItem: any;
+}) {
   const { data, setData } = useGetSiteConfigurationObject();
-  const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState<'view' | 'edit'>('view');
   const [files, setFiles] = useState<File[]>([]);
-  const { register, handleSubmit, formState, control, setValue } = useForm({
+  const { register, handleSubmit, formState, control } = useForm({
     defaultValues: {
       items: [],
       actionURl: '',
@@ -35,9 +43,26 @@ export default function ViewSiteConfiguration() {
   });
 
   const handleEdit = (item: any) => {
-    setSelectedItem(item);
-    setSidebarMode('edit');
-    setIsSidebarOpen(true);
+    // Transform the item to match the form's expected structure
+    const transformedItem = {
+      ...item,
+      ActionUrl: item.actionURl,
+      translationProperties: [
+        {
+          languageCode: 'en',
+          title: item.title,
+          description: item.description,
+          button: item.button,
+        },
+      ],
+    };
+
+    setSelectedItem({
+      id: data.slider.id,
+      MovingInSecounds: data.slider.movingInSecounds,
+      items: [transformedItem],
+    });
+    setOpen(true);
   };
 
   const handleView = (item: any) => {
@@ -45,21 +70,6 @@ export default function ViewSiteConfiguration() {
     setSidebarMode('view');
     setIsSidebarOpen(true);
   };
-
-  useEffect(() => {
-    if (selectedItem) {
-      // Set initial values for the form based on selectedItem fields
-      setValue('actionURl', selectedItem.actionURl || ''); // For actionURl
-
-      // Since there's no TranslationProperties in selectedItem, we can set it directly
-      setValue('TranslationProperties[0].title', selectedItem.title || ''); // For title
-      setValue(
-        'TranslationProperties[0].description',
-        selectedItem.description || '',
-      ); // For description
-      setValue('TranslationProperties[0].button', selectedItem.button || ''); // For button
-    }
-  }, [selectedItem, setValue]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -174,13 +184,20 @@ export default function ViewSiteConfiguration() {
             key={item.id}
             className="border p-4 bg-white rounded-lg shadow-lg"
           >
-            <img
-              src={`https://enjoyspot.premiumasp.net${item.imagePath}`}
-              alt={item.title}
-              width={300}
-              height={200}
-              className="rounded-md w-full !h-[300px]"
-            />
+            {/* Image or Video Thumbnail */}
+            {isVedioPath(item.imagePath) ? (
+              <div className="flex items-center justify-center w-full h-[300px] bg-gray-200 rounded-md">
+                <i className="fa-solid fa-video text-6xl text-gray-400" />
+              </div>
+            ) : (
+              <img
+                src={`https://enjoyspot.premiumasp.net${item.imagePath}`}
+                alt={item.title}
+                width={300}
+                height={200}
+                className="rounded-md w-full !h-[300px]"
+              />
+            )}
             <h3 className="text-lg font-semibold mt-2">{item.title}</h3>
             <p className="text-sm text-gray-600">{item.description}</p>
             <button className="mt-2 px-4 py-[6px] bg-blue-500 text-white rounded-md">
@@ -220,11 +237,17 @@ export default function ViewSiteConfiguration() {
         {sidebarMode === 'view' && selectedItem && (
           <div>
             <h2 className="text-xl font-semibold">{selectedItem.title}</h2>
-            <img
-              src={`https://enjoyspot.premiumasp.net${selectedItem.imagePath}`}
-              alt={selectedItem.title}
-              className="w-full rounded-md mt-2"
-            />
+            {isVedioPath(selectedItem.imagePath) ? (
+              <div className="flex items-center justify-center w-full h-[300px] bg-gray-200 rounded-md">
+                <i className="fa-solid fa-video text-6xl text-gray-400" />
+              </div>
+            ) : (
+              <img
+                src={`https://enjoyspot.premiumasp.net${selectedItem.imagePath}`}
+                alt={selectedItem.title}
+                className="w-full rounded-md mt-2"
+              />
+            )}
             <p className="text-gray-600 mt-2">{selectedItem.description}</p>
             <button className="mt-2 px-4 py-[6px] bg-blue-500 text-white rounded-md">
               {selectedItem.button}

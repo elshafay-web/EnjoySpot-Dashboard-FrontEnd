@@ -9,6 +9,7 @@ import ViewSiteConfiguration from './components/view';
 
 export default function SitConfigurationPage() {
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const { data: initialValues } = useGetSiteConfigurationObject();
   const queryClient = useQueryClient();
 
@@ -17,16 +18,27 @@ export default function SitConfigurationPage() {
       <div className="card">
         <div className="flex justify-between items-center">
           <PageHeader title="Site Configuration" icon="fa-solid fa-users" />
-          <AddButton onClick={() => setOpen(true)} buttonText="Update" />
+          <AddButton
+            onClick={() => {
+              setSelectedItem(null);
+              setOpen(true);
+            }}
+            buttonText="Update"
+          />
         </div>
-        <ViewSiteConfiguration />
+        <ViewSiteConfiguration
+          setSelectedItem={setSelectedItem}
+          selectedItem={selectedItem}
+          setOpen={setOpen}
+        />
       </div>
 
       <UpdateSiteConfiguration
         open={open}
-        initialValues={initialValues}
+        initialValues={selectedItem || initialValues}
         onClose={() => {
           setOpen(false);
+          setSelectedItem(null);
           queryClient.invalidateQueries({
             queryKey: ['getSiteConfigurationObject'],
           });
