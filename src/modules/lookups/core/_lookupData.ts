@@ -1,3 +1,4 @@
+/* eslint-disable no-confusing-arrow */
 import { HttpPaths } from '@/Enums/httpPaths';
 import { ILookups } from './_models';
 

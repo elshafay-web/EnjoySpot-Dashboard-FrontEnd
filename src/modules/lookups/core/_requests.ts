@@ -99,6 +99,51 @@ export function listOfLookups(Api_Get_Url: string) {
   return CommonGetRequestsWithQuery(`${Api_Get_Url}`, {});
 }
 
+// export function addLookup(model: IPostLookup, Api_Add_Url: string) {
+//   // Check if there's a file in the model
+//   const hasFile = model.iconFile && model.iconFile instanceof File;
+
+//   if (hasFile) {
+//     // Use FormData for requests with a file
+//     const formData = new FormData();
+
+//     Object.entries(model).forEach(([key, value]) => {
+//       if (key === 'translationProperties' && Array.isArray(value)) {
+//         value.forEach((translation: any, index: number) => {
+//           formData.append(
+//             `TranslationProperties[${index}].languageCode`,
+//             translation.languageCode || '',
+//           );
+//           formData.append(
+//             `TranslationProperties[${index}].name`,
+//             translation.name || '',
+//           );
+//         });
+//       } else if (key === 'iconFile' && value) {
+//         formData.append(key, value);
+//       } else if (value !== undefined) {
+//         formData.append(key, value.toString());
+//       }
+//     });
+
+//     return axios.post(`${Api_Add_Url}`, formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//       },
+//     });
+//   } else {
+//     const jsonPayload = {
+//       ...model,
+//       iconFile: undefined, // Remove iconFile from the payload since there's no file
+//     };
+
+//     return axios.post(`${Api_Add_Url}`, jsonPayload, {
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//   }
+// }
 export function addLookup(model: IPostLookup, Api_Add_Url: string) {
   // Check if there's a file in the model
   const hasFile = model.iconFile && model.iconFile instanceof File;
@@ -121,10 +166,17 @@ export function addLookup(model: IPostLookup, Api_Add_Url: string) {
         });
       } else if (key === 'iconFile' && value) {
         formData.append(key, value);
+      } else if (key === 'categoriesIds' && Array.isArray(value)) {
+        // Handle categoriesIds as an array
+        value.forEach((id: number | string, index: number) => {
+          formData.append(`categoriesIds[${index}]`, String(id));
+        });
       } else if (value !== undefined) {
         formData.append(key, value.toString());
       }
     });
+
+    console.log('FormData payload:', [...formData.entries()]); // Log FormData entries
 
     return axios.post(`${Api_Add_Url}`, formData, {
       headers: {
@@ -137,6 +189,8 @@ export function addLookup(model: IPostLookup, Api_Add_Url: string) {
       iconFile: undefined, // Remove iconFile from the payload since there's no file
     };
 
+    console.log('JSON payload:', jsonPayload); // Log JSON payload
+
     return axios.post(`${Api_Add_Url}`, jsonPayload, {
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +198,6 @@ export function addLookup(model: IPostLookup, Api_Add_Url: string) {
     });
   }
 }
-
 export function updateLookup(model: IPostLookup, Api_Update_Url: string) {
   return axios.put(`${Api_Update_Url}`, model);
 }

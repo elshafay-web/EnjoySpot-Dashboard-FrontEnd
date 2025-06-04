@@ -56,7 +56,7 @@ export default function DataTableComponent({
   const openEditModel = (row: any) => {
     openDialog({ visible: true, editObj: row });
   };
-
+  console.log(lookups);
   const deleteItem = async (obj: IGetLookup) => {
     const { data } = await deleteLookup(obj.id, lookupModel.deleteApi);
     if (data.isSuccess) {
